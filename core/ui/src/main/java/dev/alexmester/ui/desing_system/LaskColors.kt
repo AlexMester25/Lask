@@ -1,4 +1,4 @@
-package dev.alexmester.lask.ui.theme.desing_system
+package dev.alexmester.ui.desing_system
 
 
 import androidx.compose.material3.MaterialTheme

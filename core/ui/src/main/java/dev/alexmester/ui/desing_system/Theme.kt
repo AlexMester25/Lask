@@ -1,12 +1,9 @@
-package dev.alexmester.lask.ui.theme
+package dev.alexmester.ui.desing_system
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import dev.alexmester.lask.ui.theme.desing_system.LaskDarkColors
-import dev.alexmester.lask.ui.theme.desing_system.LaskLightColors
-import dev.alexmester.lask.ui.theme.desing_system.LocalLaskColors
 
 
 @Composable

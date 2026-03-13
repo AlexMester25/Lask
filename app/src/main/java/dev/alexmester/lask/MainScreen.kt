@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.alexmester.lask.ui.theme.LaskTypography
-import dev.alexmester.lask.ui.theme.desing_system.LaskColors
 import dev.alexmester.posts.presentation.list.PostsScreen
+import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.desing_system.LaskTypography
 import dev.alexmester.users.presentation.list.UsersScreen
 
 @Composable
@@ -73,12 +73,11 @@ fun MainScreen() {
         NavHost(
             navController = navController,
             startDestination = "posts",
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
         ) {
             composable("posts") {
                 PostsScreen(
                     onPostClick = { postId ->
-                        // Навигация на детали поста (если понадобится)
                         println("Post clicked: $postId")
                     }
                 )

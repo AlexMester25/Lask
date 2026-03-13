@@ -1,4 +1,4 @@
-package dev.alexmester.lask.ui.theme.desing_system
+package dev.alexmester.ui.desing_system
 
 import androidx.compose.ui.graphics.Color
 
@@ -6,7 +6,7 @@ object LaskPalette {
     // Brand
     val Brand_Blue = Color(0xFF2B5CE6)
     val Brand_BlueLight10 = Color(0xFFE8EDFD)
-    val Brand_BlueDark10 = Color(0xFF1A2033)
+    val Brand_BlueDark10 = Color(0xFF1A1A1A)
 
     // Text — Light
     val TextPrimaryLight = Color(0xFF1A1A1A)

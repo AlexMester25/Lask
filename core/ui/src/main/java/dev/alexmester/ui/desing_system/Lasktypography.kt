@@ -1,4 +1,4 @@
-package dev.alexmester.lask.ui.theme
+package dev.alexmester.ui.desing_system
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -10,7 +10,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import dev.alexmester.lask.R
+import dev.alexmester.ui.R
 
 val Inter = FontFamily(
     Font(R.font.inter_regular,  FontWeight.Normal),

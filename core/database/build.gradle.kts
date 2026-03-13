@@ -5,7 +5,6 @@ plugins {
 }
 
 android {
-//    namespace = "com.koin.database"
     namespace = "dev.alexmester.database"
 }
 

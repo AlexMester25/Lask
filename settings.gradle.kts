@@ -31,3 +31,4 @@ include(":feature:posts")
 include(":feature:users")
 
 
+include(":core:ui")
