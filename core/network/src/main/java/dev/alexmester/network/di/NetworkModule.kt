@@ -1,5 +1,6 @@
 package dev.alexmester.network.di
 
+import dev.alexmester.network.BuildConfig
 import dev.alexmester.network.plugin.ApiKeyPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
@@ -13,20 +14,12 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-/**
- * Koin qualifier для API ключа.
- * Регистрируется в :app модуле через BuildConfig, чтобы core:network
- * не зависел от BuildConfig и оставался переиспользуемым.
- */
-val newsApiKey = named("news_api_key")
 
 val networkModule = module {
 
     single {
-        val apiKey = get<String>(newsApiKey)
 
         HttpClient(Android) {
 
@@ -55,7 +48,7 @@ val networkModule = module {
             }
 
             install(ApiKeyPlugin) {
-                this.apiKey = apiKey
+                this.apiKey = BuildConfig.NEWS_API_KEY
             }
 
             install(HttpRequestRetry) {

@@ -16,13 +16,7 @@ import dev.alexmester.ui.desing_system.LaskTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-//            statusBarStyle = SystemBarStyle.auto(
-//                lightScrim = LaskPalette.Brand_BlueLight10.toArgb(),
-//                darkScrim  = LaskPalette.Brand_BlueDark10.toArgb(),
-//            )
-        )
-
+        enableEdgeToEdge()
 
         setContent {
             LaskTheme {

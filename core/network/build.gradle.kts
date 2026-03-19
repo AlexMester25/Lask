@@ -8,6 +8,13 @@ plugins {
 android {
     namespace = "dev.alexmester.network"
 
+    defaultConfig {
+        // Добавь в local.properties: NEWS_API_KEY=your_key_here
+        val newsApiKey = project.findProperty("NEWS_API_KEY")?.toString()
+            ?: System.getenv("NEWS_API_KEY")
+            ?: ""
+        buildConfigField("String", "NEWS_API_KEY", "\"$newsApiKey\"")
+    }
 }
 
 dependencies {
