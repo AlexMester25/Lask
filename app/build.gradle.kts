@@ -14,6 +14,11 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val newsApiKey = project.findProperty("NEWS_API_KEY")?.toString()
+            ?: System.getenv("NEWS_API_KEY")
+            ?: ""
+        buildConfigField("String", "NEWS_API_KEY", "\"$newsApiKey\"")
     }
 
     buildTypes {
@@ -34,5 +39,5 @@ dependencies {
     implementation(project(":feature:posts"))
     implementation(project(":feature:users"))
 
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.34.0")
+
 }

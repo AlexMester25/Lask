@@ -22,6 +22,9 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     sourceCompatibility = JavaVersion.VERSION_17
                     targetCompatibility = JavaVersion.VERSION_17
                 }
+                buildFeatures {
+                    buildConfig = true
+                }
             }
             val libs = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
             dependencies {

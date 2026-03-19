@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.internal.dsl.LibraryExtensionImpl
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -11,7 +12,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply("com.android.library")
 
-            extensions.configure<LibraryExtensionImpl> {
+            extensions.configure<LibraryExtension> {
                 compileSdk { version = release(AndroidConfig.COMPILE_SDK) }
                 defaultConfig {
                     minSdk = AndroidConfig.MIN_SDK

@@ -7,9 +7,12 @@ plugins {
 
 android {
     namespace = "dev.alexmester.network"
+
 }
 
 dependencies {
+    implementation(project(":core:models"))
+
     api(libs.bundles.ktor)
     api(libs.kotlinx.serialization.json)
     api(libs.bundles.koin)
