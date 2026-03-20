@@ -1,12 +1,13 @@
 plugins {
     id("myapp.android.library")
-    id("myapp.room")
     id("myapp.koin")
     id("myapp.kotlin.serialization")
+    id("myapp.datastore")
 }
 
 android {
-    namespace = "dev.alexmester.database"
+    namespace = "dev.alexmester.datastore"
+
 }
 
 dependencies {

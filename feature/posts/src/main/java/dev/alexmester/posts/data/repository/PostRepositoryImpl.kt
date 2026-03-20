@@ -3,12 +3,13 @@ package dev.alexmester.posts.data.repository
 
 import dev.alexmester.database.dao.PostDao
 import dev.alexmester.database.entity.PostEntity
+import dev.alexmester.posts.data.remote.PostApiService
 import dev.alexmester.posts.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class PostRepositoryImpl(
-    private val postApiService: dev.alexmester.posts.data.remote.PostApiService,
+    private val postApiService: PostApiService,
     private val postDao: PostDao
 ) : dev.alexmester.posts.domain.repository.PostRepository {
 

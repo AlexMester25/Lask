@@ -2,6 +2,7 @@ package dev.alexmester.lask
 
 import android.app.Application
 import dev.alexmester.database.di.databaseModule
+import dev.alexmester.datastore.di.dataStoreModule
 import dev.alexmester.network.di.networkModule
 import dev.alexmester.posts.di.postsModule
 import dev.alexmester.users.di.usersModule
@@ -23,8 +24,9 @@ class App : Application() {
             modules(
                 networkModule,
                 databaseModule,
+                dataStoreModule,
 
-                // Feature modules
+
                 postsModule,
                 usersModule
             )

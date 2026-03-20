@@ -6,14 +6,17 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val databaseModule = module {
+
     single {
         Room.databaseBuilder(
             context = androidContext(),
             klass = AppDatabase::class.java,
-            name = "app_database"
-        ).build()
+            name = "lask_database",
+        )
+            .fallbackToDestructiveMigrationFrom(1)
+            .build()
     }
 
-    single { get<AppDatabase>().postDao() }
-    single { get<AppDatabase>().userDao() }
+    single { get<AppDatabase>().newsArticleDao() }
+    single { get<AppDatabase>().bookmarkDao() }
 }
