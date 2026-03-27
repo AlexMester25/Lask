@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.alexmester.ui.desing_system.LaskColors
@@ -28,11 +29,6 @@ import dev.alexmester.ui.desing_system.LaskTypography
 
 @Composable
 fun BottomBarItemView(item: BottomBarItem) {
-
-    val width = animateDpAsState(
-        targetValue = if (item.isSelected) 120.dp else 48.dp,
-        animationSpec = spring(dampingRatio = 0.7f),
-    )
 
     val backgroundColor = animateColorAsState(
         targetValue = if (item.isSelected) MaterialTheme.LaskColors.textPrimary
@@ -47,11 +43,12 @@ fun BottomBarItemView(item: BottomBarItem) {
 
     Row(
         modifier = Modifier
-//            .width(width.value)
             .clip(RoundedCornerShape(24.dp))
-            .background(backgroundColor.value)
+            .drawBehind{
+                drawRect(backgroundColor.value)
+            }
             .clickable { item.onClick() }
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {

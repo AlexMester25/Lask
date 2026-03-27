@@ -27,7 +27,7 @@ fun NewsFeedClusterHeader(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = MaterialTheme.LaskColors.backgroundSecondary,
+                color = MaterialTheme.LaskColors.brand_blue10,
                 shape = RoundedCornerShape(bottomEnd = 12.dp, bottomStart = 12.dp)
             )
             .padding(horizontal = 16.dp,vertical = 10.dp),

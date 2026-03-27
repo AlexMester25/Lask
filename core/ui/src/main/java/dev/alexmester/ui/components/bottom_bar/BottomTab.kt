@@ -1,9 +1,9 @@
-package dev.alexmester.lask.navigation
+package dev.alexmester.ui.components.bottom_bar
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class BottomTab(
     val icon: ImageVector,
     val title: String,
-    val route: Any // type-safe route из feature api
+    val route: Any
 )

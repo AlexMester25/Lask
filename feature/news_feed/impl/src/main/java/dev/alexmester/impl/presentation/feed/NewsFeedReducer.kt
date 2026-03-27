@@ -16,9 +16,14 @@ object NewsFeedReducer {
             else -> state
         }
 
-    fun onClustersLoaded(clusters: List<NewsCluster>, lastCachedAt: Long?): NewsFeedScreenState =
+    fun onClustersLoaded(
+        clusters: List<NewsCluster>,
+        lastCachedAt: Long?,
+        country: String,
+    ): NewsFeedScreenState =
         NewsFeedScreenState.Content(
         clusters = clusters,
+        country = country,
         lastCachedAt = lastCachedAt,
         contentState = ContentState.Idle,
     )

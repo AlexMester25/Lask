@@ -3,20 +3,12 @@ package dev.alexmester.newsfeed.impl.presentation.feed
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.ui.uitext.UiText
 
-//data class NewsFeedState(
-//    val clusters: List<NewsCluster> = emptyList(),
-//    val isLoading: Boolean = false,
-//    val isRefreshing: Boolean = false,
-//    val error: String? = null,
-//    val isOffline: Boolean = false,
-//    val lastCachedAt: Long? = null,
-//)
-
 sealed interface NewsFeedScreenState {
     data object Loading : NewsFeedScreenState
     data class Error(val message: UiText) : NewsFeedScreenState
     data class Content(
         val clusters: List<NewsCluster>,
+        val country: String = "ru",
         val lastCachedAt: Long? = null,
         val contentState: ContentState = ContentState.Idle,
     ) : NewsFeedScreenState

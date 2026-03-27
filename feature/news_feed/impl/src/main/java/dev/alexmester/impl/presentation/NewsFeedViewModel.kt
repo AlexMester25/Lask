@@ -54,12 +54,13 @@ class NewsFeedViewModel(
         interactor.getClustersFlow().onEach { clusters ->
                 val lastCachedAt = interactor.getLastCachedAt()
                 val currentState = _state.value
+                val country = interactor.getCountry()
                 if (clusters.isEmpty()) return@onEach
                 if (currentState !is NewsFeedScreenState.Content ||
                     currentState.contentState !is ContentState.Offline
                 ) {
                     _state.update {
-                        NewsFeedReducer.onClustersLoaded(clusters, lastCachedAt)
+                        NewsFeedReducer.onClustersLoaded(clusters, lastCachedAt, country)
                     }
                 }
             }

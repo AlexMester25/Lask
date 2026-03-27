@@ -2,8 +2,11 @@ package dev.alexmester.newsfeed.impl.presentation.feed
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -23,9 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.alexmester.impl.presentation.NewsFeedViewModel
 import dev.alexmester.impl.presentation.components.NewsFeedList
+import dev.alexmester.ui.R
 import dev.alexmester.ui.components.pull_to_refresh_box.LaskPullToRefreshBox
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
@@ -81,15 +87,27 @@ internal fun NewsFeedScreenContent(
     onArticleClick: (articleId: Long, articleUrl: String) -> Unit,
 ) {
 
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "Lask",
-                        style = MaterialTheme.LaskTypography.h3,
-                        color = MaterialTheme.LaskColors.textPrimary
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.tab_top_news),
+                            style = MaterialTheme.LaskTypography.h3,
+                            color = MaterialTheme.LaskColors.textPrimary
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        if (state is NewsFeedScreenState.Content) {
+                            Text(
+                                text = countryToFlag(state.country),
+                                style = MaterialTheme.LaskTypography.h5,
+                            )
+                        }
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.LaskColors.brand_blue10
@@ -144,7 +162,12 @@ internal fun NewsFeedScreenContent(
         }
     }
 }
-
+fun countryToFlag(countryCode: String): String {
+    return countryCode
+        .uppercase()
+        .map { char -> Character.toCodePoint('\uD83C', '\uDDE6' + (char - 'A')) }
+        .joinToString("") { String(Character.toChars(it)) }
+}
 
 
 

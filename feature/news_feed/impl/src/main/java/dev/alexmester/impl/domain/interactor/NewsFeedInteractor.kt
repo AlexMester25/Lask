@@ -26,4 +26,8 @@ class NewsFeedInteractor(
 
     suspend fun getLastCachedAt(): Long? =
         repository.getLastCachedAt()
+
+    suspend fun getCountry(): String {
+        return preferencesDataSource.userPreferences.first().defaultCountry
+    }
 }
