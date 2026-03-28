@@ -6,6 +6,8 @@ import coil3.EventListener
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
+import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
@@ -18,6 +20,7 @@ import dev.alexmester.impl.navigation.NewsFeedImpl
 import dev.alexmester.network.di.networkModule
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import okio.Path.Companion.toOkioPath
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
@@ -64,6 +67,17 @@ class App : Application(), SingletonImageLoader.Factory {
                         }
                     )
                 )
+            }
+            .memoryCache {
+                MemoryCache.Builder()
+                    .maxSizePercent(context, percent = 0.25)
+                    .build()
+            }
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(context.cacheDir.resolve("image_cache").toOkioPath())
+                    .maxSizeBytes(50L * 1024 * 1024)
+                    .build()
             }
             .eventListener(object : EventListener() {
                 override fun onSuccess(request: ImageRequest, result: SuccessResult) {

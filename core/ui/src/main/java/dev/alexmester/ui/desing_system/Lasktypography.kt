@@ -98,6 +98,11 @@ data class LaskTypography(
         fontWeight = FontWeight.Normal,    // 400
         fontSize   = 12.sp,
     ),
+    val footnoteThin: TextStyle = TextStyle(
+        fontFamily = Inter,
+        fontWeight = FontWeight.Thin,
+        fontSize   = 12.sp,
+    ),
 )
 
 val LocalLaskTypography = staticCompositionLocalOf { LaskTypography() }

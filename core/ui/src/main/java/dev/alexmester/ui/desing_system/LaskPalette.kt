@@ -31,4 +31,10 @@ object LaskPalette {
     val Error = Color(0xFFF72E0A)
     val Warning = Color(0xFFFE4F32)
     val Informative = Color(0xFF416BD6)
+    val Bookmark = Color(0xFFFFBB00)
+
+    //Sentiment
+    val Sentiment_Positive = Color(0xFF1DB845)
+    val Sentiment_Neutral = Color(0xFFFF9800)
+    val Sentiment_Negative = Color(0xFFD32F2F)
 }
