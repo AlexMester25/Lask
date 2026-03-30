@@ -24,7 +24,7 @@ class NewsFeedImpl : NewsFeedApi {
         navController: NavHostController,
     ) {
         navGraphBuilder.composable<FeedRoute> {
-            NewsFeedScreen(navController = navController)
+            NewsFeedScreen()
         }
     }
 }

@@ -2,6 +2,7 @@ package dev.alexmester.impl.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.alexmester.datastore.model.UserPreferences
 import dev.alexmester.impl.domain.interactor.NewsFeedInteractor
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.result.AppResult
@@ -16,6 +17,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -29,11 +32,12 @@ class NewsFeedViewModel(
     private val _state = MutableStateFlow<NewsFeedScreenState>(NewsFeedScreenState.Loading)
     val state: StateFlow<NewsFeedScreenState> = _state.asStateFlow()
 
-    private val _sideEffects = Channel<NewsFeedSideEffect>(Channel.Factory.BUFFERED)
+    private val _sideEffects = Channel<NewsFeedSideEffect>(Channel.BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         observeClusters()
+        observePreferencesChanges()
         loadFeed()
     }
 
@@ -46,25 +50,33 @@ class NewsFeedViewModel(
         }
     }
 
-    /**
-     * Подписка на Room Flow — каждый раз когда данные меняются в базе
-     * обновляем Content state. Loading → Content происходит здесь.
-     */
     private fun observeClusters() {
         interactor.getClustersFlow().onEach { clusters ->
-                val lastCachedAt = interactor.getLastCachedAt()
-                val currentState = _state.value
-                val country = interactor.getCountry()
-                if (clusters.isEmpty()) return@onEach
-                if (currentState !is NewsFeedScreenState.Content ||
-                    currentState.contentState !is ContentState.Offline
-                ) {
-                    _state.update {
-                        NewsFeedReducer.onClustersLoaded(clusters, lastCachedAt, country)
-                    }
+            val lastCachedAt = interactor.getLastCachedAt()
+            val currentState = _state.value
+            val country = interactor.getCountry()
+            if (clusters.isEmpty()) return@onEach
+            if (currentState !is NewsFeedScreenState.Content ||
+                currentState.contentState !is ContentState.Offline
+            ) {
+                _state.update {
+                    NewsFeedReducer.onClustersLoaded(clusters, lastCachedAt, country)
                 }
             }
-            .launchIn(viewModelScope)
+        }.launchIn(viewModelScope)
+    }
+
+    private fun observePreferencesChanges() {
+        interactor.getPreferencesFlow()
+            .drop(1)
+            .distinctUntilChanged { old, new ->
+                old.defaultCountry == new.defaultCountry &&
+                old.defaultLanguage == new.defaultLanguage
+            }
+            .onEach { newPrefs ->
+                _state.update { NewsFeedScreenState.Loading }
+                loadFeed()
+            }.launchIn(viewModelScope)
     }
 
     private fun loadFeed() {
@@ -102,7 +114,8 @@ class NewsFeedViewModel(
             when (error) {
                 is NetworkError.NoInternet -> {
                     val message = UiText.StringResource(R.string.error_no_internet)
-                    val clusters = (currentState as? NewsFeedScreenState.Content)?.clusters ?: emptyList()
+                    val clusters =
+                        (currentState as? NewsFeedScreenState.Content)?.clusters ?: emptyList()
                     val lastCachedAt = interactor.getLastCachedAt()
                     _state.update {
                         NewsFeedReducer.onOffline(
@@ -113,16 +126,19 @@ class NewsFeedViewModel(
                     }
                     _sideEffects.send(NewsFeedSideEffect.ShowError(message))
                 }
+
                 is NetworkError.PaymentRequired -> {
                     val message = UiText.StringResource(R.string.error_payment_required)
-                    _state.update { NewsFeedReducer.onError(currentState, message) }
                     _sideEffects.send(NewsFeedSideEffect.ShowError(message))
+                    _state.update { NewsFeedReducer.onError(currentState, message) }
                 }
+
                 is NetworkError.RateLimit -> {
                     val message = UiText.StringResource(R.string.error_rate_limit)
                     _state.update { NewsFeedReducer.onError(currentState, message) }
                     _sideEffects.send(NewsFeedSideEffect.ShowError(message))
                 }
+
                 else -> {
                     val message = UiText.StringResource(R.string.error_unknown)
                     _state.update { NewsFeedReducer.onError(currentState, message) }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import dev.alexmester.api.navigation.FeedRoute
@@ -15,30 +16,26 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppContent(
-    splashViewModel: SplashViewModel = koinViewModel(),
+    splashViewModel: SplashViewModel,
 ) {
     val splashState by splashViewModel.state.collectAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(splashState) {
-        val state = splashState
-        if (state is SplashState.Ready) {
-            splashViewModel.initLocaleIfNeeded(
-                context = context,
-                isManuallySet = state.isLocaleManuallySet,
-            )
-        }
-    }
 
     LaskTheme {
         when (val state = splashState) {
-            SplashState.Loading -> Unit
+            SplashState.Loading,
+            SplashState.Initializing -> Unit
+
             is SplashState.Ready -> {
                 val navController = rememberNavController()
+                val startDestination = remember {
+                    if (state.isOnboardingCompleted) FeedRoute else WelcomeRoute
+                }
                 RootScreen(
                     navController = navController,
-                    startDestination = if (state.isOnboardingCompleted) FeedRoute else WelcomeRoute,
-                    onOnboardingComplete = { splashViewModel.completeOnboarding() },
+                    startDestination = startDestination,
+                    onOnboardingComplete = {
+                        splashViewModel.completeOnboarding()
+                    },
                 )
             }
         }

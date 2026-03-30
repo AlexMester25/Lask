@@ -1,39 +1,51 @@
 package dev.alexmester.lask.welcome_screen
 
 import android.content.Context
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.alexmester.api.navigation.FeedRoute
 import dev.alexmester.datastore.UserPreferencesDataSource
 import dev.alexmester.datastore.util.DeviceLocaleProvider
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SplashViewModel(
     private val preferencesDataSource: UserPreferencesDataSource,
+    private val deviceLocaleProvider: DeviceLocaleProvider,
 ) : ViewModel() {
 
-    val state = preferencesDataSource.userPreferences
-        .map { prefs ->
-            SplashState.Ready(
-                isOnboardingCompleted = prefs.isOnboardingCompleted,
-                isLocaleManuallySet = prefs.isLocaleManuallySet,
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = SplashState.Loading,
-        )
+    private val _state = MutableStateFlow<SplashState>(SplashState.Loading)
+    val state: StateFlow<SplashState> = _state
 
-    fun initLocaleIfNeeded(context: Context, isManuallySet: Boolean) {
-        if (isManuallySet) return
+    init {
+        observePreferences()
+    }
+
+    private fun observePreferences() {
         viewModelScope.launch {
-            preferencesDataSource.initLocaleFromDevice(
-                country = DeviceLocaleProvider.getCountry(context),
-                language = DeviceLocaleProvider.getLanguage(context),
-            )
+            preferencesDataSource.userPreferences.collect { prefs ->
+
+                if (!prefs.isLocaleManuallySet) {
+                    _state.value = SplashState.Initializing
+
+                    preferencesDataSource.initLocaleFromDevice(
+                        country = deviceLocaleProvider.getCountry(),
+                        language = deviceLocaleProvider.getLanguage(),
+                    )
+                }
+
+                _state.value = SplashState.Ready(
+                    isOnboardingCompleted = prefs.isOnboardingCompleted,
+                )
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import dev.alexmester.database.entity.NewsArticleEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -32,6 +33,11 @@ interface NewsArticleDao {
 
     // ── Очистка ───────────────────────────────────────────────────────────────
 
+    @Transaction
+    suspend fun replaceArticles(source: String, articles: List<NewsArticleEntity>) {
+        clearBySource(source)
+        insertArticles(articles)
+    }
     /**
      * Вызывается при pull-to-refresh — чистим только конкретный источник,
      * не затрагивая кэш других экранов.

@@ -20,7 +20,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.alexmester.impl.presentation.NewsFeedViewModel
 import dev.alexmester.impl.presentation.components.NewsFeedList
 import dev.alexmester.ui.R
@@ -40,10 +39,9 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun NewsFeedScreen(
-    navController: NavHostController,
     viewModel: NewsFeedViewModel = koinViewModel(),
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val stateRefreshBox = rememberPullToRefreshState()
     val context = LocalContext.current
@@ -73,7 +71,6 @@ fun NewsFeedScreen(
             ))
         }
     )
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +83,6 @@ internal fun NewsFeedScreenContent(
     onRefresh: () -> Unit,
     onArticleClick: (articleId: Long, articleUrl: String) -> Unit,
 ) {
-
 
     Scaffold(
         topBar = {

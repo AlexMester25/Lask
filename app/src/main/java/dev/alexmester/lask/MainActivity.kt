@@ -23,8 +23,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val splashViewModel: SplashViewModel by viewModel()
+
         splashScreen.setKeepOnScreenCondition {
-            splashViewModel.state.value is SplashState.Loading
+            splashViewModel.state.value is SplashState.Loading ||
+            splashViewModel.state.value is SplashState.Initializing
         }
 
         setContent {

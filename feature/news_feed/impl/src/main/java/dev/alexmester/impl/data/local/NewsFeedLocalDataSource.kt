@@ -18,4 +18,7 @@ class NewsFeedLocalDataSource(private val dao: NewsArticleDao) {
 
     suspend fun clearArticles() =
         dao.clearBySource(SOURCE_FEED)
+
+    suspend fun replaceArticles(articles: List<NewsArticleEntity>) =
+        dao.replaceArticles(SOURCE_FEED, articles)
 }

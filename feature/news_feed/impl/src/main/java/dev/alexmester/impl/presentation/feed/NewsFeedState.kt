@@ -8,7 +8,7 @@ sealed interface NewsFeedScreenState {
     data class Error(val message: UiText) : NewsFeedScreenState
     data class Content(
         val clusters: List<NewsCluster>,
-        val country: String = "ru",
+        val country: String = "en",
         val lastCachedAt: Long? = null,
         val contentState: ContentState = ContentState.Idle,
     ) : NewsFeedScreenState

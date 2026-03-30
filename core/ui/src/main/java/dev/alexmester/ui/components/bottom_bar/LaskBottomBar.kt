@@ -1,6 +1,5 @@
 package dev.alexmester.ui.components.bottom_bar
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,13 +19,11 @@ import dev.alexmester.ui.desing_system.LaskColors
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
 
-
 @Composable
 fun LaskBottomBar(
     items: List<LaskMainBottomBarItem>,
     modifier: Modifier = Modifier,
     hazeState: HazeState,
-    isArticleDetailsScreen: Boolean = true,
 ) {
 
     Box(
@@ -50,14 +47,8 @@ fun LaskBottomBar(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AnimatedContent(targetState = isArticleDetailsScreen) { isArticleDetailsScreen ->
-                if (isArticleDetailsScreen) {
-                    LaskArticleDetailsContent()
-                } else {
-                    items.forEach { item ->
-                        LaskMainContent(item)
-                    }
-                }
+            items.forEach { item ->
+                LaskMainContent(item)
             }
         }
     }

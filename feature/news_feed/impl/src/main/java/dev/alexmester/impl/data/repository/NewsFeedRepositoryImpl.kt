@@ -31,8 +31,7 @@ class NewsFeedRepositoryImpl(
             language = language,
         ).topNews.dtosToCluster()
 
-        if (forceRefresh) local.clearArticles()
-        local.saveArticles(clusters.toEntities(SOURCE_FEED))
+        local.replaceArticles(clusters.toEntities(SOURCE_FEED))
     }
 
     override suspend fun getLastCachedAt(): Long? =

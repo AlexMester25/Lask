@@ -15,6 +15,7 @@ import coil3.request.SuccessResult
 import dev.alexmester.api.navigation.NewsFeedApi
 import dev.alexmester.database.di.databaseModule
 import dev.alexmester.datastore.di.dataStoreModule
+import dev.alexmester.datastore.util.DeviceLocaleProvider
 import dev.alexmester.impl.di.newsFeedModule
 import dev.alexmester.impl.navigation.NewsFeedImpl
 import dev.alexmester.lask.welcome_screen.SplashViewModel
@@ -39,7 +40,13 @@ val featuresModule = module {
     // single<SearchApi> { SearchImpl() }
 }
 val splashModule = module {
-    viewModel { SplashViewModel(preferencesDataSource = get()) }
+    viewModel {
+        SplashViewModel(
+            preferencesDataSource = get(),
+            deviceLocaleProvider = get()
+        )
+    }
+    single { DeviceLocaleProvider(androidContext()) }
 }
 
 class App : Application(), SingletonImageLoader.Factory {
