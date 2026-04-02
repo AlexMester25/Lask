@@ -57,7 +57,8 @@ fun ArticleDetailBottomBar(
             )
         }
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             ClapButton(
                 count = clapCount,

@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,7 +36,7 @@ fun WelcomeScreen(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxHeight(0.65f)
+                .fillMaxHeight(0.55f)
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
                 .background(
@@ -78,16 +79,13 @@ fun WelcomeScreen(
             ) {
                 Text(
                     textAlign = TextAlign.Center,
-                    text = "Get The Latest News\nAnd Updates",
+                    text = stringResource(R.string.welcome_title),
                     style = MaterialTheme.LaskTypography.h3,
                     color = MaterialTheme.LaskColors.textPrimary,
                 )
                 Text(
                     textAlign = TextAlign.Center,
-                    text = "From Politics to Entertainment: " +
-                            "Your One-Stop Source for Comprehensive Coverage of the " +
-                            "Latest News and Developments Across the Glob will be right " +
-                            "on your hand.",
+                    text = stringResource(R.string.welcome_subtitle),
                     style = MaterialTheme.LaskTypography.body2,
                     color = MaterialTheme.LaskColors.textSecondary,
                     lineHeight = 26.sp
@@ -105,7 +103,7 @@ fun WelcomeScreen(
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp)
                 ) {
                     Text(
-                        text = "Explore →",
+                        text = stringResource(R.string.welcome_explore),
                         style = MaterialTheme.LaskTypography.button1,
                     )
                 }

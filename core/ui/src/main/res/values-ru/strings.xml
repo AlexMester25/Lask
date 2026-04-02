@@ -18,4 +18,9 @@
     <string name="add_to_bookmark">Добавлено в закладки</string>
     <string name="removed_from_bookmark">Удалено из закладок</string>
 
+    <!-- Welcome Screen -->
+    <string name="welcome_title">Получайте последние новости\nи обновления.</string>
+    <string name="welcome_subtitle">От политики до развлечений: ваш универсальный источник всесторонней информации о последних новостях и событиях по всему миру всегда будет у вас под рукой.</string>
+    <string name="welcome_explore">Исследовать →</string>
+
 </resources>

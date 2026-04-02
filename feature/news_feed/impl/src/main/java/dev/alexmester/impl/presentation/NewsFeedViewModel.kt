@@ -41,6 +41,7 @@ class NewsFeedViewModel(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     private var lastKnownCountry: String? = null
+    private var isFeedLoaded = false
 
     init {
         observeClustersWithPrefs()
@@ -59,9 +60,6 @@ class NewsFeedViewModel(
 
     private fun observeClustersWithPrefs() {
         interactor.getClustersWithPrefsFlow()
-            .onStart {
-                loadFeed()
-            }
             .onEach { (clusters, prefs) ->
 
                 val countryChanged = lastKnownCountry != null &&
@@ -73,7 +71,12 @@ class NewsFeedViewModel(
                         _state.update { NewsFeedScreenState.Loading }
                         loadFeed()
                     }
-
+                    !isFeedLoaded -> {
+                        // Первый раз — загружаем только один раз
+                        lastKnownCountry = prefs.defaultCountry
+                        isFeedLoaded = true
+                        loadFeed()
+                    }
                     _state.value.isOffline -> Unit
 
                     clusters.isNotEmpty() -> {

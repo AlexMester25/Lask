@@ -53,7 +53,7 @@ internal fun LaskTopSnackbar(
             containerColor = if (isError) {
                 MaterialTheme.LaskColors.error
             } else {
-                MaterialTheme.LaskColors.textPrimary
+                MaterialTheme.LaskColors.brand_blue10
             },
             contentColor = MaterialTheme.LaskColors.backgroundPrimary,
             shape = RoundedCornerShape(12.dp),
@@ -61,6 +61,7 @@ internal fun LaskTopSnackbar(
             Text(
                 text = snackbarData.visuals.message,
                 style = MaterialTheme.LaskTypography.body2,
+                color = MaterialTheme.LaskColors.textPrimary
             )
         }
     }

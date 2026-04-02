@@ -1,6 +1,7 @@
 package dev.alexmester.impl.presentation.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -44,6 +45,7 @@ fun ClapButton(
     )
 
     Row(
+        modifier = Modifier.animateContentSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -63,7 +65,7 @@ fun ClapButton(
         if (count > 0) {
             Text(
                 text = count.toString(),
-                style = MaterialTheme.LaskTypography.footnoteSemiBold,
+                style = MaterialTheme.LaskTypography.button1,
                 color = MaterialTheme.LaskColors.textSecondary,
             )
         }

@@ -4,6 +4,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -30,20 +31,19 @@ fun RootScreen(
     val newsFeedApi = koinInject<NewsFeedApi>()
     val articleDetailApi = koinInject<ArticleDetailApi>()
 
-    val screensWithoutBottomBar = listOf(
-        WelcomeRoute::class.qualifiedName,
-        ArticleDetailRoute::class.qualifiedName
-    )
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    val showBottomBar = remember(currentRoute) {
-        !screensWithoutBottomBar.contains(currentRoute)
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val showBottomBar = remember(currentBackStackEntry) {
+        val route = currentBackStackEntry?.destination?.route ?: return@remember false
+        !route.contains(ArticleDetailRoute::class.qualifiedName!!) &&
+        !route.contains(WelcomeRoute::class.qualifiedName!!)
     }
+
     val hazeState = rememberHazeState()
 
     Scaffold(
         modifier = Modifier,
         bottomBar = {
-            if (true) {
+            if (showBottomBar) {
                 AppBottomBar(
                     navController = navController,
                     hazeState = hazeState,
