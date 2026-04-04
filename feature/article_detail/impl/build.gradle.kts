@@ -5,6 +5,7 @@ plugins {
     id("myapp.kotlin.serialization")
     id("myapp.room")
     id("myapp.coil")
+    id("myapp.media3")
 }
 
 android {

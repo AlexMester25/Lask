@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import dev.alexmester.impl.presentation.components.common.SentimentRow
 import dev.alexmester.models.news.NewsArticle
 
 @Composable
@@ -38,6 +37,10 @@ internal fun ArticleDetailBody(
             text = article.text,
             summary = article.summary,
         )
+        article.video?.let { videoUrl ->
+            Spacer(modifier = Modifier.height(24.dp))
+            ArticleDetailVideoPlayer(videoUrl = videoUrl)
+        }
         Spacer(modifier = Modifier.height(bottomPadding + 16.dp))
     }
 }

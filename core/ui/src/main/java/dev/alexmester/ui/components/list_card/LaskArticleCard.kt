@@ -48,7 +48,6 @@ import dev.alexmester.ui.desing_system.LaskTypography
 import dev.alexmester.ui.transition.sharedElementIfAvailable
 import dev.alexmester.utils.DateFormatter
 
-
 @Composable
 fun LaskArticleCard(
     modifier: Modifier = Modifier,
@@ -75,7 +74,6 @@ fun LaskArticleCard(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
         Column(
             modifier = Modifier
                 .weight(1f)

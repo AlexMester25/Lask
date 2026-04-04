@@ -59,5 +59,9 @@ gradlePlugin {
             id = "myapp.datastore"
             implementationClass = "DataStoreConventionPlugin"
         }
+        register("media3") {
+            id = "myapp.media3"
+            implementationClass = "Media3ConventionPlugin"
+        }
     }
 }

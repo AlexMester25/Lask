@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
 @Composable
-fun ArticleDetailContent(
+internal fun ArticleDetailContent(
     article: NewsArticle,
     bottomPadding: Dp,
     onScrollThresholdReached: () -> Unit,

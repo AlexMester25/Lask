@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import dev.alexmester.impl.presentation.components.common.AuthorAvatar
 import dev.alexmester.ui.R
+import dev.alexmester.ui.components.avatars.AuthorAvatar
 import dev.alexmester.ui.components.common.SentimentGauge
 import dev.alexmester.ui.components.common.SentimentText
 import dev.alexmester.ui.desing_system.LaskColors
