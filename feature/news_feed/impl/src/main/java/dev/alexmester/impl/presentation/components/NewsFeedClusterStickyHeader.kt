@@ -14,7 +14,7 @@ import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 
 @Composable
-fun NewsFeedClusterHeader(
+fun NewsFeedClusterStickyHeader(
     title: String,
     modifier: Modifier = Modifier,
 ) {

@@ -39,9 +39,11 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.buttons.BookmarkButtonStyle
 import dev.alexmester.ui.components.buttons.LaskBookmarkButton
+import dev.alexmester.ui.components.common.SentimentDot
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskPalette
 import dev.alexmester.ui.desing_system.LaskTypography
@@ -51,13 +53,7 @@ import dev.alexmester.utils.DateFormatter
 @Composable
 fun LaskArticleCard(
     modifier: Modifier = Modifier,
-    title: String,
-    imageUrl: String?,
-    category: String?,
-    publishDate: String,
-    authors: List<String?>,
-    sentiment: Double?,
-    articleId: Long,
+    article: NewsArticle,
     selectionMode: Boolean = false,
     isKept: Boolean = true,
     isRead: Boolean = false,
@@ -81,18 +77,18 @@ fun LaskArticleCard(
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = title,
+                text = article.title,
                 style = MaterialTheme.LaskTypography.h5,
                 color = MaterialTheme.LaskColors.textPrimary,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .sharedElementIfAvailable(key = "title_$articleId")
+                    .sharedElementIfAvailable(key = "title_${article.id}")
                     .padding(bottom = 8.dp),
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                category?.let {
+                article.category?.let {
                     Text(
                         text = it.replaceFirstChar { c -> c.uppercase() },
                         style = MaterialTheme.LaskTypography.footnote,
@@ -103,13 +99,13 @@ fun LaskArticleCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    sentiment?.let { SentimentDot(it) }
+                    article.sentiment?.let { SentimentDot(it) }
                     Text(
-                        text = DateFormatter.formatPublishDate(publishDate),
+                        text = DateFormatter.formatPublishDate(article.publishDate),
                         style = MaterialTheme.LaskTypography.footnote,
                         color = MaterialTheme.LaskColors.textSecondary,
                     )
-                    authors.firstOrNull()?.let { author ->
+                    article.authors.firstOrNull()?.let { author ->
                         Text(
                             text = "· $author",
                             style = MaterialTheme.LaskTypography.footnote,
@@ -123,9 +119,9 @@ fun LaskArticleCard(
         }
 
         ArticleImage(
-            imageUrl = imageUrl,
-            title = title,
-            articleId = articleId,
+            imageUrl = article.image,
+            title = article.title,
+            articleId = article.id,
             isRead = isRead
         )
 
@@ -212,16 +208,3 @@ private fun ArticleImagePlaceholder(modifier: Modifier = Modifier) {
 }
 
 
-@Composable
-private fun SentimentDot(sentiment: Double) {
-    val color = when {
-        sentiment > 0.1 -> LaskPalette.Sentiment_Positive
-        sentiment < -0.1 -> LaskPalette.Sentiment_Negative
-        else -> LaskPalette.Sentiment_Neutral
-    }
-    Text(
-        text = "●",
-        color = color,
-        style = MaterialTheme.LaskTypography.footnote,
-    )
-}

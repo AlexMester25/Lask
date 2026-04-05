@@ -15,8 +15,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreenState
 import dev.alexmester.newsfeed.impl.presentation.feed.contentOrNull
-import dev.alexmester.newsfeed.impl.presentation.feed.countryToFlag
 import dev.alexmester.ui.R
+import dev.alexmester.ui.components.common.countryToFlag
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 
