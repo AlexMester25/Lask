@@ -39,6 +39,7 @@ dependencies {
 
     implementation(project(":feature:news_feed:impl"))
     implementation(project(":feature:article_detail:impl"))
+    implementation(project(":feature:bookmarks:impl"))
 
 
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")

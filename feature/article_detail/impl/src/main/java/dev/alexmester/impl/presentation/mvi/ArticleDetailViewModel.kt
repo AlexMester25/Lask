@@ -63,7 +63,7 @@ class ArticleDetailViewModel(
         if (isMarkedAsRead) return
         if (!isTimeReached || !isScrollReached) return
 
-        val article = (_state.value as? ArticleDetailState.Content)?.article ?: return
+        val article = _state.value.contentOrNull?.article ?: return
         isMarkedAsRead = true
         viewModelScope.launch {
             interactor.markAsRead(article)
@@ -85,6 +85,7 @@ class ArticleDetailViewModel(
     private fun observeBookmark() {
         interactor.isBookmarked(articleId)
             .onEach { isBookmarked ->
+                Log.d("observeBookmark", isBookmarked.toString())
                 _state.update { ArticleDetailReducer.onBookmarkUpdate(it, isBookmarked) }
             }
             .launchIn(viewModelScope)
@@ -105,7 +106,7 @@ class ArticleDetailViewModel(
     }
 
     private fun onToggleBookmark() {
-        val content = _state.value as? ArticleDetailState.Content ?: return
+        val content = _state.value.contentOrNull ?: return
         viewModelScope.launch {
             val nowBookmarked = interactor.toggleBookmark(content.article)
             val msg = if (nowBookmarked)

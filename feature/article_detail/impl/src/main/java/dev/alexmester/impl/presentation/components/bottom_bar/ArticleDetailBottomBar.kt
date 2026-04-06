@@ -32,7 +32,6 @@ fun ArticleDetailBottomBar(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
-
     Row(
         modifier = modifier
             .fillMaxWidth()

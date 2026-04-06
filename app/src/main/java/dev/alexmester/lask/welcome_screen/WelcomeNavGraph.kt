@@ -3,7 +3,7 @@ package dev.alexmester.lask.welcome_screen
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import dev.alexmester.api.navigation.FeedRoute
+import dev.alexmester.api.navigation.NewsFeedRoute
 import dev.alexmester.ui.components.welcome_screen.WelcomeScreen
 
 fun NavGraphBuilder.welcomeScreen(
@@ -14,7 +14,7 @@ fun NavGraphBuilder.welcomeScreen(
         WelcomeScreen(
             onExploreClick = {
                 onOnboardingComplete()
-                navController.navigate(FeedRoute) {
+                navController.navigate(NewsFeedRoute) {
                     popUpTo(WelcomeRoute) { inclusive = true }
                 }
             }

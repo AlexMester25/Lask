@@ -4,7 +4,6 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,8 +20,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.alexmester.api.navigation.ArticleDetailApi
 import dev.alexmester.api.navigation.ArticleDetailRoute
+import dev.alexmester.api.navigation.BookmarksApi
 import dev.alexmester.api.navigation.NewsFeedApi
 import dev.alexmester.lask.app_bottom_navigation.AppBottomBar
+import dev.alexmester.lask.app_bottom_navigation.shouldShowBottomBar
 import dev.alexmester.lask.welcome_screen.WelcomeRoute
 import dev.alexmester.lask.welcome_screen.welcomeScreen
 import dev.alexmester.navigation.register
@@ -40,16 +41,11 @@ fun RootScreen(
     onOnboardingComplete: () -> Unit = {},
 ) {
     val newsFeedApi = koinInject<NewsFeedApi>()
+    val bookmarkApi = koinInject<BookmarksApi>()
     val articleDetailApi = koinInject<ArticleDetailApi>()
 
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val showBottomBar = remember(currentBackStackEntry) {
-        val route = currentBackStackEntry?.destination?.route ?: return@remember false
-        !route.contains(ArticleDetailRoute::class.qualifiedName!!) &&
-        !route.contains(WelcomeRoute::class.qualifiedName!!)
-    }
-
     val hazeState = rememberHazeState()
+
     SharedTransitionLayout {
         CompositionLocalProvider(
             SharedTransitionLocals.LocalSharedTransitionScope provides this,
@@ -57,12 +53,10 @@ fun RootScreen(
             Scaffold(
                 modifier = Modifier,
                 bottomBar = {
-                    if (showBottomBar) {
-                        AppBottomBar(
-                            navController = navController,
-                            hazeState = hazeState,
-                        )
-                    }
+                    AppBottomBar(
+                        navController = navController,
+                        hazeState = hazeState,
+                    )
                 }
             ) { padding ->
                 NavHost(
@@ -78,6 +72,7 @@ fun RootScreen(
                 ) {
                     welcomeScreen(navController, onOnboardingComplete)
                     register(newsFeedApi, navController)
+                    register(bookmarkApi, navController)
                     register(articleDetailApi, navController)
                 }
             }

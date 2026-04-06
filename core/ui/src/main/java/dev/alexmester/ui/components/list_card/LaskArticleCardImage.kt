@@ -40,7 +40,7 @@ fun LaskArticleCardImage(
     isRead: Boolean,
 ) {
 
-    val backgroundColor = MaterialTheme.LaskColors.brand_blue
+    val backgroundColor = MaterialTheme.LaskColors.brand_blue10
     val iconTint = MaterialTheme.LaskColors.textSecondary.copy(alpha = 0.4f)
 
     val placeholderPainter = rememberLaskArticleCardPainter(

@@ -4,5 +4,5 @@ import dev.alexmester.navigation.FeatureApi
 
 interface NewsFeedApi : FeatureApi {
 
-    fun feedRoute(): FeedRoute
+    fun feedRoute(): NewsFeedRoute
 }

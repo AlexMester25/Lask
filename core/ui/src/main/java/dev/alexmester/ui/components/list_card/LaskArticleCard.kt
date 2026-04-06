@@ -1,11 +1,13 @@
 package dev.alexmester.ui.components.list_card
 
-
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,7 +51,8 @@ fun LaskArticleCard(
             .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp)
-            .height(IntrinsicSize.Min),
+            .height(IntrinsicSize.Min)
+            .animateContentSize(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -69,8 +72,10 @@ fun LaskArticleCard(
                     .sharedElementIfAvailable(key = "title_${article.id}")
                     .padding(bottom = 8.dp),
             )
-
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(
+                modifier = Modifier,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 article.category?.let {
                     Text(
                         text = it.replaceFirstChar { c -> c.uppercase() },
@@ -110,8 +115,10 @@ fun LaskArticleCard(
 
         AnimatedVisibility(
             visible = selectionMode,
-            enter = fadeIn() + scaleIn(initialScale = 0.7f),
-            exit = fadeOut() + scaleOut(targetScale = 0.7f),
+            enter = fadeIn() + scaleIn(initialScale = 0.7f)
+                    + slideInHorizontally(initialOffsetX = { it / 2 }),
+            exit = fadeOut() + scaleOut(targetScale = 0.7f)
+                    + slideOutHorizontally(targetOffsetX = { it / 2 }),
         ) {
             LaskBookmarkButton(
                 isBookmarked = isKept,

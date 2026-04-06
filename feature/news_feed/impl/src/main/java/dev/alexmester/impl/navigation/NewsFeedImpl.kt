@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import dev.alexmester.api.navigation.ArticleDetailApi
-import dev.alexmester.api.navigation.FeedRoute
+import dev.alexmester.api.navigation.NewsFeedRoute
 import dev.alexmester.api.navigation.NewsFeedApi
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreen
 import dev.alexmester.ui.transition.SharedTransitionLocals
@@ -16,13 +16,13 @@ class NewsFeedImpl(
     val articleDetailApi: ArticleDetailApi,
 ) : NewsFeedApi {
 
-    override fun feedRoute() = FeedRoute
+    override fun feedRoute() = NewsFeedRoute
 
     override fun registerGraph(
         navGraphBuilder: NavGraphBuilder,
         navController: NavHostController,
     ) {
-        navGraphBuilder.composable<FeedRoute> {
+        navGraphBuilder.composable<NewsFeedRoute> {
             CompositionLocalProvider(
                 SharedTransitionLocals.LocalAnimatedVisibilityScope provides this,
             ) {

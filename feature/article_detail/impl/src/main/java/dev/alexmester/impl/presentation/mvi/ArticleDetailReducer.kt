@@ -6,7 +6,7 @@ object ArticleDetailReducer {
         state: ArticleDetailState,
         intent: ArticleDetailIntent,
     ): ArticleDetailState {
-        val content = state as? ArticleDetailState.Content ?: return state
+        val content = state.contentOrNull ?: return state
         return when (intent) {
             is ArticleDetailIntent.Clap -> content.copy(
                 clapCount = content.clapCount + 1,
@@ -23,11 +23,11 @@ object ArticleDetailReducer {
         state: ArticleDetailState,
         isBookmarked: Boolean,
     ): ArticleDetailState =
-        (state as? ArticleDetailState.Content)?.copy(isBookmarked = isBookmarked) ?: state
+        state.contentOrNull?.copy(isBookmarked = isBookmarked) ?: state
 
     fun onClapCountUpdated(
         state: ArticleDetailState,
         count: Int,
     ): ArticleDetailState =
-        (state as? ArticleDetailState.Content)?.copy(clapCount = count) ?: state
+        state.contentOrNull?.copy(clapCount = count) ?: state
 }

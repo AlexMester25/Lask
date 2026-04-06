@@ -54,7 +54,6 @@ fun NewsFeedScreen(
                         isError = true,
                     )
                 }
-
                 is NewsFeedSideEffect.NavigateToArticle -> {
                     onArticleClick(effect.articleId, effect.articleUrl)
                 }
@@ -68,15 +67,7 @@ fun NewsFeedScreen(
         readArticleIds = readArticleIds,
         stateRefreshBox = stateRefreshBox,
         snackbarHostState = snackbarHostState,
-        onRefresh = { viewModel.handleIntent(NewsFeedIntent.Refresh) },
-        onArticleClick = { articleId, articleUrl ->
-            viewModel.handleIntent(
-                NewsFeedIntent.ArticleClick(
-                    articleId = articleId,
-                    articleUrl = articleUrl
-                )
-            )
-        }
+        onIntent = viewModel::handleIntent
     )
 }
 
@@ -88,15 +79,14 @@ internal fun NewsFeedScreenContent(
     readArticleIds: Set<Long>,
     stateRefreshBox: PullToRefreshState,
     snackbarHostState: SnackbarHostState,
-    onRefresh: () -> Unit,
-    onArticleClick: (articleId: Long, articleUrl: String) -> Unit,
+    onIntent: (NewsFeedIntent) -> Unit,
 ) {
 
     Scaffold(
         topBar = { NewsFeedTopBar(state = state) }
     ) { paddingValues ->
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .background(MaterialTheme.LaskColors.backgroundPrimary)
                 .padding(paddingValues)
@@ -116,7 +106,7 @@ internal fun NewsFeedScreenContent(
                         modifier = Modifier,
                         errorMessage = currentState.message.asString(),
                         isRetrying = currentState.isRefreshing,
-                        onRetry = onRefresh
+                        onRetry = { onIntent(NewsFeedIntent.Refresh) }
                     )
                 }
 
@@ -124,7 +114,7 @@ internal fun NewsFeedScreenContent(
                     LaskPullToRefreshBox(
                         modifier = Modifier.fillMaxSize(),
                         isRefreshing = currentState.isRefreshing,
-                        onRefresh = onRefresh,
+                        onRefresh = { onIntent(NewsFeedIntent.Refresh) },
                         state = stateRefreshBox,
                     ) {
                         Column {
@@ -141,7 +131,12 @@ internal fun NewsFeedScreenContent(
                                 readArticleIds = readArticleIds,
                                 bottomPadding = paddingValues.calculateBottomPadding(),
                                 onClickArticle = { artilceId, arlicteUrl ->
-                                    onArticleClick(artilceId, arlicteUrl)
+                                    onIntent(
+                                        NewsFeedIntent.ArticleClick(
+                                            articleId = artilceId,
+                                            articleUrl = arlicteUrl
+                                        )
+                                    )
                                 }
                             )
                         }

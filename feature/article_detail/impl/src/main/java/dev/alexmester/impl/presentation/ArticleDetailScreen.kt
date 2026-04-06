@@ -1,6 +1,7 @@
 package dev.alexmester.impl.presentation
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,8 +65,8 @@ fun ArticleDetailScreen(
         viewModel.sideEffects.collect { effect ->
             when (effect) {
                 is ArticleDetailSideEffect.NavigateBack -> onBack()
-                is ArticleDetailSideEffect.ShowSnackbar ->
-                    snackbarHostState.showLaskSnackbar(effect.message.asString(context))
+                is ArticleDetailSideEffect.ShowSnackbar -> {}
+//                    snackbarHostState.showLaskSnackbar(effect.message.asString(context))
                 is ArticleDetailSideEffect.ShareUrl -> {
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
@@ -98,6 +99,7 @@ internal fun ArticleDetailScreenContent(
         contentWindowInsets = WindowInsets(top = 0),
         bottomBar = {
             state.contentOrNull?.let { content ->
+                Log.d("observeBookmark", "---------" + content.isBookmarked.toString())
                 ArticleDetailBottomBar(
                     isBookmarked = content.isBookmarked,
                     clapCount = content.clapCount,

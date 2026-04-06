@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import dev.alexmester.api.navigation.FeedRoute
+import dev.alexmester.api.navigation.NewsFeedRoute
 import dev.alexmester.lask.welcome_screen.SplashState
 import dev.alexmester.lask.welcome_screen.SplashViewModel
 import dev.alexmester.lask.welcome_screen.WelcomeRoute
@@ -25,7 +25,7 @@ fun AppContent(
             is SplashState.Ready -> {
                 val navController = rememberNavController()
                 val startDestination = remember {
-                    if (state.isOnboardingCompleted) FeedRoute else WelcomeRoute
+                    if (state.isOnboardingCompleted) NewsFeedRoute else WelcomeRoute
                 }
                 RootScreen(
                     navController = navController,
