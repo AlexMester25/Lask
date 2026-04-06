@@ -12,8 +12,10 @@ class ArticleDetailInteractor(
     suspend fun toggleBookmark(article: NewsArticle): Boolean = repository.toggleBookmark(article)
 
     fun isBookmarked(id: Long): Flow<Boolean> = repository.isBookmarked(id)
-
     fun getClapCount(id: Long): Flow<Int> = repository.getClapCount(id)
+
+    suspend fun isBookmarkedOnce(id: Long): Boolean = repository.isBookmarkedOnce(id)
+    suspend fun getClapCountOnce(id: Long): Int? = repository.getClapCountOnce(id)
 
     suspend fun addClap(id: Long) = repository.addClap(id)
 

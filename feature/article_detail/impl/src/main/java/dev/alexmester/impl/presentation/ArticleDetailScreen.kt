@@ -99,7 +99,6 @@ internal fun ArticleDetailScreenContent(
         contentWindowInsets = WindowInsets(top = 0),
         bottomBar = {
             state.contentOrNull?.let { content ->
-                Log.d("observeBookmark", "---------" + content.isBookmarked.toString())
                 ArticleDetailBottomBar(
                     isBookmarked = content.isBookmarked,
                     clapCount = content.clapCount,

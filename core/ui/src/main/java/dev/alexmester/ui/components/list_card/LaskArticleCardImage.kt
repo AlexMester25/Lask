@@ -97,6 +97,7 @@ fun LaskArticleCardImage(
         }
     } else {
         Image(
+            modifier = sizeMod,
             painter = emptyPainter,
             contentDescription = null
         )

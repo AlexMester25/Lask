@@ -42,14 +42,14 @@ internal fun BookmarksTopBar(
                     Row {
                         TextButton(onClick = { onIntent(BookmarksIntent.CancelDeletion) }) {
                             Text(
-                                text = "Cancel",
+                                text = stringResource(R.string.bookmarks_cancel),
                                 style = MaterialTheme.LaskTypography.body2SemiBold,
                                 color = MaterialTheme.LaskColors.error,
                             )
                         }
                         TextButton(onClick = { onIntent(BookmarksIntent.ConfirmDeletion) }) {
                             Text(
-                                text = "Done",
+                                text = stringResource(R.string.bookmarks_done),
                                 style = MaterialTheme.LaskTypography.body2SemiBold,
                                 color = MaterialTheme.LaskColors.brand_blue,
                             )

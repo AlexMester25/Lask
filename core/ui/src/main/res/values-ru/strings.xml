@@ -14,9 +14,12 @@
     <string name="tab_bookmark">Избранное</string>
     <string name="tab_profile">Профиль</string>
 
-    <!-- Bookmark action -->
+    <!-- Bookmark-->
     <string name="add_to_bookmark">Добавлено в закладки</string>
     <string name="removed_from_bookmark">Удалено из закладок</string>
+    <string name="empty_bookmarks">Нет Закладок</string>
+    <string name="bookmarks_cancel">Отменить</string>
+    <string name="bookmarks_done">Применить</string>
 
     <!-- Welcome Screen -->
     <string name="welcome_title">Получайте последние новости\nи обновления.</string>

@@ -49,10 +49,10 @@ fun NewsFeedScreen(
         viewModel.sideEffects.collect { effect ->
             when (effect) {
                 is NewsFeedSideEffect.ShowError -> {
-                    snackbarHostState.showLaskSnackbar(
-                        message = effect.message.asString(context),
-                        isError = true,
-                    )
+//                    snackbarHostState.showLaskSnackbar(
+//                        message = effect.message.asString(context),
+//                        isError = true,
+//                    )
                 }
                 is NewsFeedSideEffect.NavigateToArticle -> {
                     onArticleClick(effect.articleId, effect.articleUrl)

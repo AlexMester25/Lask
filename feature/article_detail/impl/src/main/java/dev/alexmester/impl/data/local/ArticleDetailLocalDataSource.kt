@@ -27,7 +27,13 @@ class ArticleDetailLocalDataSource(
     suspend fun getBookmarkById(id: Long): BookmarkEntity? =
         withContext(ioDispatcher) { bookmarkDao.getBookmarkById(id) }
 
-    fun isBookmarked(id: Long): Flow<Boolean> = bookmarkDao.isBookmarked(id)
+    suspend fun getClapCountById(id: Long): Int? =
+        withContext(ioDispatcher) { clapDao.getClapCount(id) }
+
+    fun isBookmarkedFlow(id: Long): Flow<Boolean> = bookmarkDao.isBookmarked(id)
+
+    fun getClapFlow(id: Long): Flow<Int> =
+        clapDao.getClapFlow(id).map { it?.count ?: 0 }
 
     suspend fun insertBookmark(bookmark: BookmarkEntity) =
         withContext(ioDispatcher) { bookmarkDao.insertBookmark(bookmark) }
@@ -35,8 +41,7 @@ class ArticleDetailLocalDataSource(
     suspend fun deleteBookmark(id: Long) =
         withContext(ioDispatcher) { bookmarkDao.deleteBookmark(id) }
 
-    fun getClapFlow(id: Long): Flow<Int> =
-        clapDao.getClapFlow(id).map { it?.count ?: 0 }
+
 
     suspend fun addClap(id: Long) = withContext(ioDispatcher) {
         val existing = clapDao.getClapCount(id)

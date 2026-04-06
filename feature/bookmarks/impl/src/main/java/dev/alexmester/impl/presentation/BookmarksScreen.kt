@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,6 +25,7 @@ import dev.alexmester.impl.presentation.mvi.BookmarksSideEffect
 import dev.alexmester.impl.presentation.mvi.BookmarksState
 import dev.alexmester.impl.presentation.mvi.BookmarksViewModel
 import dev.alexmester.impl.presentation.mvi.contentOrNull
+import dev.alexmester.ui.R
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 import org.koin.compose.viewmodel.koinViewModel
@@ -82,7 +84,7 @@ internal fun BookmarksScreenContent(
 
                 is BookmarksState.Empty -> {
                     Text(
-                        text = "Empty bookmarks",
+                        text = stringResource(R.string.empty_bookmarks),
                         style = MaterialTheme.LaskTypography.body1,
                         color = MaterialTheme.LaskColors.textSecondary,
                         textAlign = TextAlign.Center,

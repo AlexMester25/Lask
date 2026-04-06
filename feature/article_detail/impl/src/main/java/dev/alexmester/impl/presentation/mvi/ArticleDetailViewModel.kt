@@ -77,7 +77,14 @@ class ArticleDetailViewModel(
                 val message = UiText.StringResource(R.string.error_article_not_found)
                 _state.value = ArticleDetailState.Error(message)
             } else {
-                _state.value = ArticleDetailState.Content(article = article)
+                val isBookmarked = interactor.isBookmarkedOnce(articleId)
+                val clapCount = interactor.getClapCountOnce(articleId) ?: 0
+                Log.d("loadArticle", isBookmarked.toString() + clapCount.toString())
+                _state.value = ArticleDetailState.Content(
+                    article = article,
+                    isBookmarked = isBookmarked,
+                    clapCount = clapCount,
+                )
             }
         }
     }
@@ -85,7 +92,6 @@ class ArticleDetailViewModel(
     private fun observeBookmark() {
         interactor.isBookmarked(articleId)
             .onEach { isBookmarked ->
-                Log.d("observeBookmark", isBookmarked.toString())
                 _state.update { ArticleDetailReducer.onBookmarkUpdate(it, isBookmarked) }
             }
             .launchIn(viewModelScope)

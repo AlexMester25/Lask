@@ -30,7 +30,13 @@ class ArticleDetailRepositoryImpl(
         }
     }
 
-    override fun isBookmarked(id: Long): Flow<Boolean> = local.isBookmarked(id)
+    override fun isBookmarked(id: Long): Flow<Boolean> = local.isBookmarkedFlow(id)
+
+    override suspend fun isBookmarkedOnce(id: Long): Boolean =
+        local.getBookmarkById(id) != null
+
+    override suspend fun getClapCountOnce(id: Long): Int? =
+        local.getClapCountById(id)
 
     override fun getClapCount(id: Long): Flow<Int> = local.getClapFlow(id)
 
