@@ -24,7 +24,6 @@ sealed interface ContentState {
 }
 
 
-
 val NewsFeedScreenState.contentOrNull: NewsFeedScreenState.Content?
     get() = this as? NewsFeedScreenState.Content
 

@@ -14,6 +14,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import dev.alexmester.impl.presentation.mvi.BookmarksIntent
 import dev.alexmester.ui.R
 import dev.alexmester.ui.desing_system.LaskColors
@@ -32,8 +33,9 @@ internal fun BookmarksTopBar(
         title = {
             Text(
                 text = stringResource(R.string.tab_bookmark),
-                style = MaterialTheme.LaskTypography.h3,
+                style = MaterialTheme.LaskTypography.h4,
                 color = MaterialTheme.LaskColors.textPrimary,
+                overflow = TextOverflow.Ellipsis
             )
         },
         actions = {

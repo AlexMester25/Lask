@@ -41,3 +41,5 @@ include(":feature:article_detail:api")
 include(":feature:article_detail:impl")
 include(":feature:bookmarks:api")
 include(":feature:bookmarks:impl")
+
+include(":macrobenchmark")

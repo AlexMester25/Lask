@@ -9,6 +9,33 @@ import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
 
+// ── DTO → Entity ──────────────────────────────────────────────────────────────
+
+fun NewsArticleDto.toEntity(sourceScreen: String, clusterId: Int): NewsArticleEntity =
+    NewsArticleEntity(
+        id = id,
+        title = title,
+        text = text,
+        summary = summary,
+        url = url,
+        image = image,
+        video = video,
+        publishDate = publishDate,
+        authors = json.encodeToString(authors),
+        category = category,
+        language = language,
+        sourceCountry = sourceCountry,
+        sentiment = sentiment,
+        cachedAt = System.currentTimeMillis(),
+        sourceScreen = sourceScreen,
+        clusterId = clusterId,
+    )
+
+fun List<NewsClusterDto>.dtosToEntities(sourceScreen: String): List<NewsArticleEntity> =
+    flatMapIndexed { index, cluster ->
+        cluster.news.map { dto -> dto.toEntity(sourceScreen, clusterId = index) }
+    }
+
 // ── DTO → Domain ──────────────────────────────────────────────────────────────
 
 fun NewsArticleDto.toDomain(): NewsArticle = NewsArticle(
@@ -32,8 +59,7 @@ fun NewsClusterDto.toDomain(id: Int): NewsCluster = NewsCluster(
     articles = news.map { it.toDomain() },
 )
 
-/** DTO list → Domain clusters */
-fun List<NewsClusterDto>.dtosToCluster(): List<NewsCluster> =
+fun List<NewsClusterDto>.dtosToDomain(): List<NewsCluster> =
     mapIndexed { index, dto -> dto.toDomain(index) }
         .filter { it.articles.isNotEmpty() }
 
@@ -83,7 +109,6 @@ fun NewsArticleEntity.toDomain(): NewsArticle = NewsArticle(
     sentiment = sentiment,
 )
 
-/** Entity list → Domain clusters, restored by clusterId */
 fun List<NewsArticleEntity>.entitiesToClusters(): List<NewsCluster> =
     groupBy { it.clusterId }
         .entries

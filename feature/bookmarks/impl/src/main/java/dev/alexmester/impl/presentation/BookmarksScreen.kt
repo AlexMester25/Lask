@@ -84,7 +84,7 @@ internal fun BookmarksScreenContent(
 
                 is BookmarksState.Empty -> {
                     Text(
-                        text = stringResource(R.string.empty_bookmarks),
+                        text = stringResource(R.string.bookmarks_empty),
                         style = MaterialTheme.LaskTypography.body1,
                         color = MaterialTheme.LaskColors.textSecondary,
                         textAlign = TextAlign.Center,

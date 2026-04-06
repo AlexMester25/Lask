@@ -41,6 +41,7 @@
             <option value="$PROJECT_DIR$/feature/news_feed" />
             <option value="$PROJECT_DIR$/feature/news_feed/api" />
             <option value="$PROJECT_DIR$/feature/news_feed/impl" />
+            <option value="$PROJECT_DIR$/macrobenchmark" />
           </set>
         </option>
       </GradleProjectSettings>

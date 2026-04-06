@@ -15,9 +15,9 @@
     <string name="tab_profile">Profile</string>
 
     <!-- Bookmark-->
-    <string name="add_to_bookmark">Added to bookmarks</string>
-    <string name="removed_from_bookmark">Removed from bookmarks</string>
-    <string name="empty_bookmarks">Empty bookmarks</string>
+    <string name="bookmark_add">Added to bookmarks</string>
+    <string name="bookmark_removed">Removed from bookmarks</string>
+    <string name="bookmarks_empty">Empty bookmarks</string>
     <string name="bookmarks_cancel">Cancel</string>
     <string name="bookmarks_done">Done</string>
 

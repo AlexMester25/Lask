@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreenState
 import dev.alexmester.newsfeed.impl.presentation.feed.contentOrNull
@@ -28,8 +29,9 @@ fun NewsFeedTopBar(state: NewsFeedScreenState) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(R.string.tab_top_news),
-                    style = MaterialTheme.LaskTypography.h3,
-                    color = MaterialTheme.LaskColors.textPrimary
+                    style = MaterialTheme.LaskTypography.h4,
+                    color = MaterialTheme.LaskColors.textPrimary,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 state.contentOrNull?.let { content ->

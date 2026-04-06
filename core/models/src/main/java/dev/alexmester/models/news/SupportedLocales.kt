@@ -2,7 +2,6 @@ package dev.alexmester.models.news
 
 object SupportedLocales {
 
-    /** Страны, поддерживаемые World News API (source-country) */
     val SUPPORTED_COUNTRIES = setOf(
         "us", "gb", "de", "fr", "it", "es", "ru", "cn", "jp", "au",
         "ca", "br", "in", "mx", "za", "ar", "kr", "nl", "se", "no",
@@ -12,7 +11,6 @@ object SupportedLocales {
         "vn", "ph", "my", "sg", "nz", "ie", "hk", "tw",
     )
 
-    /** Языки, поддерживаемые World News API */
     val SUPPORTED_LANGUAGES = setOf(
         "en", "de", "fr", "it", "es", "ru", "zh", "ja", "ar", "pt",
         "nl", "sv", "no", "da", "fi", "pl", "cs", "hu", "ro", "tr",
