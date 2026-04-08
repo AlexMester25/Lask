@@ -23,7 +23,7 @@ class NewsFeedInteractor(
                 clusters to prefs
             }
 
-    fun getReadArticleIdsFlow(): Flow<Set<Long>> = repository.getReadArticleIdsFlow()
+    fun getReadArticleIdsFlow(): Flow<List<Long>> = repository.getReadArticleIdsFlow()
 
     suspend fun refresh(): AppResult<Unit> {
         if (refreshMutex.isLocked) return AppResult.Success(Unit)

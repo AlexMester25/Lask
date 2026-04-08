@@ -37,6 +37,7 @@ class NewsFeedViewModel(
 
     val readArticleIds: StateFlow<Set<Long>> = interactor
         .getReadArticleIdsFlow()
+        .map { it.toSet() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

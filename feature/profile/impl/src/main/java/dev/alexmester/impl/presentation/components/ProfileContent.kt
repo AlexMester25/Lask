@@ -1,4 +1,4 @@
-package dev.alexmester.ui.components.menu
+package dev.alexmester.impl.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.alexmester.impl.presentation.mvi.ProfileState
+import dev.alexmester.ui.components.menu.LaskRowMenu
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTheme
 import dev.alexmester.ui.desing_system.LaskTypography
@@ -19,12 +21,12 @@ import dev.alexmester.ui.desing_system.LaskTypography
 @Composable
 fun ProfileContent(
     modifier: Modifier = Modifier,
-    isEditMode: Boolean,
+    profileState: ProfileState,
     onProfileNameChange: (String) -> Unit,
     onEdit: () -> Unit,
     onApply: () -> Unit,
     onCancel: () -> Unit,
-    onProfileAvatarClick: () -> Unit,
+    onAvatarSelected: (String) -> Unit,
     onClappedArticleClick: () -> Unit,
     onReadArticleClick: () -> Unit,
 ) {
@@ -35,8 +37,11 @@ fun ProfileContent(
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         ProfileTopHeader(
-            isEdit = isEditMode,
-            onProfileAvatarClick = onProfileAvatarClick,
+            avatarUri = profileState.avatarUri,
+            profileName = profileState.profileName,
+            currentLevel = profileState.level,
+            isEdit = profileState.isEditingMode,
+            onAvatarSelected = { onAvatarSelected(it) },
             onProfileNameChange = { onProfileNameChange(it) },
             onEdit = onEdit,
             onApply = onApply,
@@ -45,9 +50,9 @@ fun ProfileContent(
         Spacer(modifier = Modifier.height(24.dp))
         ProfileStatisticRow(
             modifier = Modifier,
-            articleReadCount = 123,
-            streakCount = 234,
-            levelCount = 300
+            articleReadCount = profileState.articleReadCount,
+            streakCount = profileState.streakCount,
+            levelCount = profileState.currentLevel
         )
         Spacer(modifier = Modifier.height(24.dp))
         Spacer(
@@ -86,12 +91,12 @@ private fun ProfileContentPreviewDark() {
     LaskTheme(darkTheme = true) {
         ProfileContent(
             modifier = Modifier,
-            isEditMode = true,
+            profileState = ProfileState.mock(),
             onProfileNameChange = {},
             onEdit = {},
             onApply = {},
             onCancel = {},
-            onProfileAvatarClick = {},
+            onAvatarSelected = {},
             onClappedArticleClick = {},
             onReadArticleClick = {}
         )
@@ -103,12 +108,13 @@ private fun ProfileContentPreviewLight() {
     LaskTheme(darkTheme = false) {
         ProfileContent(
             modifier = Modifier,
-            isEditMode = false,
+            profileState = ProfileState.mock()
+                .copy(isEditingMode = false),
             onProfileNameChange = {},
             onEdit = {},
             onApply = {},
             onCancel = {},
-            onProfileAvatarClick = {},
+            onAvatarSelected = {},
             onClappedArticleClick = {},
             onReadArticleClick = {}
         )

@@ -39,7 +39,12 @@ include(":feature:news_feed:impl")
 
 include(":feature:article_detail:api")
 include(":feature:article_detail:impl")
+
 include(":feature:bookmarks:api")
 include(":feature:bookmarks:impl")
 
+include(":feature:profile:api")
+
+
 include(":macrobenchmark")
+include(":feature:profile:impl")

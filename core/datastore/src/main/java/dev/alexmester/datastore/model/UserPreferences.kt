@@ -8,4 +8,11 @@ data class UserPreferences(
     val isDarkTheme: Boolean? = null,
     val isOnboardingCompleted: Boolean = false,
     val isLocaleManuallySet: Boolean = false,
+    // Profile
+    val profileName: String = "Anonim",
+    val avatarUri: String? = null,
+    val streakCount: Int = 0,
+    val lastStreakDate: String? = null,
+    val currentXp: Float = 0f,
+    val currentLevel: Int = 1,
 )

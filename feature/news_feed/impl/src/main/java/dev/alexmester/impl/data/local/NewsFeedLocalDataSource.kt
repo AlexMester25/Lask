@@ -34,6 +34,6 @@ class NewsFeedLocalDataSource(
             }
         }
 
-    fun getReadArticleIds(): Flow<Set<Long>> =
+    fun getReadArticleIds(): Flow<List<Long>> =
         readingHistoryDao.getReadArticleIds()
 }

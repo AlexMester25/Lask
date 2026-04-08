@@ -1,4 +1,4 @@
-package dev.alexmester.ui.components.menu
+package dev.alexmester.impl.presentation.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
