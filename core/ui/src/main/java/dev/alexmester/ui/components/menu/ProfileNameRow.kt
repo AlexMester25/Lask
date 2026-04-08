@@ -1,26 +1,38 @@
 package dev.alexmester.ui.components.menu
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.alexmester.ui.R
+import dev.alexmester.ui.components.buttons.LaskEditButton
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTheme
 import dev.alexmester.ui.desing_system.LaskTypography
@@ -30,7 +42,11 @@ fun ProfileNameRow(
     modifier: Modifier = Modifier,
     profileName: String,
     levelData: Levels,
+    onProfileNameChange: (String) -> Unit,
+    isEdit: Boolean = false,
     onEdit: () -> Unit,
+    onApply: () -> Unit,
+    onCancel: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -39,26 +55,83 @@ fun ProfileNameRow(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(
-                text = profileName,
-                style = MaterialTheme.LaskTypography.h4,
-                color = MaterialTheme.LaskColors.textPrimary,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )
-            IconButton(
-                modifier = Modifier.size(30.dp),
-                onClick = onEdit
-            ) {
-                Icon(
-                    modifier = Modifier,
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
-                    contentDescription = null,
-                    tint = MaterialTheme.LaskColors.textSecondary
-                )
+            AnimatedContent(targetState = isEdit) { isEdit ->
+                if (isEdit){
+                    Row(
+                        modifier = modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        BasicTextField(
+                            modifier = Modifier.weight(1f),
+                            value = profileName,
+                            onValueChange = { onProfileNameChange(it) },
+                            singleLine = true,
+                            textStyle = MaterialTheme.LaskTypography.h4.copy(
+                                color = MaterialTheme.LaskColors.textPrimary
+                            ),
+                            enabled = isEdit,
+                        ) { innerTextField ->
+                            OutlinedTextFieldDefaults.DecorationBox(
+                                value = profileName,
+                                innerTextField = innerTextField,
+                                placeholder = {
+                                    Text(
+                                        text = profileName,
+                                        style = MaterialTheme.LaskTypography.h5,
+                                        color = MaterialTheme.LaskColors.textPrimary,
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 1
+                                    )
+                                },
+                                enabled = isEdit,
+                                singleLine = true,
+                                visualTransformation = VisualTransformation.None,
+                                interactionSource = remember { MutableInteractionSource() },
+                                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 6.dp),
+                                container = {
+                                    OutlinedTextFieldDefaults.Container(
+                                        enabled = isEdit,
+                                        isError = false,
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        shape = RoundedCornerShape(8.dp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedBorderColor = MaterialTheme.LaskColors.textLink,
+                                            unfocusedBorderColor = MaterialTheme.LaskColors.textLink
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                        ButtonsInEditMode(
+                            modifier = Modifier,
+                            onApply = onApply,
+                            onCancel = onCancel
+                        )
+                    }
+                }else{
+                    Row(
+                        modifier = modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            modifier = modifier.weight(1f, fill = false),
+                            text = profileName,
+                            style = MaterialTheme.LaskTypography.h4,
+                            color = MaterialTheme.LaskColors.textPrimary,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                        LaskEditButton(
+                            modifier = Modifier.size(30.dp),
+                            tint = MaterialTheme.LaskColors.textLink,
+                            onClick = onEdit
+                        )
+                    }
+                }
             }
         }
         Row(
@@ -71,11 +144,45 @@ fun ProfileNameRow(
                 tint = Color.Unspecified
             )
             Text(
-                text = levelData.title ,
+                text = levelData.title,
                 style = MaterialTheme.LaskTypography.body1,
-                color = MaterialTheme.LaskColors.informative,
+                color = MaterialTheme.LaskColors.textLink,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
+            )
+        }
+    }
+}
+
+@Composable
+fun ButtonsInEditMode(
+    modifier: Modifier = Modifier,
+    onApply: () -> Unit,
+    onCancel: () -> Unit,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        IconButton(
+            modifier = Modifier.size(30.dp),
+            onClick = onApply
+        ) {
+            Icon(
+                imageVector = Icons.Default.CheckCircle,
+                contentDescription = null,
+                tint = MaterialTheme.LaskColors.success
+            )
+        }
+        IconButton(
+            modifier = Modifier.size(30.dp),
+            onClick = onCancel
+        ) {
+            Icon(
+                imageVector = Icons.Default.Cancel,
+                contentDescription = null,
+                tint = MaterialTheme.LaskColors.error
             )
         }
     }
@@ -100,7 +207,10 @@ private fun ProfileNameRowPreviewLight() {
             modifier = Modifier,
             profileName = "Dianne Russell",
             levelData = Levels.LEVEL_5,
-            onEdit = {}
+            onProfileNameChange = {},
+            onEdit = {},
+            onApply = {},
+            onCancel = {}
         )
     }
 }
@@ -112,7 +222,10 @@ private fun ProfileNameRowPreviewDark() {
             modifier = Modifier,
             profileName = "Dianne Russell",
             levelData = Levels.LEVEL_5,
-            onEdit = {}
+            onProfileNameChange = {},
+            onEdit = {},
+            onApply = {},
+            onCancel = {}
         )
     }
 }

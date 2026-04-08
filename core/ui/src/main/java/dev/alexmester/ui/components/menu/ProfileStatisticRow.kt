@@ -60,7 +60,6 @@ fun ProfileStatisticRow(
             )
         }
         Column(
-            modifier = Modifier.padding(end = 32.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
