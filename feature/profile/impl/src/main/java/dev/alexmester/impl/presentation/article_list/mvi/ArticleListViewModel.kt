@@ -3,6 +3,7 @@ package dev.alexmester.impl.presentation.article_list.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.ArticleListType
+import dev.alexmester.impl.domain.interactor.ArticleListInteractor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class ArticleListViewModel(
     private val type: ArticleListType,
-//    private val interactor: ArticleListInteractor,
+    private val interactor: ArticleListInteractor,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ArticleListState())
@@ -25,7 +26,7 @@ class ArticleListViewModel(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
-//        observeArticles()
+        observeArticles()
     }
 
     fun handleIntent(intent: ArticleListIntent) {
@@ -43,18 +44,16 @@ class ArticleListViewModel(
         }
     }
 
-//    private fun observeArticles() {
-//        val flow = when (type) {
-//            ArticleListType.READ -> interactor.getReadArticles()
-//            ArticleListType.CLAPPED -> interactor.getClappedArticles()
-//        }
-//
-//        flow
-//            .onEach { articles ->
-//                _state.update { it.copy(allArticles = articles, isLoading = false) }
-//            }
-//            .launchIn(viewModelScope)
-//    }
+    private fun observeArticles() {
+        val flow = when (type) {
+            ArticleListType.READ -> interactor.getReadArticles()
+            ArticleListType.CLAPPED -> interactor.getClappedArticles()
+        }
+
+        flow.onEach { articles ->
+            _state.update { it.copy(allArticles = articles, isLoading = false) }
+        }.launchIn(viewModelScope)
+    }
 
     private fun emitSideEffect(effect: ArticleListSideEffect) {
         viewModelScope.launch { _sideEffects.send(effect) }

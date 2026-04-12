@@ -1,9 +1,11 @@
 package dev.alexmester.impl.presentation.article_list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -37,6 +40,7 @@ import dev.alexmester.impl.presentation.article_list.mvi.ArticleListIntent
 import dev.alexmester.impl.presentation.article_list.mvi.ArticleListSideEffect
 import dev.alexmester.impl.presentation.article_list.mvi.ArticleListState
 import dev.alexmester.impl.presentation.article_list.mvi.ArticleListViewModel
+import dev.alexmester.ui.R
 import dev.alexmester.ui.components.list_card.LaskArticleCard
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
@@ -79,8 +83,8 @@ internal fun ArticleListScreenContent(
     onIntent: (ArticleListIntent) -> Unit,
 ) {
     val title = when (type) {
-        ArticleListType.READ -> "Read Articles"
-        ArticleListType.CLAPPED -> "Clapped Articles"
+        ArticleListType.READ -> stringResource(R.string.profile_menu_read_articles)
+        ArticleListType.CLAPPED -> stringResource(R.string.profile_menu_clapped_articles)
     }
 
     Scaffold(
@@ -96,15 +100,21 @@ internal fun ArticleListScreenContent(
                     }
                 },
                 title = {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.LaskTypography.h4,
-                        color = MaterialTheme.LaskColors.textPrimary,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.LaskTypography.h5,
+                            color = MaterialTheme.LaskColors.textPrimary,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.LaskColors.backgroundPrimary,
+                    containerColor = MaterialTheme.LaskColors.brand_blue10,
                 ),
             )
         },
@@ -139,9 +149,7 @@ internal fun ArticleListScreenContent(
 
                 else -> {
                     Column {
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        // ── Фильтры категорий ──────────────────────────────
+                        Spacer(modifier = Modifier.height(16.dp))
                         CategoryFilterRow(
                             categories = state.categories,
                             selectedCategory = state.selectedCategory,
@@ -149,13 +157,9 @@ internal fun ArticleListScreenContent(
                                 onIntent(ArticleListIntent.SelectCategory(category))
                             },
                         )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        // ── Список статей ──────────────────────────────────
+                        Spacer(modifier = Modifier.height(16.dp))
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(bottom = 32.dp),
                         ) {
                             items(
                                 items = state.filteredArticles,
@@ -166,7 +170,7 @@ internal fun ArticleListScreenContent(
                                         .fillMaxWidth()
                                         .animateItem(),
                                     article = article,
-                                    isRead = true, // все статьи на этом экране прочитаны/аплодированы
+                                    isRead = true,
                                     onClick = {
                                         onIntent(
                                             ArticleListIntent.ArticleClick(

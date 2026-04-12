@@ -46,8 +46,10 @@
     <string name="profile_streak">Стрик</string>
     <string name="profile_streak_days">%1$s дней</string>
     <string name="profile_level">Уровень</string>
-    <string name="profile_read_history">История чтения</string>
-    <string name="profile_clapped_articles">Понравившиеся Статьи</string>
-    <string name="profile_read_articles">Прочитанные Статьи</string>
+    <string name="profile_title_read_history">История чтения</string>
+    <string name="profile_title_settings">Настройки</string>
+    <string name="profile_menu_clapped_articles">Понравившиеся Статьи</string>
+    <string name="profile_menu_read_articles">Прочитанные Статьи</string>
+    <string name="profile_menu_system">Система</string>
 
 </resources>

@@ -46,9 +46,11 @@
     <string name="profile_streak">Streak</string>
     <string name="profile_streak_days">%1$s Days</string>
     <string name="profile_level">Level</string>
-    <string name="profile_read_history">Reading History</string>
-    <string name="profile_clapped_articles">Clapped Articles</string>
-    <string name="profile_read_articles">Read Articles</string>
+    <string name="profile_title_read_history">Reading History</string>
+    <string name="profile_title_settings">Settings</string>
+    <string name="profile_menu_clapped_articles">Clapped Articles</string>
+    <string name="profile_menu_read_articles">Read Articles</string>
+    <string name="profile_menu_system">System</string>
 
 
 </resources>

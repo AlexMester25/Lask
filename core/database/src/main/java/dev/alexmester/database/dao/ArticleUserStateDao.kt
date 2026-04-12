@@ -52,6 +52,9 @@ interface ArticleUserStateDao {
     @Query("SELECT articleId FROM article_user_state WHERE isRead = 1")
     fun observeReadArticleIds(): Flow<List<Long>>
 
+    @Query("SELECT COUNT(*) FROM article_user_state WHERE isRead = 1")
+    fun observeReadCount(): Flow<Int>
+
     @Query("""
         SELECT a.* FROM articles a
         INNER JOIN article_user_state s ON a.id = s.articleId

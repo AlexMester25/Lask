@@ -54,7 +54,7 @@ fun ProfileContent(
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = stringResource(R.string.profile_read_history),
+            text = stringResource(R.string.profile_title_read_history),
             style = MaterialTheme.LaskTypography.h5,
             color = MaterialTheme.LaskColors.textPrimary
         )
@@ -64,13 +64,29 @@ fun ProfileContent(
         ) {
             LaskRowMenu(
                 modifier = Modifier,
-                menuName = stringResource(R.string.profile_clapped_articles),
+                menuName = stringResource(R.string.profile_menu_clapped_articles),
                 onClick = { onIntent(ProfileIntent.NavigateToClappedArticles) }
             )
             LaskRowMenu(
                 modifier = Modifier,
-                menuName = stringResource(R.string.profile_read_articles),
+                menuName = stringResource(R.string.profile_menu_read_articles),
                 onClick = { onIntent(ProfileIntent.NavigateToReadArticles) }
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.profile_title_settings),
+            style = MaterialTheme.LaskTypography.h5,
+            color = MaterialTheme.LaskColors.textPrimary
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            LaskRowMenu(
+                modifier = Modifier,
+                menuName = stringResource(R.string.profile_menu_system),
+                onClick = {  }
             )
         }
     }

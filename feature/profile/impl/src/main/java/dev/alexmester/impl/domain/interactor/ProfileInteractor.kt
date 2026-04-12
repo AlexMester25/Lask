@@ -25,8 +25,8 @@ class ProfileInteractor(
 
     fun observeProfile(): Flow<Pair<UserPreferences, Int>> {
         return preferencesDataSource.userPreferences
-            .combine(articleUserStateDao.observeReadArticleIds()){ prefs, readCount ->
-                prefs to readCount.size
+            .combine(articleUserStateDao.observeReadCount()){ prefs, readCount ->
+                prefs to readCount
             }
     }
 }
