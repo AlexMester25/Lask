@@ -29,9 +29,7 @@ internal fun SettingsValueRow(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -47,12 +45,13 @@ internal fun SettingsValueRow(
                     shape = RoundedCornerShape(50.dp)
                 )
                 .clip(RoundedCornerShape(50.dp))
+                .clickable(onClick = onClick)
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.LaskColors.brand_blue10,
                     shape = RoundedCornerShape(50.dp)
                 )
-                .padding(horizontal = 16.dp, vertical = 6.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {

@@ -59,7 +59,7 @@ private fun ThemeChip(
             containerColor = if (isSelected) MaterialTheme.LaskColors.brand_blue
             else MaterialTheme.LaskColors.backgroundPrimary,
         ),
-        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         border = BorderStroke(
             width = 1.dp,
             color = if (isSelected) MaterialTheme.LaskColors.brand_blue
@@ -70,7 +70,7 @@ private fun ThemeChip(
             modifier = Modifier,
             text = label,
             style = MaterialTheme.LaskTypography.footnote,
-            color = MaterialTheme.LaskColors.textPrimary
+            color = if (isSelected) Color.White else MaterialTheme.LaskColors.textPrimary
         )
     }
 }

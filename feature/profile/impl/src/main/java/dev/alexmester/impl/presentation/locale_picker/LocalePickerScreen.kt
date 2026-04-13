@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.alexmester.api.navigation.LocalePickerType
+import dev.alexmester.impl.presentation.locale_picker.components.LocalePickerTopBar
+import dev.alexmester.impl.presentation.locale_picker.components.LocaleRowItem
 import dev.alexmester.impl.presentation.locale_picker.mvi.LocalePickerIntent
 import dev.alexmester.impl.presentation.locale_picker.mvi.LocalePickerSideEffect
 import dev.alexmester.impl.presentation.locale_picker.mvi.LocalePickerState
@@ -75,36 +77,12 @@ internal fun LocalePickerScreenContent(
 ) {
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                navigationIcon = {
-                    LaskBackButton(onClick = { onIntent(LocalePickerIntent.Back) })
-                },
-                title = {
-                    Text(
-                        text = state.title,
-                        style = MaterialTheme.LaskTypography.h5,
-                        color = MaterialTheme.LaskColors.textPrimary,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                actions = {
-                    TextButton(
-                        onClick = { onIntent(LocalePickerIntent.Apply) },
-                        enabled = state.isApplyEnabled,
-                    ) {
-                        Text(
-                            text = "Apply",
-                            style = MaterialTheme.LaskTypography.button1,
-                            color = if (state.isApplyEnabled)
-                                MaterialTheme.LaskColors.brand_blue
-                            else
-                                MaterialTheme.LaskColors.textSecondary,
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.LaskColors.backgroundPrimary,
-                ),
+            LocalePickerTopBar(
+                modifier = Modifier,
+                title = state.title,
+                isApplyEnabled = state.isApplyEnabled,
+                onBack = { onIntent(LocalePickerIntent.Back) },
+                onApply = { onIntent(LocalePickerIntent.Apply) }
             )
         },
         containerColor = MaterialTheme.LaskColors.backgroundPrimary,
@@ -122,44 +100,12 @@ internal fun LocalePickerScreenContent(
                 key = { it.code },
             ) { item ->
                 val isSelected = item.code == state.pendingCode
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .clickable { onIntent(LocalePickerIntent.SelectItem(item.code)) },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.LaskColors.brand_blue10),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = item.flag,
-                            fontSize = 22.sp,
-                        )
-                    }
-                    Text(
-                        text = item.displayName,
-                        style = MaterialTheme.LaskTypography.body1,
-                        color = MaterialTheme.LaskColors.textPrimary,
-                        modifier = Modifier.weight(1f),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                    )
-                    RadioButton(
-                        selected = isSelected,
-                        onClick = { onIntent(LocalePickerIntent.SelectItem(item.code)) },
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = MaterialTheme.LaskColors.brand_blue,
-                            unselectedColor = MaterialTheme.LaskColors.textSecondary,
-                        ),
-                    )
-                }
+                LocaleRowItem(
+                    modifier = Modifier,
+                    isSelected = isSelected,
+                    item = item,
+                    onClick = { onIntent(LocalePickerIntent.SelectItem(item.code)) }
+                )
             }
         }
     }

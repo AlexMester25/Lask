@@ -79,24 +79,24 @@ internal fun SystemScreenContent(
                 .background(MaterialTheme.LaskColors.backgroundPrimary)
                 .padding(paddingValues)
                 .padding(horizontal = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
                     text = "Theme",
                     style = MaterialTheme.LaskTypography.body1,
                     color = MaterialTheme.LaskColors.textPrimary,
-                    modifier = Modifier.weight(0.3f),
+                    modifier = Modifier,
                 )
                 ThemeSelector(
                     selected = state.theme,
                     onSelect = { onIntent(SystemIntent.SetTheme(it)) },
-                    modifier = Modifier.weight(0.7f),
+                    modifier = Modifier.weight(1f),
                 )
             }
             SettingsValueRow(

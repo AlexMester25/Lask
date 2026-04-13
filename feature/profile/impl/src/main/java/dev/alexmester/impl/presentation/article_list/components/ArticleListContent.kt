@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -23,15 +24,14 @@ fun ArticleListContent(
     Column(
         modifier = modifier
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
         CategoryFilterRow(
+            modifier = Modifier,
             categories = state.categories,
             selectedCategory = state.selectedCategory,
             onCategorySelected = { category ->
                 onIntent(ArticleListIntent.SelectCategory(category))
             },
         )
-        Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -44,7 +44,6 @@ fun ArticleListContent(
                         .fillMaxWidth()
                         .animateItem(),
                     article = article,
-                    isRead = true,
                     onClick = {
                         onIntent(
                             ArticleListIntent.ArticleClick(
