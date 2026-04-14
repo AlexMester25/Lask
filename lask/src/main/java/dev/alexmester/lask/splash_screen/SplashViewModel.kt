@@ -1,4 +1,4 @@
-package dev.alexmester.lask.welcome_screen
+package dev.alexmester.lask.splash_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

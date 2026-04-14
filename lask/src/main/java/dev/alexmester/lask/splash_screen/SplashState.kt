@@ -1,4 +1,4 @@
-package dev.alexmester.lask.welcome_screen
+package dev.alexmester.lask.splash_screen
 
 sealed interface SplashState {
     data object Loading : SplashState

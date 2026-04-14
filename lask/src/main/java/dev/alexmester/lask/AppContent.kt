@@ -8,28 +8,26 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import dev.alexmester.api.navigation.NewsFeedRoute
 import dev.alexmester.datastore.UserPreferencesDataSource
-import dev.alexmester.lask.welcome_screen.SplashState
-import dev.alexmester.lask.welcome_screen.SplashViewModel
+import dev.alexmester.lask.splash_screen.SplashState
+import dev.alexmester.lask.splash_screen.SplashViewModel
+import dev.alexmester.lask.theme_switch.ThemeViewModel
 import dev.alexmester.lask.welcome_screen.WelcomeRoute
 import dev.alexmester.ui.desing_system.LaskTheme
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppContent(
     splashViewModel: SplashViewModel,
+    themeViewModel: ThemeViewModel = koinViewModel()
 ) {
     val splashState by splashViewModel.state.collectAsStateWithLifecycle()
-    val preferencesDataSource = koinInject<UserPreferencesDataSource>()
-    val userPreferences by preferencesDataSource.userPreferences.collectAsStateWithLifecycle(
-        initialValue = null
-    )
+    val state by themeViewModel.state.collectAsStateWithLifecycle()
 
-    val prefs = userPreferences ?: return
-
-    val darkTheme = when (prefs.isDarkTheme) {
-        true  -> true
+    val darkTheme = when (state.isDarkTheme) {
+        true -> true
         false -> false
-        null  -> isSystemInDarkTheme()
+        null -> isSystemInDarkTheme()
     }
     LaskTheme(darkTheme = darkTheme) {
         when (val state = splashState) {
