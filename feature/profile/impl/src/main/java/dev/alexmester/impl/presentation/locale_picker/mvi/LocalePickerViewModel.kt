@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.LocalePickerType
 import dev.alexmester.datastore.UserPreferencesDataSource
-import dev.alexmester.impl.presentation.locale_picker.components.BuildLocaleItems
+import dev.alexmester.utils.BuildLocale
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -50,8 +50,8 @@ class LocalePickerViewModel(
             }
 
             val items = when (type) {
-                LocalePickerType.COUNTRY  -> BuildLocaleItems.buildCountryItems()
-                LocalePickerType.LANGUAGE -> BuildLocaleItems.buildLanguageItems()
+                LocalePickerType.COUNTRY  -> BuildLocale.buildCountryItems()
+                LocalePickerType.LANGUAGE -> BuildLocale.buildLanguageItems()
             }
 
             _state.update {

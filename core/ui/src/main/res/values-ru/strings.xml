@@ -53,4 +53,8 @@
     <string name="profile_menu_read_articles">Прочитанные Статьи</string>
     <string name="profile_menu_system">Система</string>
 
+    <!-- Locale -->
+    <string name="locale_title_country">Страна</string>
+    <string name="locale_title_language">Язык</string>
+
 </resources>

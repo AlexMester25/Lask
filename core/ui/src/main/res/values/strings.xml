@@ -53,5 +53,11 @@
     <string name="profile_menu_read_articles">Read Articles</string>
     <string name="profile_menu_system">System</string>
 
+    <!-- Locale -->
+    <string name="locale_title_country">Country</string>
+    <string name="locale_title_language">Language</string>
+
+
+
 
 </resources>

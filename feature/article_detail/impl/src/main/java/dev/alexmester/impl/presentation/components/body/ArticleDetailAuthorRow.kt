@@ -19,8 +19,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.avatars.AuthorAvatar
-import dev.alexmester.ui.components.common.LaskSentimentGauge
-import dev.alexmester.ui.components.common.SentimentText
+import dev.alexmester.ui.components.sentiment.LaskSentimentGauge
+import dev.alexmester.ui.components.sentiment.SentimentText
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 import dev.alexmester.utils.DateFormatter

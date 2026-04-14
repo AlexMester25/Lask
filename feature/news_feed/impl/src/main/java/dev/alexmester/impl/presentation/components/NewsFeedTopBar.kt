@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreenState
 import dev.alexmester.newsfeed.impl.presentation.feed.contentOrNull
 import dev.alexmester.ui.R
-import dev.alexmester.ui.components.common.countryToFlag
+import dev.alexmester.ui.components.locale.countryCodeToFlagEmoji
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 
@@ -36,7 +36,7 @@ fun NewsFeedTopBar(state: NewsFeedScreenState) {
                 Spacer(modifier = Modifier.width(12.dp))
                 state.contentOrNull?.let { content ->
                     Text(
-                        text = countryToFlag(content.country),
+                        text = countryCodeToFlagEmoji(content.country),
                         style = MaterialTheme.LaskTypography.h5
                     )
                 }

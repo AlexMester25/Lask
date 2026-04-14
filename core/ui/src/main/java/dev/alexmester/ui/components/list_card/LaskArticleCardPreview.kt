@@ -45,7 +45,7 @@ private val articleNoImage = NewsArticle(
     authors = listOf("Jane Doe"),
     category = "business",
     language = "en",
-    sourceCountry = "us",
+    sourceCountry = "ru",
     sentiment = -0.7,
 )
 

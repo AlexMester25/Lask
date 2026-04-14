@@ -23,7 +23,7 @@ android {
     
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -40,9 +40,6 @@ android {
             isMinifyEnabled = false
         }
     }
-}
-base {
-    archivesName = "${android.defaultConfig.applicationId}-${android.defaultConfig.versionName}-${android.defaultConfig.versionCode}"
 }
 
 dependencies {

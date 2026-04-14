@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.alexmester.models.news.NewsArticle
+import dev.alexmester.ui.components.list_card.ArticleCardVariant
 import dev.alexmester.ui.components.list_card.LaskArticleCard
 
 @Composable
@@ -33,9 +34,10 @@ internal fun BookmarksList(
         ) { article ->
             val isKept = article.id !in pendingRemovalIds
             LaskArticleCard(
-                modifier = Modifier.fillMaxWidth().animateItem(),
+                modifier = Modifier.animateItem(),
                 article = article,
                 selectionMode = isEditMode,
+                variant = ArticleCardVariant.Default,
                 isKept = isKept,
                 onClick = { onArticleClick(article.id, article.url) },
                 onBookmarkToggle = { onTogglePendingRemoval(article.id) },
