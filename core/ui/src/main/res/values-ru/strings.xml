@@ -54,6 +54,10 @@
     <string name="profile_menu_system">Система</string>
     <string name="profile_menu_interests">Интересы</string>
 
+    <!-- Interests -->
+    <string name="interests_empty_message">Добавьте свои интересы в\nПрофиль -> Интересы</string>
+    <string name="interests_just_for_you">Для Тебя</string>
+
     <!-- Locale -->
     <string name="locale_title_country">Страна</string>
     <string name="locale_title_language">Язык</string>

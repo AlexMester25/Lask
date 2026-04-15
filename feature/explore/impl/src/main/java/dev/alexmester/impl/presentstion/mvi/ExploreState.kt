@@ -16,3 +16,9 @@ sealed interface ExploreState {
         val isOffline: Boolean = false,
     ) : ExploreState
 }
+
+val ExploreState.contentOrNull: ExploreState.Content?
+    get() = this as? ExploreState.Content
+
+val ExploreState.isContent: Boolean
+    get() = this is ExploreState.Content

@@ -54,6 +54,10 @@
     <string name="profile_menu_system">System</string>
     <string name="profile_menu_interests">Interests</string>
 
+    <!-- Interests -->
+    <string name="interests_empty_message">Add interests in\nProfile -> Interests</string>
+    <string name="interests_just_for_you">Just For You</string>
+
     <!-- Locale -->
     <string name="locale_title_country">Country</string>
     <string name="locale_title_language">Language</string>

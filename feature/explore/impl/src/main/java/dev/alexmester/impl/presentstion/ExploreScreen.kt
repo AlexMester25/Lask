@@ -17,6 +17,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,14 +26,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.alexmester.impl.presentstion.components.ExploreList
+import dev.alexmester.impl.presentstion.components.ExploreTopBar
 import dev.alexmester.impl.presentstion.mvi.ExploreIntent
 import dev.alexmester.impl.presentstion.mvi.ExploreSideEffect
 import dev.alexmester.impl.presentstion.mvi.ExploreState
 import dev.alexmester.impl.presentstion.mvi.ExploreViewModel
+import dev.alexmester.ui.R
 import dev.alexmester.ui.components.error_screen.LaskErrorScreen
 import dev.alexmester.ui.components.pull_to_refresh_box.LaskPullToRefreshBox
 import dev.alexmester.ui.components.snackbar.LaskTopSnackbarHost
@@ -55,7 +59,8 @@ fun ExploreScreen(
     LaunchedEffect(Unit) {
         viewModel.sideEffects.collect { effect ->
             when (effect) {
-                is ExploreSideEffect.NavigateToArticle -> onArticleClick(effect.articleId, effect.articleUrl)
+                is ExploreSideEffect.NavigateToArticle ->
+                    onArticleClick(effect.articleId, effect.articleUrl)
                 is ExploreSideEffect.ShowError -> {
                     snackbarHostState.showLaskSnackbar(
                         message = effect.message.asString(context),
@@ -81,32 +86,13 @@ private fun ExploreScreenContent(
     state: ExploreState,
     readArticleIds: Set<Long>,
     snackbarHostState: SnackbarHostState,
-    stateRefreshBox: androidx.compose.material3.pulltorefresh.PullToRefreshState,
+    stateRefreshBox: PullToRefreshState,
     onIntent: (ExploreIntent) -> Unit,
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Explore",
-                        style = MaterialTheme.LaskTypography.h4,
-                        color = MaterialTheme.LaskColors.textPrimary,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Outlined.Search,
-                            contentDescription = null,
-                            tint = MaterialTheme.LaskColors.textPrimary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.LaskColors.brand_blue10
-                )
+            ExploreTopBar(
+                onSearch = {}
             )
         }
     ) { paddingValues ->
@@ -117,7 +103,7 @@ private fun ExploreScreenContent(
                 .padding(paddingValues)
         ) {
             when (state) {
-                ExploreState.Loading -> {
+                is ExploreState.Loading -> {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.LaskColors.brand_blue10,
@@ -133,15 +119,13 @@ private fun ExploreScreenContent(
                     )
                 }
 
-                ExploreState.EmptyInterests -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "Add interests in System -> Interests to personalize Explore.",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.LaskColors.textSecondary,
-                            modifier = Modifier.padding(24.dp),
-                        )
-                    }
+                is ExploreState.EmptyInterests -> {
+                    Text(
+                        modifier = Modifier.padding(24.dp).align(Alignment.Center),
+                        text = stringResource(R.string.interests_empty_message),
+                        style = MaterialTheme.LaskTypography.body1,
+                        color = MaterialTheme.LaskColors.textSecondary,
+                    )
                 }
 
                 is ExploreState.Content -> {
@@ -151,14 +135,12 @@ private fun ExploreScreenContent(
                         onRefresh = { onIntent(ExploreIntent.Refresh) },
                         state = stateRefreshBox,
                     ) {
-                        Column {
-                            ExploreList(
-                                state = state,
-                                readArticleIds = readArticleIds,
-                                bottomPadding = paddingValues.calculateBottomPadding(),
-                                onIntent = onIntent,
-                            )
-                        }
+                        ExploreList(
+                            state = state,
+                            readArticleIds = readArticleIds,
+                            bottomPadding = paddingValues.calculateBottomPadding(),
+                            onIntent = onIntent,
+                        )
                     }
                 }
             }

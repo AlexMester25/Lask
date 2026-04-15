@@ -43,7 +43,7 @@ fun NewsFeedList(
                 LaskArticleCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 4.dp, bottom = if (isLast) 16.dp else 4.dp),
+                        .padding(bottom = if (isLast) 16.dp else 0.dp),
                     article = article,
                     isRead = article.id in readArticleIds,
                     onClick = { onClickArticle(article.id, article.url) }

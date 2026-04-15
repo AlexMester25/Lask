@@ -27,7 +27,7 @@ internal fun LeadingLayout(
             .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp)
-            .padding(top = 12.dp)
+            .padding(bottom = 16.dp)
             .animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
