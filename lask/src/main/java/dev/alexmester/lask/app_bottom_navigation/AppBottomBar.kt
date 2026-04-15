@@ -30,7 +30,7 @@ fun AppBottomBar(
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val bottomBarDestination = currentBackStackEntry?.destination
 
-     if (bottomBarDestination.shouldShowBottomBar()){
+     if (bottomBarDestination.shouldShowBottomBar(tabs)){
          LaskBottomBar(
              hazeState = hazeState,
              items = tabs.map { tab ->
@@ -59,15 +59,13 @@ fun AppBottomBar(
      }
 }
 
-fun NavDestination?.shouldShowBottomBar(): Boolean {
+fun NavDestination?.shouldShowBottomBar(tabs: List<AppBottomTab>): Boolean {
     if (this == null) return false
 
-    return hierarchy.none {
-        it.route?.contains(ArticleDetailRoute::class.qualifiedName!!) == true ||
-        it.route?.contains(WelcomeRoute::class.qualifiedName!!) == true ||
-        it.route?.contains(ArticleListRoute::class.qualifiedName!!) == true ||
-        it.route?.contains(SystemRoute::class.qualifiedName!!) == true ||
-        it.route?.contains(LocalePickerRoute::class.qualifiedName!!) == true ||
-        it.route?.contains(InterestsRoute::class.qualifiedName!!) == true
+    val bottomBarRoutes = tabs.mapNotNull { it.route::class.qualifiedName }
+
+    return hierarchy.any { destination ->
+        val currentRoute = destination.route ?: return@any false
+        bottomBarRoutes.any(currentRoute::contains)
     }
 }
