@@ -37,6 +37,9 @@
             <option value="$PROJECT_DIR$/feature/bookmarks" />
             <option value="$PROJECT_DIR$/feature/bookmarks/api" />
             <option value="$PROJECT_DIR$/feature/bookmarks/impl" />
+            <option value="$PROJECT_DIR$/feature/explore" />
+            <option value="$PROJECT_DIR$/feature/explore/api" />
+            <option value="$PROJECT_DIR$/feature/explore/impl" />
             <option value="$PROJECT_DIR$/feature/news_feed" />
             <option value="$PROJECT_DIR$/feature/news_feed/api" />
             <option value="$PROJECT_DIR$/feature/news_feed/impl" />

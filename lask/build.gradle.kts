@@ -50,6 +50,7 @@ dependencies {
     implementation(project(":core:models"))
 
     implementation(project(":feature:news_feed:impl"))
+    implementation(project(":feature:explore:impl"))
     implementation(project(":feature:article_detail:impl"))
     implementation(project(":feature:bookmarks:impl"))
     implementation(project(":feature:profile:impl"))

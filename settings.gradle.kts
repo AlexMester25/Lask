@@ -44,7 +44,9 @@ include(":feature:bookmarks:api")
 include(":feature:bookmarks:impl")
 
 include(":feature:profile:api")
+include(":feature:profile:impl")
 
+include(":feature:explore:api")
+include(":feature:explore:impl")
 
 include(":macrobenchmark")
-include(":feature:profile:impl")

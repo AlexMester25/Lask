@@ -4,6 +4,7 @@ import dev.alexmester.database.di.databaseModule
 import dev.alexmester.datastore.di.dataStoreModule
 import dev.alexmester.impl.di.articleDetailModule
 import dev.alexmester.impl.di.bookmarksModule
+import dev.alexmester.impl.di.exploreModule
 import dev.alexmester.impl.di.newsFeedModule
 import dev.alexmester.impl.di.profileModule
 import dev.alexmester.lask.splash_screen.splashModule
@@ -22,6 +23,7 @@ object AppModules {
         dataStoreModule,
         // Features
         newsFeedModule,
+        exploreModule,
         articleDetailModule,
         bookmarksModule,
         profileModule,

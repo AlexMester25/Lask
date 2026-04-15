@@ -40,5 +40,6 @@ data class FeedCacheEntity(
     companion object {
         const val FEED_TOP = "FEED"
         const val FEED_SEARCH = "SEARCH"
+        const val FEED_EXPLORE = "EXPLORE"
     }
 }

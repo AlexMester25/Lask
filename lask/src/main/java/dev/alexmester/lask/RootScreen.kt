@@ -21,6 +21,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.alexmester.api.navigation.ArticleDetailApi
 import dev.alexmester.api.navigation.ArticleDetailRoute
 import dev.alexmester.api.navigation.BookmarksApi
+import dev.alexmester.api.navigation.ExploreApi
 import dev.alexmester.api.navigation.NewsFeedApi
 import dev.alexmester.api.navigation.ProfileApi
 import dev.alexmester.lask.app_bottom_navigation.AppBottomBar
@@ -43,6 +44,7 @@ fun RootScreen(
 ) {
     val newsFeedApi = koinInject<NewsFeedApi>()
     val bookmarkApi = koinInject<BookmarksApi>()
+    val exploreApi = koinInject<ExploreApi>()
     val articleDetailApi = koinInject<ArticleDetailApi>()
     val profileApi = koinInject<ProfileApi>()
 
@@ -74,6 +76,7 @@ fun RootScreen(
                 ) {
                     welcomeScreen(navController, onOnboardingComplete)
                     register(newsFeedApi, navController)
+                    register(exploreApi, navController)
                     register(bookmarkApi, navController)
                     register(articleDetailApi, navController)
                     register(profileApi, navController)

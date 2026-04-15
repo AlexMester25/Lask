@@ -1,6 +1,5 @@
 package dev.alexmester.impl.presentation.mvi
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.impl.domain.interactor.NewsFeedInteractor
