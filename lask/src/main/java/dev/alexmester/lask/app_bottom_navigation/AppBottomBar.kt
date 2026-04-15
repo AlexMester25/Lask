@@ -10,14 +10,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import dev.alexmester.api.navigation.ArticleDetailRoute
-import dev.alexmester.api.navigation.ArticleListRoute
-import dev.alexmester.api.navigation.InterestsRoute
-import dev.alexmester.api.navigation.LocalePickerRoute
-import dev.alexmester.api.navigation.SystemRoute
-import dev.alexmester.lask.welcome_screen.WelcomeRoute
-import dev.alexmester.ui.components.bottom_bar.LaskMainBottomBarItem
 import dev.alexmester.ui.components.bottom_bar.LaskBottomBar
+import dev.alexmester.ui.components.bottom_bar.LaskMainBottomBarItem
 import dev.chrisbanes.haze.HazeState
 
 @Composable
