@@ -28,7 +28,7 @@ import dev.alexmester.ui.components.avatars.AuthorAvatar
 import dev.alexmester.ui.desing_system.LaskColors
 
 @Composable
-fun ProfileAvatar(
+internal fun ProfileAvatar(
     modifier: Modifier = Modifier,
     displayUri: Uri?,
     name: String,

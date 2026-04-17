@@ -29,7 +29,7 @@ import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 
 @Composable
-fun ExploreList(
+internal fun ExploreList(
     state: ExploreState.Content,
     readArticleIds: Set<Long>,
     bottomPadding: Dp,

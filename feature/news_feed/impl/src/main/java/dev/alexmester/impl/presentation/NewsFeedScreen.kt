@@ -74,11 +74,10 @@ fun NewsFeedScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun NewsFeedScreenContent(
     modifier: Modifier,
-    state: NewsFeedScreenState,
+    state: NewsFeedState,
     readArticleIds: Set<Long>,
     stateRefreshBox: PullToRefreshState,
     snackbarHostState: SnackbarHostState,
@@ -95,14 +94,14 @@ internal fun NewsFeedScreenContent(
         ) {
             when (val currentState = state) {
 
-                is NewsFeedScreenState.Loading -> {
+                is NewsFeedState.Loading -> {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.LaskColors.brand_blue10,
                         trackColor = MaterialTheme.LaskColors.brand_blue
                     )
                 }
-                is NewsFeedScreenState.Empty -> {
+                is NewsFeedState.Empty -> {
                     LaskPullToRefreshBox(
                         modifier = Modifier.fillMaxSize(),
                         isRefreshing = currentState.isRefreshing,
@@ -118,7 +117,7 @@ internal fun NewsFeedScreenContent(
                         )
                     }
                 }
-                is NewsFeedScreenState.Error -> {
+                is NewsFeedState.Error -> {
                     LaskErrorScreen(
                         modifier = Modifier,
                         errorMessage = currentState.message.asString(),
@@ -127,7 +126,7 @@ internal fun NewsFeedScreenContent(
                     )
                 }
 
-                is NewsFeedScreenState.Content -> {
+                is NewsFeedState.Content -> {
                     LaskPullToRefreshBox(
                         modifier = Modifier.fillMaxSize(),
                         isRefreshing = currentState.isRefreshing,

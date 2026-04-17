@@ -28,7 +28,7 @@ import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.transition.sharedElementIfAvailable
 
 @Composable
-fun ArticleDetailHeaderImage(
+internal fun ArticleDetailHeaderImage(
     modifier: Modifier = Modifier,
     image: String?,
     articleId: Long,
@@ -91,6 +91,5 @@ fun ArticleDetailHeaderImage(
                     )
             )
         }
-
     }
 }

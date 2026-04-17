@@ -52,7 +52,7 @@ fun ProfileScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 internal fun ProfileScreenContent(
     state: ProfileState,

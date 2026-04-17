@@ -14,7 +14,7 @@ import dev.alexmester.ui.desing_system.LaskTypography
 import java.util.Locale
 
 @Composable
-fun NewsFeedEmptyScreen(
+internal fun NewsFeedEmptyScreen(
     country: String,
     language: String,
     modifier: Modifier = Modifier,

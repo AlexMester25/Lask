@@ -1,7 +1,5 @@
 package dev.alexmester.newsfeed.impl.presentation.components
 
-import android.content.Context
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,26 +8,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.os.ConfigurationCompat
 import dev.alexmester.ui.R
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 import dev.alexmester.ui.uitext.UiText
 import dev.alexmester.utils.DateFormatter
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Date
-import java.util.Locale
 
 @Composable
-fun NewsFeedOfflineBanner(
+internal fun NewsFeedOfflineBanner(
     lastCachedAt: Long?,
     modifier: Modifier = Modifier,
 ) {

@@ -7,12 +7,10 @@ import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedIntent
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedReducer
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreenState
+import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedSideEffect
 import dev.alexmester.newsfeed.impl.presentation.feed.contentOrNull
 import dev.alexmester.newsfeed.impl.presentation.feed.isOffline
-import dev.alexmester.ui.uitext.UiText
-import dev.alexmester.utils.BuildLocale
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,8 +28,8 @@ class NewsFeedViewModel(
     private val interactor: NewsFeedInteractor,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<NewsFeedScreenState>(NewsFeedScreenState.Loading)
-    val state: StateFlow<NewsFeedScreenState> = _state.asStateFlow()
+    private val _state = MutableStateFlow<NewsFeedState>(NewsFeedState.Loading)
+    val state: StateFlow<NewsFeedState> = _state.asStateFlow()
 
     private val _sideEffects = Channel<NewsFeedSideEffect>(Channel.BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
@@ -85,7 +83,7 @@ class NewsFeedViewModel(
     private fun onCountryChanged(newCountry: String) {
         lastKnownCountry = newCountry
         isFeedLoaded = false
-        _state.update { NewsFeedScreenState.Loading }
+        _state.update { NewsFeedState.Loading }
         loadFeed()
     }
 

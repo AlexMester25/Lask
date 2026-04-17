@@ -13,13 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.alexmester.newsfeed.impl.presentation.components.NewsFeedClusterStickyHeader
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreenState
+import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
 import dev.alexmester.ui.components.list_card.LaskArticleCard
 
 @Composable
-fun NewsFeedList(
+internal fun NewsFeedList(
     modifier: Modifier = Modifier,
-    state: NewsFeedScreenState.Content,
+    state: NewsFeedState.Content,
     readArticleIds: Set<Long>,
     bottomPadding: Dp,
     onClickArticle: (articleId: Long, articleUrl: String) -> Unit,

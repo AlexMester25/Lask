@@ -40,7 +40,7 @@ import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-private const val READ_TIME_THRESHOLD_MS = 10_000L
+private const val READ_TIME_THRESHOLD_MS = 5_000L
 
 @Composable
 fun ArticleDetailScreen(

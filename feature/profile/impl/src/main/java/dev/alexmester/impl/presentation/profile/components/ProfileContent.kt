@@ -22,7 +22,7 @@ import dev.alexmester.ui.desing_system.LaskTheme
 import dev.alexmester.ui.desing_system.LaskTypography
 
 @Composable
-fun ProfileContent(
+internal fun ProfileContent(
     modifier: Modifier = Modifier,
     profileState: ProfileState,
     onIntent: (ProfileIntent) -> Unit,

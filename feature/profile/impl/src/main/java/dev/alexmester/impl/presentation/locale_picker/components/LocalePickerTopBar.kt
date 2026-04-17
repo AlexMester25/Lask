@@ -15,7 +15,7 @@ import dev.alexmester.ui.desing_system.LaskTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LocalePickerTopBar(
+internal fun LocalePickerTopBar(
     modifier: Modifier = Modifier,
     title: String,
     isApplyEnabled: Boolean,

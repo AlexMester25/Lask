@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreenState
+import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
 import dev.alexmester.newsfeed.impl.presentation.feed.contentOrNull
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.locale.countryCodeToFlagEmoji
@@ -23,7 +23,7 @@ import dev.alexmester.ui.desing_system.LaskTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewsFeedTopBar(state: NewsFeedScreenState) {
+internal fun NewsFeedTopBar(state: NewsFeedState) {
     TopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {

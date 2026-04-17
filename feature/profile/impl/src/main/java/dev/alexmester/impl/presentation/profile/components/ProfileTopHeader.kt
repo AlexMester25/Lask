@@ -17,7 +17,7 @@ import dev.alexmester.impl.presentation.profile.mvi.ProfileIntent
 import dev.alexmester.ui.desing_system.LaskTheme
 
 @Composable
-fun ProfileTopHeader(
+internal fun ProfileTopHeader(
     modifier: Modifier = Modifier,
     avatarUri: Uri?,
     editAvatarUri: Uri?,

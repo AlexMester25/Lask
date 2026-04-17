@@ -7,14 +7,14 @@ import dev.alexmester.ui.uitext.UiText
 
 object NewsFeedReducer {
 
-    fun reduce(state: NewsFeedScreenState, intent: NewsFeedIntent): NewsFeedScreenState =
+    fun reduce(state: NewsFeedState, intent: NewsFeedIntent): NewsFeedState =
         when (intent) {
             is NewsFeedIntent.Refresh -> when (state) {
-                is NewsFeedScreenState.Content -> state.copy(
+                is NewsFeedState.Content -> state.copy(
                     contentState = ContentState.Refreshing,
                 )
-                is NewsFeedScreenState.Error -> state.copy(isRefreshing = true)
-                is NewsFeedScreenState.Empty -> state.copy(isRefreshing = true)
+                is NewsFeedState.Error -> state.copy(isRefreshing = true)
+                is NewsFeedState.Empty -> state.copy(isRefreshing = true)
                 else -> state
             }
             else -> state
@@ -24,37 +24,37 @@ object NewsFeedReducer {
         clusters: List<NewsCluster>,
         lastCachedAt: Long?,
         country: String,
-    ): NewsFeedScreenState =
-        NewsFeedScreenState.Content(
+    ): NewsFeedState =
+        NewsFeedState.Content(
             clusters = clusters,
             country = country,
             lastCachedAt = lastCachedAt,
             contentState = ContentState.Idle,
         )
 
-    fun onEmpty(country: String, language: String): NewsFeedScreenState =
-        NewsFeedScreenState.Empty(country = country, language = language, isRefreshing = false)
+    fun onEmpty(country: String, language: String): NewsFeedState =
+        NewsFeedState.Empty(country = country, language = language, isRefreshing = false)
 
     fun onNetworkError(
-        state: NewsFeedScreenState,
+        state: NewsFeedState,
         error: NetworkError,
         cachedClusters: List<NewsCluster>,
         lastCachedAt: Long?,
-    ): Pair<NewsFeedScreenState, UiText> {
+    ): Pair<NewsFeedState, UiText> {
         val message = NetworkErrorUiMapper.toUiText(error)
 
         val newState = when {
             error is NetworkError.NoInternet && cachedClusters.isNotEmpty() ->
-                NewsFeedScreenState.Content(
+                NewsFeedState.Content(
                     clusters = cachedClusters,
                     lastCachedAt = lastCachedAt,
                     contentState = ContentState.Offline(lastCachedAt),
                 )
 
-            state is NewsFeedScreenState.Content ->
+            state is NewsFeedState.Content ->
                 state.copy(contentState = ContentState.Idle)
 
-            else -> NewsFeedScreenState.Error(
+            else -> NewsFeedState.Error(
                 message = message,
                 isRefreshing = false,
             )

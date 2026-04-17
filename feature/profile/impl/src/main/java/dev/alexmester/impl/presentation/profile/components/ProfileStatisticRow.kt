@@ -18,7 +18,7 @@ import dev.alexmester.ui.desing_system.LaskTheme
 import dev.alexmester.ui.desing_system.LaskTypography
 
 @Composable
-fun ProfileStatisticRow(
+internal fun ProfileStatisticRow(
     modifier: Modifier = Modifier,
     articleReadCount: Int,
     streakCount: Int,

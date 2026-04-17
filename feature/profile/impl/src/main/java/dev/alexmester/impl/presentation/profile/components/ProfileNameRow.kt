@@ -29,7 +29,7 @@ import dev.alexmester.ui.desing_system.LaskTheme
 import dev.alexmester.ui.desing_system.LaskTypography
 
 @Composable
-fun ProfileNameRow(
+internal fun ProfileNameRow(
     modifier: Modifier = Modifier,
     name: String,
     editName: String,
@@ -109,7 +109,7 @@ fun ProfileNameRow(
 }
 
 @Composable
-fun ButtonsInEditMode(
+internal fun ButtonsInEditMode(
     modifier: Modifier = Modifier,
     onApply: () -> Unit,
     onCancel: () -> Unit,

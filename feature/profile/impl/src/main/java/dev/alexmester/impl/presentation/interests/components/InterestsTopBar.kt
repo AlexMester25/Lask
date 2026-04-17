@@ -16,11 +16,12 @@ import dev.alexmester.ui.desing_system.LaskTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InterestsTopBar(
+internal fun InterestsTopBar(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
+        modifier = modifier,
         navigationIcon = {
             LaskBackButton(onClick = onClick)
         },

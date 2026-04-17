@@ -3,23 +3,23 @@ package dev.alexmester.newsfeed.impl.presentation.feed
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.ui.uitext.UiText
 
-sealed interface NewsFeedScreenState {
-    data object Loading : NewsFeedScreenState
+sealed interface NewsFeedState {
+    data object Loading : NewsFeedState
     data class Error(
         val message: UiText,
         val isRefreshing: Boolean = false,
-        ) : NewsFeedScreenState
+        ) : NewsFeedState
     data class Content(
         val clusters: List<NewsCluster>,
         val country: String = "en",
         val lastCachedAt: Long? = null,
         val contentState: ContentState = ContentState.Idle,
-    ) : NewsFeedScreenState
+    ) : NewsFeedState
     data class Empty(
         val country: String = "en",
         val language: String = "us",
         val isRefreshing: Boolean = false,
-    ) : NewsFeedScreenState
+    ) : NewsFeedState
 }
 
 sealed interface ContentState {
@@ -29,22 +29,22 @@ sealed interface ContentState {
 }
 
 
-val NewsFeedScreenState.contentOrNull: NewsFeedScreenState.Content?
-    get() = this as? NewsFeedScreenState.Content
+val NewsFeedState.contentOrNull: NewsFeedState.Content?
+    get() = this as? NewsFeedState.Content
 
-val NewsFeedScreenState.isLoading: Boolean
-    get() = this is NewsFeedScreenState.Loading
+val NewsFeedState.isLoading: Boolean
+    get() = this is NewsFeedState.Loading
 
-val NewsFeedScreenState.isError: Boolean
-    get() = this is NewsFeedScreenState.Error
+val NewsFeedState.isError: Boolean
+    get() = this is NewsFeedState.Error
 
-val NewsFeedScreenState.isRefreshing: Boolean
+val NewsFeedState.isRefreshing: Boolean
     get() = when (this) {
-        is NewsFeedScreenState.Content -> this.contentState is ContentState.Refreshing
-        is NewsFeedScreenState.Empty -> this.isRefreshing
-        is NewsFeedScreenState.Error -> this.isRefreshing
+        is NewsFeedState.Content -> this.contentState is ContentState.Refreshing
+        is NewsFeedState.Empty -> this.isRefreshing
+        is NewsFeedState.Error -> this.isRefreshing
         else -> false
     }
 
-val NewsFeedScreenState.isOffline: Boolean
-    get() = this is NewsFeedScreenState.Content && this.contentState is ContentState.Offline
+val NewsFeedState.isOffline: Boolean
+    get() = this is NewsFeedState.Content && this.contentState is ContentState.Offline

@@ -16,7 +16,7 @@ import dev.alexmester.ui.desing_system.LaskTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SystemTopBar(
+internal fun SystemTopBar(
     modifier: Modifier = Modifier,
     title: String,
     onBack: () -> Unit

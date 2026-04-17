@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
 @Composable
-fun rememberScrollThreshold(
+internal fun rememberScrollThreshold(
     scrollState: ScrollState,
     threshold: Float = 0.5f,
     onThresholdReached: () -> Unit,

@@ -52,7 +52,6 @@ fun BookmarksScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun BookmarksScreenContent(
     state: BookmarksState,

@@ -17,7 +17,7 @@ import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 
 @Composable
-fun ProfileEditField(
+internal fun ProfileEditField(
     modifier: Modifier = Modifier,
     isEdit: Boolean,
     editName: String,

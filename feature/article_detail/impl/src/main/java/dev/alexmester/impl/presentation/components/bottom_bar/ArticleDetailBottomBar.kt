@@ -24,7 +24,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
 
 @Composable
-fun ArticleDetailBottomBar(
+internal fun ArticleDetailBottomBar(
     isBookmarked: Boolean,
     clapCount: Int,
     isClapAnimating: Boolean,

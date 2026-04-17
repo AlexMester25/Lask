@@ -19,7 +19,7 @@ import dev.alexmester.ui.desing_system.LaskTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExploreTopBar(
+internal fun ExploreTopBar(
     modifier: Modifier = Modifier,
     onSearch: () -> Unit
 ) {

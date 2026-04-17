@@ -80,7 +80,6 @@ fun ExploreScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExploreScreenContent(
     state: ExploreState,
