@@ -37,7 +37,7 @@ fun LaskTextField(
         placeholder = {
             Text(
                 text = placeholderText,
-                style = MaterialTheme.LaskTypography.body2,
+                style = MaterialTheme.LaskTypography.footnote,
                 color = MaterialTheme.LaskColors.textSecondary,
             )
         },

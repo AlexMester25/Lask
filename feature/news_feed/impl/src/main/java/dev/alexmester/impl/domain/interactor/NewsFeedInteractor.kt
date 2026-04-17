@@ -25,8 +25,8 @@ class NewsFeedInteractor(
 
     fun getReadArticleIdsFlow(): Flow<List<Long>> = repository.getReadArticleIdsFlow()
 
-    suspend fun refresh(): AppResult<Unit> {
-        if (refreshMutex.isLocked) return AppResult.Success(Unit)
+    suspend fun refresh(): AppResult<Int> {
+        if (refreshMutex.isLocked) return AppResult.Success(0)
         return refreshMutex.withLock {
             val prefs = preferencesDataSource.userPreferences.first()
             repository.refreshTopNews(
@@ -34,6 +34,10 @@ class NewsFeedInteractor(
                 language = prefs.defaultLanguage,
             )
         }
+    }
+    suspend fun getCurrentLocale(): Pair<String, String> {
+        val prefs = preferencesDataSource.userPreferences.first()
+        return prefs.defaultCountry to prefs.defaultLanguage
     }
 
     suspend fun getLastCachedAt(): Long? = repository.getLastCachedAt()

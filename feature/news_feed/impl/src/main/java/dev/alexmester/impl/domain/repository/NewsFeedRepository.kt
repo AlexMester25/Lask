@@ -13,7 +13,7 @@ interface NewsFeedRepository {
     suspend fun refreshTopNews(
         country: String,
         language: String,
-    ): AppResult<Unit>
+    ): AppResult<Int>
 
     suspend fun getLastCachedAt(): Long?
 }

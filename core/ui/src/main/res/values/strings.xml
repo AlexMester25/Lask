@@ -57,11 +57,17 @@
     <!-- Interests -->
     <string name="interests_empty_message">Add interests in\nProfile -> Interests</string>
     <string name="interests_just_for_you">Just For You</string>
+    <string name="interests_text_field_placeholder">Write you interests</string>
+    <string name="interests_add">Add</string>
+    <string name="interests_you_interests">You Interests</string>
+
 
     <!-- System -->
     <string name="system_theme">Theme</string>
-    <string name="system_locale_country">Country</string>
-    <string name="system_locale_language">Language</string>
+    <string name="system_locale_country">Article Country</string>
+    <string name="system_locale_language">Article Language</string>
+
+
 
 
 

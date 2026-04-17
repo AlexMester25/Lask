@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.alexmester.impl.presentation.interests.components.InterestsTopBar
@@ -27,6 +28,7 @@ import dev.alexmester.impl.presentation.interests.mvi.InterestsIntent
 import dev.alexmester.impl.presentation.interests.mvi.InterestsSideEffect
 import dev.alexmester.impl.presentation.interests.mvi.InterestsState
 import dev.alexmester.impl.presentation.interests.mvi.InterestsViewModel
+import dev.alexmester.ui.R
 import dev.alexmester.ui.components.buttons.LaskChipButton
 import dev.alexmester.ui.components.buttons.LaskChipButtonVariants
 import dev.alexmester.ui.components.buttons.LaskTextButton
@@ -85,7 +87,7 @@ internal fun InterestsScreenContent(
                 LaskTextField(
                     modifier = Modifier.weight(1f).focusRequester(focusRequester),
                     text = state.inputText,
-                    placeholderText = "Write you interests",
+                    placeholderText = stringResource(R.string.interests_text_field_placeholder),
                     leadingIcon = Icons.Default.Interests,
                     onValueChange = { onIntent(InterestsIntent.OnInputChange(it)) },
                     onClearClick = { onIntent(InterestsIntent.OnInputChange("")) },
@@ -98,7 +100,7 @@ internal fun InterestsScreenContent(
                 )
                 LaskTextButton(
                     modifier = Modifier,
-                    text = "Add",
+                    text = stringResource(R.string.interests_add),
                     textColor = if (state.canAdd) MaterialTheme.LaskColors.brand_blue
                     else MaterialTheme.LaskColors.textSecondary,
                     onClick = {
@@ -114,7 +116,7 @@ internal fun InterestsScreenContent(
             if (state.interests.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(horizontal = 4.dp),
-                    text = "You Interests",
+                    text = stringResource(R.string.interests_you_interests),
                     style = MaterialTheme.LaskTypography.footnote,
                     color = MaterialTheme.LaskColors.textSecondary,
                 )

@@ -11,6 +11,8 @@ import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreenState
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedSideEffect
 import dev.alexmester.newsfeed.impl.presentation.feed.contentOrNull
 import dev.alexmester.newsfeed.impl.presentation.feed.isOffline
+import dev.alexmester.ui.uitext.UiText
+import dev.alexmester.utils.BuildLocale
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -60,11 +62,7 @@ class NewsFeedViewModel(
             )
         }
     }
-    private fun refresh() {
-        viewModelScope.launch {
-            handleNetworkResult(interactor.refresh())
-        }
-    }
+
     private fun observeClustersWithPrefs() {
         interactor.getClustersWithPrefsFlow()
             .onEach { (clusters, prefs) ->
@@ -125,18 +123,37 @@ class NewsFeedViewModel(
         }
     }
 
-    private fun handleNetworkResult(result: AppResult<Unit>) {
-        if (result !is AppResult.Failure) return
+    private fun refresh() {
+        viewModelScope.launch {
+            handleNetworkResult(interactor.refresh())
+        }
+    }
 
-        val currentState = _state.value
-        val (newState, message) = NewsFeedReducer.onNetworkError(
-            state = currentState,
-            error = result.error,
-            cachedClusters = currentState.contentOrNull?.clusters ?: emptyList(),
-            lastCachedAt = currentState.contentOrNull?.lastCachedAt,
-        )
-        _state.update { newState }
-        emitSideEffect(NewsFeedSideEffect.ShowError(message))
+    private fun handleNetworkResult(result: AppResult<Int>) {
+        when (result) {
+            is AppResult.Success -> {
+                if (result.data == 0) {
+                    viewModelScope.launch {
+                        val (country, language) = interactor.getCurrentLocale()
+                        val clusters = _state.value.contentOrNull?.clusters ?: emptyList()
+                        if (clusters.isEmpty()) {
+                            _state.update { NewsFeedReducer.onEmpty(country, language) }
+                        }
+                    }
+                }
+            }
+            is AppResult.Failure -> {
+                val currentState = _state.value
+                val (newState, message) = NewsFeedReducer.onNetworkError(
+                    state = currentState,
+                    error = result.error,
+                    cachedClusters = currentState.contentOrNull?.clusters ?: emptyList(),
+                    lastCachedAt = currentState.contentOrNull?.lastCachedAt,
+                )
+                _state.update { newState }
+                emitSideEffect(NewsFeedSideEffect.ShowError(message))
+            }
+        }
     }
 
     private fun emitSideEffect(effect: NewsFeedSideEffect) {

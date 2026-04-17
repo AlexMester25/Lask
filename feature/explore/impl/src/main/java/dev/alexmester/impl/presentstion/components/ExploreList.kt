@@ -46,8 +46,8 @@ fun ExploreList(
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp,vertical = 16.dp),
                 text = stringResource(R.string.interests_just_for_you),
-                style = MaterialTheme.LaskTypography.h3,
-                color = MaterialTheme.LaskColors.textLink,
+                style = MaterialTheme.LaskTypography.h4,
+                color = MaterialTheme.LaskColors.textPrimary,
             )
         }
         itemsIndexed(

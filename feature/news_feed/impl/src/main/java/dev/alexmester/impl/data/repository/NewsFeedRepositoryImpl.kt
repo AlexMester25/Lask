@@ -26,7 +26,7 @@ class NewsFeedRepositoryImpl(
     override suspend fun refreshTopNews(
         country: String,
         language: String,
-    ): AppResult<Unit> = safeApiCall {
+    ): AppResult<Int> = safeApiCall {
         val response = remote.getTopNews(sourceCountry = country, language = language)
 
         val (articles, feedCache) = withContext(Dispatchers.Default) {
@@ -34,6 +34,7 @@ class NewsFeedRepositoryImpl(
         }
 
         local.replaceTopNewsFeed(articles = articles, feedCache = feedCache)
+        response.topNews.size
     }
 
     override suspend fun getLastCachedAt(): Long? =

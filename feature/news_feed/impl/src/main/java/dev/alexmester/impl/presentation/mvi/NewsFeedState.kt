@@ -15,6 +15,11 @@ sealed interface NewsFeedScreenState {
         val lastCachedAt: Long? = null,
         val contentState: ContentState = ContentState.Idle,
     ) : NewsFeedScreenState
+    data class Empty(
+        val country: String = "en",
+        val language: String = "us",
+        val isRefreshing: Boolean = false,
+    ) : NewsFeedScreenState
 }
 
 sealed interface ContentState {
@@ -34,7 +39,12 @@ val NewsFeedScreenState.isError: Boolean
     get() = this is NewsFeedScreenState.Error
 
 val NewsFeedScreenState.isRefreshing: Boolean
-    get() = this is NewsFeedScreenState.Content && this.contentState is ContentState.Refreshing
+    get() = when (this) {
+        is NewsFeedScreenState.Content -> this.contentState is ContentState.Refreshing
+        is NewsFeedScreenState.Empty -> this.isRefreshing
+        is NewsFeedScreenState.Error -> this.isRefreshing
+        else -> false
+    }
 
 val NewsFeedScreenState.isOffline: Boolean
     get() = this is NewsFeedScreenState.Content && this.contentState is ContentState.Offline

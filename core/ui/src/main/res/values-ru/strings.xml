@@ -57,10 +57,13 @@
     <!-- Interests -->
     <string name="interests_empty_message">Добавьте свои интересы в\nПрофиль -> Интересы</string>
     <string name="interests_just_for_you">Для Тебя</string>
+    <string name="interests_text_field_placeholder">Напишите ваши интересы</string>
+    <string name="interests_add">Добавить</string>
+    <string name="interests_you_interests">Ваши интересы</string>
 
     <!-- System -->
-    <string name="system_theme">Theme</string>
-    <string name="system_locale_country">Страна</string>
-    <string name="system_locale_language">Язык</string>
+    <string name="system_theme">Тема</string>
+    <string name="system_locale_country">Страна новости</string>
+    <string name="system_locale_language">Язык новости</string>
 
 </resources>

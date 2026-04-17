@@ -8,6 +8,10 @@ import java.util.Locale
 
 object BuildLocale {
 
+    fun languageCodeToFullLanguageName(languageCode: String): String =
+        Locale(languageCode).getDisplayLanguage(Locale.ENGLISH)
+            .replaceFirstChar { it.uppercase() }
+
     fun countryCodeToFullCountryName(countryCode: String): String =
         Locale("", countryCode
             .uppercase()).getDisplayCountry(Locale.ENGLISH)

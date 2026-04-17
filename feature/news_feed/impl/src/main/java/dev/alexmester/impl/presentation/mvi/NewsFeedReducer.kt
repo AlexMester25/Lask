@@ -13,14 +13,10 @@ object NewsFeedReducer {
                 is NewsFeedScreenState.Content -> state.copy(
                     contentState = ContentState.Refreshing,
                 )
-
-                is NewsFeedScreenState.Error -> state.copy(
-                    isRefreshing = true,
-                )
-
+                is NewsFeedScreenState.Error -> state.copy(isRefreshing = true)
+                is NewsFeedScreenState.Empty -> state.copy(isRefreshing = true)
                 else -> state
             }
-
             else -> state
         }
 
@@ -35,6 +31,9 @@ object NewsFeedReducer {
             lastCachedAt = lastCachedAt,
             contentState = ContentState.Idle,
         )
+
+    fun onEmpty(country: String, language: String): NewsFeedScreenState =
+        NewsFeedScreenState.Empty(country = country, language = language, isRefreshing = false)
 
     fun onNetworkError(
         state: NewsFeedScreenState,

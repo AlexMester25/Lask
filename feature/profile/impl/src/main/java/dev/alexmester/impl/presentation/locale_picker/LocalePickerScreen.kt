@@ -53,7 +53,7 @@ fun LocalePickerScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 internal fun LocalePickerScreenContent(
     state: LocalePickerState,
