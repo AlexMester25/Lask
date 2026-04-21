@@ -1,7 +1,6 @@
 package dev.alexmester.ui.components.buttons
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
@@ -49,13 +48,16 @@ fun LaskBookmarkButton(
             }
 
         BookmarkButtonStyle.Standalone ->
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = tint,
-                modifier = modifier
-                    .size(24.dp)
-                    .clickable(onClick = onClick),
-            )
+            IconButton(
+                modifier = modifier.size(30.dp),
+                onClick = onClick,
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = tint,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
     }
 }

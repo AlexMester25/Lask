@@ -41,9 +41,7 @@ internal fun NewsFeedList(
                 val isLast = article == cluster.articles.last()
 
                 LaskArticleCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = if (isLast) 16.dp else 0.dp),
+                    modifier = Modifier.animateItem(),
                     article = article,
                     isRead = article.id in readArticleIds,
                     onClick = { onClickArticle(article.id, article.url) }
@@ -51,7 +49,7 @@ internal fun NewsFeedList(
             }
         }
         item {
-            Spacer(modifier = Modifier.height(bottomPadding + 32.dp))
+            Spacer(modifier = Modifier.height(bottomPadding + 64.dp))
         }
     }
 }

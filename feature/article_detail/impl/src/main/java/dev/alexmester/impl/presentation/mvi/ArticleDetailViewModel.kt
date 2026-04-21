@@ -116,11 +116,7 @@ class ArticleDetailViewModel(
     private fun onToggleBookmark() {
         viewModelScope.launch {
             val nowBookmarked = interactor.toggleBookmark(articleId)
-            val message = if (nowBookmarked)
-                UiText.StringResource(R.string.bookmark_add)
-            else
-                UiText.StringResource(R.string.bookmark_removed)
-            emitSideEffect(ArticleDetailSideEffect.ShowSnackbar(message))
+            emitSideEffect(ArticleDetailSideEffect.ShowSnackbar(nowBookmarked))
         }
     }
 

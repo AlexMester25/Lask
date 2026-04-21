@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -26,7 +27,7 @@ internal fun BookmarksList(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp),
+        contentPadding = PaddingValues(bottom = 16.dp),
     ) {
         items(
             items = articles,
@@ -44,7 +45,7 @@ internal fun BookmarksList(
             )
         }
         item {
-            Spacer(modifier = Modifier.height(bottomPadding + 32.dp))
+            Spacer(modifier = Modifier.height(bottomPadding + 64.dp))
         }
     }
 }

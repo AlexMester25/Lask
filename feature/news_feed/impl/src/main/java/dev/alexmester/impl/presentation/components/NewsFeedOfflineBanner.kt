@@ -32,7 +32,7 @@ internal fun NewsFeedOfflineBanner(
 
     Text(
         text = timeText.asString(),
-        style = MaterialTheme.LaskTypography.footnote,
+        style = MaterialTheme.LaskTypography.footnoteSemiBold,
         color = MaterialTheme.LaskColors.textPrimary,
         textAlign = TextAlign.Center,
         modifier = modifier

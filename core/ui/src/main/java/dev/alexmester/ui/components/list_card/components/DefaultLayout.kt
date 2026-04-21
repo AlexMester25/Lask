@@ -1,15 +1,10 @@
 package dev.alexmester.ui.components.list_card.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -20,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +34,11 @@ internal fun DefaultLayout(
     onBookmarkToggle: () -> Unit,
     onClick: () -> Unit,
 ) {
+    val buttonWidth by animateDpAsState(
+        targetValue = if (selectionMode) 40.dp else 0.dp,
+        label = "bookmark_width"
+    )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -69,18 +70,19 @@ internal fun DefaultLayout(
             isRead = isRead
         )
 
-        AnimatedVisibility(
-            visible = selectionMode,
-            enter = fadeIn() + scaleIn(initialScale = 0.7f)
-                    + slideInHorizontally(initialOffsetX = { it / 2 }),
-            exit = fadeOut() + scaleOut(targetScale = 0.7f)
-                    + slideOutHorizontally(targetOffsetX = { it / 2 }),
+        Box(
+            modifier = Modifier
+                .width(buttonWidth)
+                .fillMaxHeight(),
+            contentAlignment = Alignment.Center
         ) {
-            LaskBookmarkButton(
-                isBookmarked = isKept,
-                onClick = onBookmarkToggle,
-                style = BookmarkButtonStyle.Standalone,
-            )
+            if (buttonWidth > 0.dp) {
+                LaskBookmarkButton(
+                    isBookmarked = isKept,
+                    onClick = onBookmarkToggle,
+                    style = BookmarkButtonStyle.Standalone,
+                )
+            }
         }
     }
 }

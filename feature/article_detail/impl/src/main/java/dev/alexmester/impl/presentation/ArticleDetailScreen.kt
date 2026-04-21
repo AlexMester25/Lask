@@ -1,39 +1,43 @@
 package dev.alexmester.impl.presentation
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BookmarkAdded
+import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.alexmester.impl.presentation.components.bottom_bar.ArticleDetailBottomBar
+import com.snackbar.snackswipe.SnackSwipeBox
+import com.snackbar.snackswipe.SnackSwipeController
+import com.snackbar.snackswipe.showSnackSwipe
 import dev.alexmester.impl.presentation.components.ArticleDetailContent
+import dev.alexmester.impl.presentation.components.bottom_bar.ArticleDetailBottomBar
 import dev.alexmester.impl.presentation.mvi.ArticleDetailIntent
 import dev.alexmester.impl.presentation.mvi.ArticleDetailSideEffect
 import dev.alexmester.impl.presentation.mvi.ArticleDetailState
 import dev.alexmester.impl.presentation.mvi.ArticleDetailViewModel
 import dev.alexmester.impl.presentation.mvi.contentOrNull
 import dev.alexmester.impl.presentation.mvi.isContent
-import dev.alexmester.ui.components.snackbar.LaskTopSnackbarHost
-import dev.alexmester.ui.components.snackbar.showLaskSnackbar
+import dev.alexmester.ui.R
+import dev.alexmester.ui.components.snackbar.showBookmarkSnackbar
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.uitext.UiText
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -52,7 +56,7 @@ fun ArticleDetailScreen(
     ),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val backgroundColorSnack = MaterialTheme.LaskColors.brand_blue10
     val context = LocalContext.current
 
     LaunchedEffect(state.isContent) {
@@ -61,28 +65,37 @@ fun ArticleDetailScreen(
         viewModel.handleIntent(ArticleDetailIntent.TimeThresholdReached)
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.sideEffects.collect { effect ->
-            when (effect) {
-                is ArticleDetailSideEffect.NavigateBack -> onBack()
-                is ArticleDetailSideEffect.ShowSnackbar -> {}
-//                    snackbarHostState.showLaskSnackbar(effect.message.asString(context))
-                is ArticleDetailSideEffect.ShareUrl -> {
-                    val intent = Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, effect.url)
+    SnackSwipeBox(
+        modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
+    ) { snackSwipeController ->
+        LaunchedEffect(Unit) {
+            viewModel.sideEffects.collect { effect ->
+                when (effect) {
+                    is ArticleDetailSideEffect.NavigateBack -> onBack()
+                    is ArticleDetailSideEffect.ShowSnackbar -> {
+                        snackSwipeController.showBookmarkSnackbar(
+                            isBookmarked = effect.isBookmarked,
+                            backgroundColor = backgroundColorSnack,
+                            addedText = UiText.StringResource(R.string.bookmark_add).asString(context),
+                            removedText = UiText.StringResource(R.string.bookmark_removed).asString(context),
+                        )
                     }
-                    context.startActivity(Intent.createChooser(intent, "Поделиться"))
+                    is ArticleDetailSideEffect.ShareUrl -> {
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, effect.url)
+                        }
+                        context.startActivity(Intent.createChooser(intent, "Поделиться"))
+                    }
                 }
             }
         }
-    }
 
-    ArticleDetailScreenContent(
-        state = state,
-        onIntent = viewModel::handleIntent,
-        snackbarHostState = snackbarHostState
-    )
+        ArticleDetailScreenContent(
+            state = state,
+            onIntent = viewModel::handleIntent,
+        )
+    }
 }
 
 @Composable
@@ -90,7 +103,6 @@ internal fun ArticleDetailScreenContent(
     modifier: Modifier = Modifier,
     state: ArticleDetailState,
     onIntent: (ArticleDetailIntent) -> Unit,
-    snackbarHostState: SnackbarHostState,
 ) {
     val hazeState = rememberHazeState()
 
@@ -142,14 +154,8 @@ internal fun ArticleDetailScreenContent(
                     )
                 }
             }
-
-            LaskTopSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(top = 8.dp),
-            )
         }
     }
 }
+
+

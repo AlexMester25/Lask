@@ -54,11 +54,8 @@ internal fun ExploreList(
             items = state.articles,
             key = { _, item -> item.id },
         ) { index, article ->
-            val isLast = article == lastArticle
             LaskArticleCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = if (isLast) 16.dp else 0.dp),
+                modifier = Modifier.animateItem(),
                 article = article,
                 variant = if (index == 0) ArticleCardVariant.Leading else ArticleCardVariant.Default,
                 isRead = article.id in readArticleIds,
@@ -89,7 +86,7 @@ internal fun ExploreList(
         }
 
         item {
-            Spacer(modifier = Modifier.height(bottomPadding + 32.dp))
+            Spacer(modifier = Modifier.height(bottomPadding + 64.dp))
         }
     }
 }
