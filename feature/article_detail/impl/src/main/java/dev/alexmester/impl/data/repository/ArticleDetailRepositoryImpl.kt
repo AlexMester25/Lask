@@ -49,8 +49,7 @@ class ArticleDetailRepositoryImpl(
             targetLanguage = targetLanguage,
             sourceLanguage = sourceLanguage,
         )
-        return response.data.translations.firstOrNull()?.translatedText
-            ?: error("Empty translation response")
+        return response.translations.translatedText
     }
 
     override suspend fun getAutoTranslateLanguage(): String? =

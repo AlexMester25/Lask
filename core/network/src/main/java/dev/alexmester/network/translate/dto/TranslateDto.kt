@@ -5,23 +5,20 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TranslateRequestDto(
-    val q: String,
-    val target: String,
+    val text: String,
     val source: String? = null,
-)
-
-@Serializable
-data class TranslateResponseDto(
-    val data: TranslateDataDto,
+    val target: String,
 )
 
 @Serializable
 data class TranslateDataDto(
-    val translations: List<TranslationDto>,
+    val translations: TranslationDto,
 )
 
 @Serializable
 data class TranslationDto(
-    @SerialName("translatedText") val translatedText: String,
-    @SerialName("detectedSourceLanguage") val detectedSourceLanguage: String? = null,
+    @SerialName("text") val originalText: String,
+    @SerialName("translation") val translatedText: String,
+    @SerialName("source") val sourceLanguage: String? = null,
+    @SerialName("target") val targetLanguage: String? = null,
 )

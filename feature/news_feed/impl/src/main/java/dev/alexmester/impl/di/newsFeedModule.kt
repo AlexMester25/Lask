@@ -11,13 +11,14 @@ import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsUseCase
 import dev.alexmester.impl.domain.usecase.RefreshFeedUseCase
 import dev.alexmester.impl.presentation.mvi.NewsFeedViewModel
 import dev.alexmester.models.di.DISPATCHER_IO
+import dev.alexmester.network.di.Clients
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val newsFeedModule = module {
 
-    single { NewsFeedApiService(client = get()) }
+    single { NewsFeedApiService(client = get(named(Clients.WORLD_NEWS))) }
 
     single {
         NewsFeedLocalDataSource(
