@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -69,28 +70,28 @@ class ArticleDetailViewModel(
 
     private fun loadArticle() {
         viewModelScope.launch {
-            val article = interactor.getArticle(articleId)
-
-            if (article == null) {
+            val article = interactor.getArticle(articleId) ?: run {
                 _state.value = ArticleDetailState.Error(
                     UiText.StringResource(R.string.error_article_not_found)
                 )
                 return@launch
             }
 
-            val isBookmarked = interactor.isBookmarked(articleId)
-            val clapCount = interactor.getClapCount(articleId)
             val autoTranslateLang = interactor.getAutoTranslateLanguage()
 
-            _state.value = ArticleDetailState.Content(
-                article = article,
-                isBookmarked = isBookmarked,
-                clapCount = clapCount,
-                autoTranslateLanguage = autoTranslateLang,
-            )
-
-            observeBookmark()
-            observeClapCount()
+            combine(
+                interactor.observeIsBookmarked(articleId),
+                interactor.observeClapCount(articleId)
+            ) { isBookmarked, clapCount ->
+                ArticleDetailState.Content(
+                    article = article,
+                    isBookmarked = isBookmarked,
+                    clapCount = clapCount,
+                    autoTranslateLanguage = autoTranslateLang,
+                )
+            }.collect {
+                _state.value = it
+            }
         }
     }
 
