@@ -10,13 +10,9 @@ interface ArticleDetailRepository {
 
     fun observeIsBookmarked(id: Long): Flow<Boolean>
 
-    suspend fun isBookmarked(id: Long): Boolean
-
-    suspend fun toggleBookmark(articleId: Long): Boolean
-
     fun observeClapCount(id: Long): Flow<Int>
 
-    suspend fun getClapCount(id: Long): Int
+    suspend fun toggleBookmark(articleId: Long): Boolean
 
     suspend fun addClap(articleId: Long)
 

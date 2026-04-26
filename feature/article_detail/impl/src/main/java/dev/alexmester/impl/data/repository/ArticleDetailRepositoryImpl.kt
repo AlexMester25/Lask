@@ -8,6 +8,11 @@ import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.network.ext.safeApiCall
 import dev.alexmester.network.translate.TranslateApiService
+import dev.alexmester.utils.constants.LaskConstants.DELIMITER_POINT
+import dev.alexmester.utils.constants.LaskConstants.MAX_TRANSLATE_CHARS
+import dev.alexmester.utils.constants.LaskConstants.TEXT_ECLIPSE
+import dev.alexmester.utils.constants.LaskConstants.XP_PER_CLAP
+import dev.alexmester.utils.constants.LaskConstants.XP_PER_READ
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
@@ -23,17 +28,11 @@ class ArticleDetailRepositoryImpl(
     override fun observeIsBookmarked(id: Long): Flow<Boolean> =
         local.observeIsBookmarked(id)
 
-    override suspend fun isBookmarked(id: Long): Boolean =
-        local.isBookmarked(id)
-
     override suspend fun toggleBookmark(articleId: Long): Boolean =
         local.toggleBookmark(articleId)
 
     override fun observeClapCount(id: Long): Flow<Int> =
         local.observeClapCount(id)
-
-    override suspend fun getClapCount(id: Long): Int =
-        local.getClapCount(id)
 
     override suspend fun addClap(articleId: Long){
         local.addClap(articleId)
@@ -53,9 +52,9 @@ class ArticleDetailRepositoryImpl(
         val truncated = if (text.length > MAX_TRANSLATE_CHARS) {
             text.take(MAX_TRANSLATE_CHARS)
                 .substringBeforeLast(
-                    delimiter = '.',
+                    delimiter = DELIMITER_POINT,
                     missingDelimiterValue = text.take(MAX_TRANSLATE_CHARS)
-                ) + "..."
+                ) + TEXT_ECLIPSE
         } else text
         val response = translateApiService.translate(
             text = truncated ,
@@ -68,9 +67,4 @@ class ArticleDetailRepositoryImpl(
     override suspend fun getAutoTranslateLanguage(): String =
         preferencesDataSource.userPreferences.first().autoTranslateLanguage
 
-    private companion object {
-        private const val MAX_TRANSLATE_CHARS = 5_000
-        private const val XP_PER_READ = 25f
-        private const val XP_PER_CLAP = 10f
-    }
 }
