@@ -1,6 +1,7 @@
 package dev.alexmester.impl.data.repository
 
 import dev.alexmester.database.entity.FeedCacheEntity.Companion.FEED_TOP
+import dev.alexmester.datastore.UserPreferencesDataSource
 import dev.alexmester.impl.data.local.NewsFeedLocalDataSource
 import dev.alexmester.impl.data.mapper.toEntities
 import dev.alexmester.impl.data.remote.NewsFeedApiService
@@ -10,17 +11,19 @@ import dev.alexmester.models.result.AppResult
 import dev.alexmester.network.ext.safeApiCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 class NewsFeedRepositoryImpl(
     private val remote: NewsFeedApiService,
     private val local: NewsFeedLocalDataSource,
+    private val preferencesDataSource: UserPreferencesDataSource,
 ) : NewsFeedRepository {
 
     override fun observeFeedClusters(): Flow<List<NewsCluster>> =
         local.observeFeedClusters()
 
-    override fun observeReadArticleIds() =
+    override fun observeReadArticleIds(): Flow<List<Long>> =
         local.observeReadArticleIds()
 
     override suspend fun refreshFeed(
@@ -39,4 +42,9 @@ class NewsFeedRepositoryImpl(
 
     override suspend fun getLastCachedAt(): Long? =
         local.getLastCachedAt()
+
+    override suspend fun getCurrentLocale(): Pair<String, String> {
+        val prefs = preferencesDataSource.userPreferences.first()
+        return prefs.defaultCountry to prefs.defaultLanguage
+    }
 }

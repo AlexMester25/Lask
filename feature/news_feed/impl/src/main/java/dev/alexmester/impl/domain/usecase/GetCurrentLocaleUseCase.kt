@@ -1,13 +1,10 @@
 package dev.alexmester.impl.domain.usecase
 
-import dev.alexmester.datastore.UserPreferencesDataSource
-import kotlinx.coroutines.flow.first
+import dev.alexmester.impl.domain.repository.NewsFeedRepository
 
 class GetCurrentLocaleUseCase(
-    private val preferencesDataSource: UserPreferencesDataSource,
+    private val repository: NewsFeedRepository,
 ) {
-    suspend operator fun invoke(): Pair<String, String> {
-        val prefs = preferencesDataSource.userPreferences.first()
-        return prefs.defaultCountry to prefs.defaultLanguage
-    }
+    suspend operator fun invoke(): Pair<String, String> =
+        repository.getCurrentLocale()
 }

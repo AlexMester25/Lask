@@ -34,12 +34,13 @@ val newsFeedModule = module {
         NewsFeedRepositoryImpl(
             remote = get(),
             local = get(),
+            preferencesDataSource = get()
         )
     }
 
     factory { ObserveFeedClustersUseCase(repository = get(), preferencesDataSource = get()) }
     factory { ObserveReadArticleIdsUseCase(repository = get()) }
-    factory { GetCurrentLocaleUseCase(preferencesDataSource = get()) }
+    factory { GetCurrentLocaleUseCase(repository = get()) }
     factory { GetLastCachedAtUseCase(repository = get()) }
     single { RefreshFeedUseCase(repository = get(), preferencesDataSource = get()) }
 
