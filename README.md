@@ -1,10 +1,8 @@
-# Lask
+**Lask** - is an Android app for reading and exploring news with a focus on personalization, a modern UI, and modular architecture.
 
-Lask — это Android-приложение для чтения и исследования новостей с акцентом на персонализацию, современный UI и модульную архитектуру.
+## 🚀 Tech Stack
 
-## 🚀 Стек технологий
-
-### Язык и платформа
+### Language and Platform
 - **Kotlin**
 - **Android (minSdk 26, targetSdk 36)**
 
@@ -13,84 +11,82 @@ Lask — это Android-приложение для чтения и исслед
 - **Material 3**
 - **Navigation Compose**
 
-### Архитектура и состояние
-- **Модульная feature/core архитектура**
-- **MVI-подход** во feature-модулях (State / Intent / SideEffect / ViewModel)
-- **Repository + UseCase / Interactor**
+### Architecture and State
+- **Modular Feature/Core Architecture**
+- **MVI Approach**
+- **Repository + UseCase**
 
 ### DI
 - **Koin**
 
-### Данные и сеть
-- **Ktor Client** (сериализация, логирование, ContentNegotiation)
+### Data and Network
+- **Ktor Client**
 - **Kotlinx Serialization**
-- **Room** (локальный кэш и состояние пользователя)
-- **DataStore** (пользовательские настройки)
+- **Room** (local cache and user state)
+- **DataStore** (user settings)
 
-### Медиа и изображения
+### Media and Images
 - **Coil 3**
 - **Media3 (ExoPlayer)**
 
-### Асинхронность и утилиты
+### Asynchrony and Utilities
 - **Kotlin Coroutines / Flow**
-- **kotlinx-datetime**
 
-### Производительность и тесты
-- **Unit tests / Instrumented tests**
-- **Macrobenchmark**
+### API
+- **https://worldnewsapi.com/**
 
 ---
 
-## ✨ Ключевые фичи
+## ✨ Key Features
 
-- **News Feed** — основной поток новостей и трендов.
-- **Article Detail** — экран статьи с чтением, переводом, лайками (clap), закладками и шарингом.
-- **Explore** — исследование контента по интересам.
-- **Search** — поиск с фильтрами (категории, язык, дата и др.).
-- **Bookmarks** — сохранённые статьи.
-- **Profile** — профиль, интересы, выбор локали и системные настройки.
-- **Welcome / Splash / Theme switch** — onboarding и базовый UX-каркас приложения.
+- **News Feed** — main feed of news and trends.
+- **Article Detail** — article screen with reading, translation, clapping, bookmarking, and sharing options.
+- **Explore** — content exploration by interests.
+- **Search** — search with filters (categories, language, date, etc.).
+- **Bookmarks** — saved articles.
+- **Profile** — profile, interests, locale selection, and system settings.
+- **Welcome / Splash / Theme Switch** — onboarding and basic UX framework for the app.
 
 ---
 
-## 🧩 Архитектура проекта
+## 🧩 Project Architecture
 
-Проект разделён на независимые gradle-модули:
+The project is divided into independent Gradle modules:
 
 ```text
-:lask                     # App module (точка входа)
-:core:*                   # Общие инфраструктурные модули
-  :core:network
-  :core:database
-  :core:datastore
-  :core:models
-  :core:ui
-  :core:navigation
-  :core:utils
-  :core:platform
+:lask # App module (entry point)
+:core:* # Common infrastructure modules
+:core:network
+:core:database
+:core:datastore
+:core:models
+:core:ui
+:core:navigation
+:core:utils
+:core:platform
 
-:feature:*                # Бизнес-фичи
-  :feature:<name>:api     # Контракты навигации / публичный API фичи
-  :feature:<name>:impl    # Реализация UI, domain, data
+:feature:* # Business features
+:feature:<name>:api # Navigation contracts / public API features
+:feature:<name>:impl # UI, domain, and data implementation
 
-:macrobenchmark           # Бенчмарки запуска/производительности
 ```
+
 ## 📱 Screenshots
 
 <p align="center">
   <img src="docs/images/onboarding.png" width="250"/>
   <img src="docs/images/trends.png" width="250"/>
   <img src="docs/images/article_detail.png" width="250"/>
-  <img src="docs/images/bookmark.png" width="250"/>
 </p>
 
 <p align="center">
+  <img src="docs/images/bookmark.png" width="250"/>
   <img src="docs/images/interests.png" width="250"/>
   <img src="docs/images/explore.png" width="250"/>
-  <img src="docs/images/search.png" width="250"/>
 </p>
 
 <p align="center">
+  <img src="docs/images/search.png" width="250"/>
   <img src="docs/images/profile.png" width="250"/>
   <img src="docs/images/locale.png" width="250"/>
   <img src="docs/images/system_settings.png" width="250"/>
