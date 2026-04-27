@@ -2,7 +2,8 @@ package dev.alexmester.impl.di
 
 import dev.alexmester.impl.data.local.BookmarksLocalDataSource
 import dev.alexmester.impl.data.repository.BookmarksRepositoryImpl
-import dev.alexmester.impl.domain.interactor.BookmarksInteractor
+import dev.alexmester.impl.domain.usecase.ObserveBookmarksUseCase
+import dev.alexmester.impl.domain.usecase.RemoveBookmarksUseCase
 import dev.alexmester.impl.domain.repository.BookmarksRepository
 import dev.alexmester.impl.presentation.mvi.BookmarksViewModel
 import dev.alexmester.models.di.DISPATCHER_IO
@@ -23,11 +24,13 @@ val bookmarksModule = module {
         BookmarksRepositoryImpl(local = get())
     }
 
-    factory {
-        BookmarksInteractor(repository = get())
-    }
+    factory { ObserveBookmarksUseCase(repository = get()) }
+    factory { RemoveBookmarksUseCase(repository = get()) }
 
     viewModel {
-        BookmarksViewModel(interactor = get())
+        BookmarksViewModel(
+            observeBookmarksUseCase = get(),
+            removeBookmarksUseCase = get()
+        )
     }
 }

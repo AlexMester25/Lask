@@ -1,15 +1,12 @@
-package dev.alexmester.impl.domain.interactor
+package dev.alexmester.impl.domain.usecase
 
 import dev.alexmester.impl.domain.repository.BookmarksRepository
 import dev.alexmester.models.news.NewsArticle
 import kotlinx.coroutines.flow.Flow
 
-class BookmarksInteractor(
+class ObserveBookmarksUseCase(
     private val repository: BookmarksRepository,
 ) {
-    fun observeBookmarks(): Flow<List<NewsArticle>> =
+    operator fun invoke(): Flow<List<NewsArticle>> =
         repository.observeBookmarks()
-
-    suspend fun removeBookmarks(ids: Set<Long>) =
-        repository.removeBookmarks(ids)
 }
