@@ -1,15 +1,15 @@
 package dev.alexmester.impl
 
 import app.cash.turbine.test
-import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsUseCase
+import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class ObserveReadArticleIdsUseCaseTest {
+class ObserveReadArticleIdsTrendsUseCaseTest {
 
     private val repository = FakeNewsFeedRepository()
-    private val useCase = ObserveReadArticleIdsUseCase(repository)
+    private val useCase = ObserveReadArticleIdsTrendsUseCase(repository)
 
     @Test
     fun `given no read articles, emits empty list`() = runTest {

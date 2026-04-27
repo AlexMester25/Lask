@@ -2,22 +2,22 @@ package dev.alexmester.impl
 
 import app.cash.turbine.test
 import dev.alexmester.datastore.model.UserPreferences
-import dev.alexmester.impl.domain.usecase.ObserveFeedClustersUseCase
+import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class ObserveFeedClustersUseCaseTest {
+class ObserveTrendsUseCaseTest {
 
     private val repository = FakeNewsFeedRepository()
     private val prefsSource = FakeUserPreferencesDataSource()
-    private lateinit var useCase: ObserveFeedClustersUseCase
+    private lateinit var useCase: ObserveTrendsUseCase
 
     @Before
     fun setUp() {
-        useCase = ObserveFeedClustersUseCase(
+        useCase = ObserveTrendsUseCase(
             repository = repository,
             preferencesDataSource = prefsSource,
         )

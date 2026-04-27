@@ -1,14 +1,14 @@
 package dev.alexmester.impl
 
-import dev.alexmester.impl.domain.usecase.GetCurrentLocaleUseCase
+import dev.alexmester.impl.domain.usecase.GetCurrentLocaleTrendsUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class GetCurrentLocaleUseCaseTest {
+class GetCurrentLocaleTrendsUseCaseTest {
 
     private val repository = FakeNewsFeedRepository()
-    private val useCase = GetCurrentLocaleUseCase(repository)
+    private val useCase = GetCurrentLocaleTrendsUseCase(repository)
 
     @Test
     fun `given default locale in repo, returns us and en`() = runTest {

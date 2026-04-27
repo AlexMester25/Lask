@@ -7,7 +7,7 @@ import dev.alexmester.models.news.NewsCluster
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-class ObserveFeedClustersUseCase(
+class ObserveTrendsUseCase(
     private val repository: NewsFeedRepository,
     private val preferencesDataSource: UserPreferencesDataSource,
 ) {

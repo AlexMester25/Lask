@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-class RefreshFeedUseCase(
+class RefreshTrendsUseCase(
     private val repository: NewsFeedRepository,
     private val preferencesDataSource: UserPreferencesDataSource,
 ) {

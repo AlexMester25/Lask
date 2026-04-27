@@ -1,7 +1,7 @@
 package dev.alexmester.impl
 
 import dev.alexmester.datastore.model.UserPreferences
-import dev.alexmester.impl.domain.usecase.RefreshFeedUseCase
+import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.result.AppResult
 import kotlinx.coroutines.test.runTest
@@ -10,15 +10,15 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class RefreshFeedUseCaseTest {
+class RefreshTrendsUseCaseTest {
 
     private val repository = FakeNewsFeedRepository()
     private val prefsSource = FakeUserPreferencesDataSource()
-    private lateinit var useCase: RefreshFeedUseCase
+    private lateinit var useCase: RefreshTrendsUseCase
 
     @Before
     fun setUp() {
-        useCase = RefreshFeedUseCase(
+        useCase = RefreshTrendsUseCase(
             repository = repository,
             preferencesDataSource = prefsSource,
         )
