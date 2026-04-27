@@ -7,6 +7,7 @@ import dev.alexmester.database.converter.StringListConverter
 import dev.alexmester.database.dao.ArticleDao
 import dev.alexmester.database.dao.ArticleUserStateDao
 import dev.alexmester.database.dao.FeedCacheDao
+import dev.alexmester.database.di.DatabaseConstants.DB_VERSION
 import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.database.entity.ArticleUserStateEntity
 import dev.alexmester.database.entity.FeedCacheEntity
@@ -17,7 +18,7 @@ import dev.alexmester.database.entity.FeedCacheEntity
         ArticleUserStateEntity::class,
         FeedCacheEntity::class,
     ],
-    version = 5,
+    version = DB_VERSION,
     exportSchema = true,
 )
 @TypeConverters(StringListConverter::class)
