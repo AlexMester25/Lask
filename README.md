@@ -75,3 +75,23 @@ Lask — это Android-приложение для чтения и исслед
 
 :macrobenchmark           # Бенчмарки запуска/производительности
 ```
+## 📱 Screenshots
+
+<p align="center">
+  <img src="docs/images/onboarding.png" width="250"/>
+  <img src="docs/images/trends.png" width="250"/>
+  <img src="docs/images/article_detail.png" width="250"/>
+  <img src="docs/images/bookmark.png" width="250"/>
+</p>
+
+<p align="center">
+  <img src="docs/images/interests.png" width="250"/>
+  <img src="docs/images/explore.png" width="250"/>
+  <img src="docs/images/search.png" width="250"/>
+</p>
+
+<p align="center">
+  <img src="docs/images/profile.png" width="250"/>
+  <img src="docs/images/locale.png" width="250"/>
+  <img src="docs/images/system_settings.png" width="250"/>
+</p>
