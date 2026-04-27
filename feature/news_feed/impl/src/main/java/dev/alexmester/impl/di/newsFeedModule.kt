@@ -4,11 +4,11 @@ import dev.alexmester.impl.data.local.NewsFeedLocalDataSource
 import dev.alexmester.impl.data.remote.NewsFeedApiService
 import dev.alexmester.impl.data.repository.NewsFeedRepositoryImpl
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
-import dev.alexmester.impl.domain.usecase.GetCurrentLocaleUseCase
-import dev.alexmester.impl.domain.usecase.ObserveFeedClustersUseCase
-import dev.alexmester.impl.domain.usecase.GetLastCachedAtUseCase
-import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsUseCase
-import dev.alexmester.impl.domain.usecase.RefreshFeedUseCase
+import dev.alexmester.impl.domain.usecase.GetCurrentLocaleTrendsUseCase
+import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
+import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
+import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
+import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.impl.presentation.mvi.NewsFeedViewModel
 import dev.alexmester.models.di.DISPATCHER_IO
 import dev.alexmester.network.di.Clients
@@ -38,11 +38,11 @@ val newsFeedModule = module {
         )
     }
 
-    factory { ObserveFeedClustersUseCase(repository = get(), preferencesDataSource = get()) }
-    factory { ObserveReadArticleIdsUseCase(repository = get()) }
-    factory { GetCurrentLocaleUseCase(repository = get()) }
-    factory { GetLastCachedAtUseCase(repository = get()) }
-    single { RefreshFeedUseCase(repository = get(), preferencesDataSource = get()) }
+    factory { ObserveTrendsUseCase(repository = get(), preferencesDataSource = get()) }
+    factory { ObserveReadArticleIdsTrendsUseCase(repository = get()) }
+    factory { GetCurrentLocaleTrendsUseCase(repository = get()) }
+    factory { GetCachedAtTrendsUseCase(repository = get()) }
+    single { RefreshTrendsUseCase(repository = get(), preferencesDataSource = get()) }
 
 
     viewModel {

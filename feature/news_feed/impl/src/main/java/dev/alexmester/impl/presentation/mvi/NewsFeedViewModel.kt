@@ -2,11 +2,11 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.impl.domain.usecase.GetCurrentLocaleUseCase
-import dev.alexmester.impl.domain.usecase.GetLastCachedAtUseCase
-import dev.alexmester.impl.domain.usecase.ObserveFeedClustersUseCase
-import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsUseCase
-import dev.alexmester.impl.domain.usecase.RefreshFeedUseCase
+import dev.alexmester.impl.domain.usecase.GetCurrentLocaleTrendsUseCase
+import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
+import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
+import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
+import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.result.AppResult
@@ -30,11 +30,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewsFeedViewModel(
-    private val observeFeedClusters: ObserveFeedClustersUseCase,
-    private val refreshFeed: RefreshFeedUseCase,
-    private val observeReadArticleIds: ObserveReadArticleIdsUseCase,
-    private val getCurrentLocale: GetCurrentLocaleUseCase,
-    private val getLastCachedAt: GetLastCachedAtUseCase,
+    private val observeFeedClusters: ObserveTrendsUseCase,
+    private val refreshFeed: RefreshTrendsUseCase,
+    private val observeReadArticleIds: ObserveReadArticleIdsTrendsUseCase,
+    private val getCurrentLocale: GetCurrentLocaleTrendsUseCase,
+    private val getLastCachedAt: GetCachedAtTrendsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<NewsFeedState>(NewsFeedState.Loading)

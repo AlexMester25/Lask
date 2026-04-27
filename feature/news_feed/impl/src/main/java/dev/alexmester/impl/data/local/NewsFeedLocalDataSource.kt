@@ -7,7 +7,7 @@ import dev.alexmester.database.dao.ArticleUserStateDao
 import dev.alexmester.database.dao.FeedCacheDao
 import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.database.entity.FeedCacheEntity
-import dev.alexmester.database.entity.FeedCacheEntity.Companion.FEED_TOP
+import dev.alexmester.database.entity.FeedCacheEntity.Companion.TRENDS_FEED
 import dev.alexmester.impl.data.mapper.toClusters
 import dev.alexmester.models.news.NewsCluster
 import kotlinx.coroutines.CoroutineDispatcher
@@ -30,7 +30,7 @@ class NewsFeedLocalDataSource(
      * articles или article_user_state.
      */
     fun observeFeedClusters(): Flow<List<NewsCluster>> =
-        feedCacheDao.observeFeedWithState(FEED_TOP)
+        feedCacheDao.observeFeedWithState(TRENDS_FEED)
             .map { rows -> rows.toClusters() }
 
     fun observeReadArticleIds(): Flow<List<Long>> =
@@ -38,7 +38,7 @@ class NewsFeedLocalDataSource(
 
     suspend fun getLastCachedAt(): Long? =
         withContext(ioDispatcher) {
-            feedCacheDao.getLastCachedAt(FEED_TOP)
+            feedCacheDao.getLastCachedAt(TRENDS_FEED)
         }
 
     /**
@@ -55,7 +55,7 @@ class NewsFeedLocalDataSource(
         feedCache: List<FeedCacheEntity>,
     ) = withContext(ioDispatcher) {
         db.withTransaction {
-            feedCacheDao.clearFeed(FEED_TOP)
+            feedCacheDao.clearFeed(TRENDS_FEED)
             articleDao.insertArticles(articles)
             feedCacheDao.insertFeedCache(feedCache)
             articleDao.deleteOrphaned()

@@ -1,6 +1,6 @@
 package dev.alexmester.impl.data.repository
 
-import dev.alexmester.database.entity.FeedCacheEntity.Companion.FEED_TOP
+import dev.alexmester.database.entity.FeedCacheEntity.Companion.TRENDS_FEED
 import dev.alexmester.datastore.UserPreferencesDataSource
 import dev.alexmester.impl.data.local.NewsFeedLocalDataSource
 import dev.alexmester.impl.data.mapper.toEntities
@@ -33,7 +33,7 @@ class NewsFeedRepositoryImpl(
         val response = remote.getTopNews(sourceCountry = country, language = language)
 
         val (articles, feedCache) = withContext(Dispatchers.Default) {
-            response.topNews.toEntities(FEED_TOP)
+            response.topNews.toEntities(TRENDS_FEED)
         }
 
         local.replaceFeedCache(articles = articles, feedCache = feedCache)
