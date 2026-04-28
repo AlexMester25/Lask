@@ -183,6 +183,6 @@ class ExploreViewModel(
     }
 
     private fun emitSideEffect(effect: ExploreSideEffect) {
-        _sideEffects.trySend(effect)
+        viewModelScope.launch { _sideEffects.trySend(effect) }
     }
 }

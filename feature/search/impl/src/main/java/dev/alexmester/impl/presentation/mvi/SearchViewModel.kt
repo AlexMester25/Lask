@@ -2,9 +2,12 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.impl.domain.interactor.SearchInteractor
 import dev.alexmester.impl.domain.model.SearchFilters
-import dev.alexmester.models.result.AppResult
+import dev.alexmester.impl.domain.usecase.GetReadArticleIdsSearchUseCase
+import dev.alexmester.impl.domain.usecase.SearchUseCase
+import dev.alexmester.models.result.onFailure
+import dev.alexmester.models.result.onSuccess
+import dev.alexmester.utils.constants.LaskConstants.PAGE_SIZE
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -20,10 +23,10 @@ import kotlinx.coroutines.launch
 
 private const val DEBOUNCE_MS = 500L
 private const val MIN_QUERY_LENGTH = 2
-private const val PAGE_SIZE = 20
 
 class SearchViewModel(
-    private val interactor: SearchInteractor,
+    private val searchUseCase: SearchUseCase,
+    private val getReadArticleIdsSearchUseCase: GetReadArticleIdsSearchUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SearchState())
@@ -32,8 +35,8 @@ class SearchViewModel(
     private val _sideEffects = Channel<SearchSideEffect>(Channel.BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
 
-    val readArticleIds: StateFlow<Set<Long>> = interactor
-        .getReadArticleIdsFlow()
+    val readArticleIds: StateFlow<Set<Long>> =
+        getReadArticleIdsSearchUseCase()
         .map { it.toSet() }
         .stateIn(
             scope = viewModelScope,
@@ -88,15 +91,19 @@ class SearchViewModel(
 
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            when (val result = interactor.search(current.query, current.filters)) {
-                is AppResult.Success -> _state.update {
-                    it.copy(results = result.data, isLoading = false, hasSearched = true)
+            searchUseCase(
+                current.query,
+                current.filters
+            ).onSuccess { result ->
+                _state.update {
+                    it.copy(results = result, isLoading = false, hasSearched = true)
                 }
-                is AppResult.Failure -> _state.update {
+            }.onFailure { error ->
+                _state.update {
                     it.copy(
                         isLoading = false,
                         hasSearched = true,
-                        error = result.error,
+                        error = error,
                     )
                 }
             }
@@ -111,19 +118,20 @@ class SearchViewModel(
 
         loadMoreJob = viewModelScope.launch {
             _state.update { it.copy(isLoadingMore = true) }
-            when (val result = interactor.search(
+            searchUseCase(
                 query = current.query,
                 filters = current.filters,
                 offset = current.results.size,
-            )) {
-                is AppResult.Success -> _state.update {
+            ).onSuccess { result ->
+                _state.update {
                     it.copy(
-                        results = it.results + result.data,
+                        results = it.results + result,
                         isLoadingMore = false,
-                        endReached = result.data.size < PAGE_SIZE,
+                        endReached = result.size < PAGE_SIZE,
                     )
                 }
-                is AppResult.Failure -> _state.update {
+            }.onFailure {
+                _state.update {
                     it.copy(isLoadingMore = false)
                 }
             }
