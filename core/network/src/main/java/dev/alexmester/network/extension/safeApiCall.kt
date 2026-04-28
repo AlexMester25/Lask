@@ -1,4 +1,4 @@
-package dev.alexmester.network.ext
+package dev.alexmester.network.extension
 
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.result.AppResult

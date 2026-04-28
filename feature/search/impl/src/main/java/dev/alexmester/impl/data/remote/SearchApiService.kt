@@ -2,6 +2,7 @@ package dev.alexmester.impl.data.remote
 
 import dev.alexmester.impl.data.remote.dto.SearchResponseDto
 import dev.alexmester.impl.domain.model.SearchFilters
+import dev.alexmester.network.endpoints.ApiRoutes
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -13,9 +14,8 @@ class SearchApiService(private val client: HttpClient) {
         filters: SearchFilters,
         offset: Int,
         number: Int,
-    ): SearchResponseDto = client.get("search-news") {
+    ): SearchResponseDto = client.get(ApiRoutes.News.SEARCH_NEWS) {
         parameter("text", query)
-//        parameter("text-match-indexes", "title,text")
         filters.language?.let { parameter("language", it) }
         filters.country?.let { parameter("source-countries", it) }
         filters.category?.let { parameter("categories", it) }

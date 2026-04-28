@@ -8,7 +8,7 @@ import dev.alexmester.impl.data.remote.NewsFeedApiService
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.network.ext.safeApiCall
+import dev.alexmester.network.extension.safeApiCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

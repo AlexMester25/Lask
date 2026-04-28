@@ -3,19 +3,13 @@ package dev.alexmester.network.error
 import dev.alexmester.models.error.NetworkError
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
-import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.SerializationException
 import java.net.ConnectException
 import java.net.SocketException
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 
-/**
- * Централизованный маппинг Ktor/Java исключений в типизированный NetworkError.
- *
- * Вызывается в runAppResult { } блоках в data-слоях.
- * Все feature-модули работают только с NetworkError, никакого Ktor в :impl слоях.
- */
+
 internal object NetworkErrorMapper {
 
     fun map(throwable: Throwable): NetworkError = when (throwable) {

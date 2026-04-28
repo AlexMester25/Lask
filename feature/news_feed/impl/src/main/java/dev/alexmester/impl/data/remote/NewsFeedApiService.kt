@@ -1,6 +1,7 @@
 package dev.alexmester.impl.data.remote
 
 import dev.alexmester.impl.data.remote.dto.TopNewsResponseDto
+import dev.alexmester.network.endpoints.ApiRoutes
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -16,9 +17,9 @@ class NewsFeedApiService(private val client: HttpClient) {
         date: String? = null,
         maxNewsPerCluster: Int = 5,
     ): TopNewsResponseDto {
-        val requestDate = date ?: getApiDate()
+        val requestDate = date ?: LocalDate.now(ZoneOffset.UTC).toString()
 
-        val response = client.get("top-news") {
+        val response = client.get(ApiRoutes.News.TOP_NEWS) {
             parameter("source-country", sourceCountry)
             language?.let { parameter("language", it) }
             parameter("date", requestDate)
@@ -29,7 +30,7 @@ class NewsFeedApiService(private val client: HttpClient) {
 
         if (response.topNews.isEmpty() && date == null) {
             val yesterday = LocalDate.now(ZoneOffset.UTC).minusDays(1).toString()
-            return client.get("top-news") {
+            return client.get(ApiRoutes.News.TOP_NEWS) {
                 parameter("source-country", sourceCountry)
                 language?.let { parameter("language", it) }
                 parameter("date", yesterday)
@@ -40,8 +41,4 @@ class NewsFeedApiService(private val client: HttpClient) {
 
         return response
     }
-
-    private fun getApiDate(): String =
-        LocalDate.now(ZoneOffset.UTC).toString()
-
 }

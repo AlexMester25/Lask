@@ -6,7 +6,7 @@ import dev.alexmester.impl.data.mappers.toDomain
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.network.ext.safeApiCall
+import dev.alexmester.network.extension.safeApiCall
 import dev.alexmester.network.translate.TranslateApiService
 import dev.alexmester.utils.constants.LaskConstants.DELIMITER_POINT
 import dev.alexmester.utils.constants.LaskConstants.MAX_TRANSLATE_CHARS

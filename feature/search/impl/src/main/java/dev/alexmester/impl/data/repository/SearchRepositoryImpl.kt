@@ -9,7 +9,7 @@ import dev.alexmester.impl.domain.model.SearchFilters
 import dev.alexmester.impl.domain.repository.SearchRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.network.ext.safeApiCall
+import dev.alexmester.network.extension.safeApiCall
 import kotlinx.coroutines.flow.Flow
 
 class SearchRepositoryImpl(

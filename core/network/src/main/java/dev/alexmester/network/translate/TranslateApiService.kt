@@ -1,5 +1,6 @@
 package dev.alexmester.network.translate
 
+import dev.alexmester.network.endpoints.ApiRoutes
 import dev.alexmester.network.translate.dto.TranslateDataDto
 import dev.alexmester.network.translate.dto.TranslateRequestDto
 import io.ktor.client.HttpClient
@@ -21,7 +22,7 @@ class TranslateApiService(
         sourceLanguage: String? = null,
         targetLanguage: String,
     ): TranslateDataDto =
-        client.post("v2/translate") {
+        client.post(ApiRoutes.Translate.TRANSLATE) {
             contentType(ContentType.Application.Json)
             setBody(
                 TranslateRequestDto(

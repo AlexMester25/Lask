@@ -1,6 +1,7 @@
 package dev.alexmester.impl.data.remote
 
 import dev.alexmester.impl.data.remote.dto.SearchNewsResponseDto
+import dev.alexmester.network.endpoints.ApiRoutes
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -16,7 +17,7 @@ class ExploreApiService(
         offset: Int,
         number: Int,
     ): SearchNewsResponseDto =
-        client.get("search-news") {
+        client.get(ApiRoutes.News.SEARCH_NEWS) {
             parameter("text", text)
             parameter("text-match-indexes", "title")
             parameter("language", language)
