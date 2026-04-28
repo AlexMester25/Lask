@@ -79,9 +79,9 @@ class UserPreferencesDataSourceImpl(
         }
     }
 
-    override suspend fun updateAutoTranslateLanguage(languageCode: String) {
+    override suspend fun updateAutoTranslateLanguage(language: String) {
         dataStore.edit { prefs ->
-            prefs[KEY_AUTO_TRANSLATE_LANGUAGE] = languageCode
+            prefs[KEY_AUTO_TRANSLATE_LANGUAGE] = language
             prefs[KEY_AUTO_TRANSLATE_MANUALLY_SET] = true
         }
     }

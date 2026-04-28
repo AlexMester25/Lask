@@ -6,7 +6,9 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.ArticleListType
-import dev.alexmester.impl.domain.interactor.ProfileInteractor
+import dev.alexmester.impl.domain.usecase.ApplyEditChangesUseCase
+import dev.alexmester.impl.domain.usecase.ObserveProfileUseCase
+import dev.alexmester.impl.domain.usecase.UpdateStreakUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +20,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    private val profileInteractor: ProfileInteractor,
+    private val observeProfileUseCase: ObserveProfileUseCase,
+    private val updateStreakUseCase: UpdateStreakUseCase,
+    private val applyEditChangesUseCase: ApplyEditChangesUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -59,7 +63,7 @@ class ProfileViewModel(
     }
 
     private fun observeProfile() {
-        profileInteractor.observeProfile()
+        observeProfileUseCase()
             .onEach{ pair ->
                 Log.d("observeProfile", pair.first.toString())
                 _state.update { current ->
@@ -76,9 +80,7 @@ class ProfileViewModel(
     }
 
     private fun updateStreak() {
-        viewModelScope.launch {
-            profileInteractor.updateStreak()
-        }
+        viewModelScope.launch { updateStreakUseCase() }
     }
 
     private fun initEditMode(){
@@ -92,7 +94,7 @@ class ProfileViewModel(
 
     private fun applyEditChanges() {
         viewModelScope.launch {
-            profileInteractor.applyEditChanges(
+            applyEditChangesUseCase(
                 imageUri = _state.value.editAvatarUriDraft ?: _state.value.avatarUri,
                 name = _state.value.editNameDraft
             )

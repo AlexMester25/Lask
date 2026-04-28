@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.LocalePickerType
 import dev.alexmester.datastore.UserPreferencesDataSource
+import dev.alexmester.impl.domain.usecase.ObserveUserPreferencesUseCase
+import dev.alexmester.impl.domain.usecase.UpdateThemeUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +17,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SystemViewModel(
-    private val preferencesDataSource: UserPreferencesDataSource,
+    private val observeUserPreferencesUseCase: ObserveUserPreferencesUseCase,
+    private val updateThemeUseCase: UpdateThemeUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SystemState())
@@ -43,7 +46,7 @@ class SystemViewModel(
     }
 
     private fun observePreferences() {
-        preferencesDataSource.userPreferences
+        observeUserPreferencesUseCase()
             .onEach { prefs ->
                 _state.update {
                     it.copy(
@@ -68,7 +71,7 @@ class SystemViewModel(
                 AppTheme.LIGHT  -> false
                 AppTheme.DARK   -> true
             }
-            preferencesDataSource.updateTheme(isDark)
+            updateThemeUseCase(isDark)
         }
     }
 

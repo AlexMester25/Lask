@@ -3,17 +3,23 @@ package dev.alexmester.impl.presentation.interests.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.datastore.UserPreferencesDataSource
+import dev.alexmester.impl.domain.usecase.AddInterestUseCase
+import dev.alexmester.impl.domain.usecase.ObserveUserPreferencesUseCase
+import dev.alexmester.impl.domain.usecase.RemoveInterestUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-
 class InterestsViewModel(
-    private val preferencesDataSource: UserPreferencesDataSource,
+    private val observeUserPreferencesUseCase: ObserveUserPreferencesUseCase,
+    private val addInterestUseCase: AddInterestUseCase,
+    private val removeInterestUseCase: RemoveInterestUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(InterestsState())
@@ -23,11 +29,9 @@ class InterestsViewModel(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
-        viewModelScope.launch {
-            preferencesDataSource.userPreferences.collect { prefs ->
-                _state.update { it.copy(interests = prefs.interests) }
-            }
-        }
+        observeUserPreferencesUseCase().onEach { prefs ->
+            _state.update { it.copy(interests = prefs.interests) }
+        }.launchIn(viewModelScope)
     }
 
     fun handleIntent(intent: InterestsIntent) {
@@ -38,7 +42,7 @@ class InterestsViewModel(
             is InterestsIntent.Add -> addInterest()
 
             is InterestsIntent.Remove -> viewModelScope.launch {
-                preferencesDataSource.removeInterest(intent.keyword)
+                removeInterestUseCase(intent.keyword)
             }
 
             is InterestsIntent.Back ->
@@ -50,7 +54,7 @@ class InterestsViewModel(
         val keyword = _state.value.inputText.trim()
         if (keyword.isBlank()) return
         viewModelScope.launch {
-            preferencesDataSource.addInterest(keyword)
+            addInterestUseCase(keyword)
             _state.update { it.copy(inputText = "") }
         }
     }

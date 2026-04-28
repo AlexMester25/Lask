@@ -20,7 +20,7 @@ class FakeUserPreferencesDataSource : UserPreferencesDataSource {
     override suspend fun completeOnboarding() = Unit
     override suspend fun initLocaleFromDevice(country: String, language: String) = Unit
     override suspend fun updateLocaleManually(country: String, language: String) = Unit
-    override suspend fun updateAutoTranslateLanguage(languageCode: String) = Unit
+    override suspend fun updateAutoTranslateLanguage(language: String) = Unit
     override suspend fun updateTheme(isDark: Boolean?) = Unit
     override suspend fun updateProfileName(name: String) = Unit
     override suspend fun updateAvatarUri(uri: Uri?) = Unit

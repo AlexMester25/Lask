@@ -14,7 +14,7 @@ interface UserPreferencesDataSource {
 
     suspend fun updateLocaleManually(country: String, language: String)
 
-    suspend fun updateAutoTranslateLanguage(languageCode: String)
+    suspend fun updateAutoTranslateLanguage(language: String)
 
     suspend fun updateTheme(isDark: Boolean?)
 
