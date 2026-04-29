@@ -51,10 +51,8 @@ class InterestsViewModel(
     }
 
     private fun addInterest() {
-        val keyword = _state.value.inputText.trim()
-        if (keyword.isBlank()) return
         viewModelScope.launch {
-            addInterestUseCase(keyword)
+            addInterestUseCase(_state.value.inputText)
             _state.update { it.copy(inputText = "") }
         }
     }

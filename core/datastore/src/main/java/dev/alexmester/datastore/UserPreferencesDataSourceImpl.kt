@@ -22,7 +22,6 @@ import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_PROFILE_NAME
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_STREAK_COUNT
 import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.utils.constants.LaskConstants.ANONIM
-import dev.alexmester.utils.constants.LaskConstants.DELIMITER
 import dev.alexmester.utils.date.DateUtils.isYesterday
 import dev.alexmester.utils.statistic.StatisticUtils.MAX_LEVEL
 import dev.alexmester.utils.statistic.StatisticUtils.xpForLevel
@@ -46,10 +45,7 @@ class UserPreferencesDataSourceImpl(
             lastStreakDate = prefs[KEY_LAST_STREAK_DATE],
             currentXp = prefs[KEY_CURRENT_XP] ?: 0f,
             currentLevel = prefs[KEY_CURRENT_LEVEL] ?: 1,
-            interests = prefs[KEY_INTERESTS]
-                ?.split(DELIMITER)
-                ?.filter { it.isNotBlank() }
-                ?: emptyList(),
+            interests = prefs[KEY_INTERESTS] ?: emptySet(),
             autoTranslateLanguage = prefs[KEY_AUTO_TRANSLATE_LANGUAGE]
                 ?: SupportedLocales.FALLBACK_LANGUAGE,
             isAutoTranslateManuallySet = prefs[KEY_AUTO_TRANSLATE_MANUALLY_SET] ?: false,
@@ -85,7 +81,6 @@ class UserPreferencesDataSourceImpl(
             prefs[KEY_AUTO_TRANSLATE_MANUALLY_SET] = true
         }
     }
-
 
     override suspend fun updateTheme(isDark: Boolean?) {
         dataStore.edit { prefs ->
@@ -128,26 +123,23 @@ class UserPreferencesDataSourceImpl(
     }
 
     override suspend fun addInterest(keyword: String) {
+        val normalized = keyword.trim().lowercase()
+        if (normalized.isBlank()) return
+
         dataStore.edit { prefs ->
-            val current = prefs[KEY_INTERESTS]
-                ?.split(DELIMITER)
-                ?.filter { it.isNotBlank() }
-                ?.toMutableList()
-                ?: mutableListOf()
-            if (keyword.trim().isNotBlank() && keyword.trim() !in current) {
-                current.add(keyword.trim())
-                prefs[KEY_INTERESTS] = current.joinToString(DELIMITER)
+            val current = prefs[KEY_INTERESTS] ?: emptySet()
+            if (normalized !in current) {
+                prefs[KEY_INTERESTS] = current + normalized
             }
         }
     }
 
     override suspend fun removeInterest(keyword: String) {
         dataStore.edit { prefs ->
-            val current = prefs[KEY_INTERESTS]
-                ?.split(DELIMITER)
-                ?.filter { it.isNotBlank() && it != keyword }
-                ?: emptyList()
-            prefs[KEY_INTERESTS] = current.joinToString(DELIMITER)
+            val current = prefs[KEY_INTERESTS] ?: emptySet()
+            if (keyword in current) {
+                prefs[KEY_INTERESTS] = current - keyword
+            }
         }
     }
 

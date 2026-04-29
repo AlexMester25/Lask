@@ -4,6 +4,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 
 internal object UserPreferencesKeys {
     val KEY_DEFAULT_COUNTRY = stringPreferencesKey("default_country")
@@ -20,5 +21,5 @@ internal object UserPreferencesKeys {
     val KEY_LAST_STREAK_DATE = stringPreferencesKey("last_streak_date")
     val KEY_CURRENT_XP = floatPreferencesKey("current_xp")
     val KEY_CURRENT_LEVEL = intPreferencesKey("current_level")
-    val KEY_INTERESTS = stringPreferencesKey("interests")
+    val KEY_INTERESTS = stringSetPreferencesKey("interests")
 }

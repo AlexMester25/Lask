@@ -1,7 +1,7 @@
 package dev.alexmester.impl.presentation.interests.mvi
 
 data class InterestsState(
-    val interests: List<String> = emptyList(),
+    val interests: Set<String> = emptySet(),
     val inputText: String = "",
 ) {
     val canAdd: Boolean
