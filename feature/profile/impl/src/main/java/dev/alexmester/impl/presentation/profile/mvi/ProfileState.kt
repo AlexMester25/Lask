@@ -17,7 +17,7 @@ data class ProfileState(
     val level: Levels
         get() = when {
             currentLevel >= 50 -> Levels.LEVEL_5
-            currentLevel >= 20 -> Levels.LEVEL_4
+            currentLevel >= 25 -> Levels.LEVEL_4
             currentLevel >= 10 -> Levels.LEVEL_3
             currentLevel >= 5 -> Levels.LEVEL_2
             else -> Levels.LEVEL_1
