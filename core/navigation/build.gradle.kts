@@ -7,8 +7,3 @@ plugins {
 android {
     namespace = "dev.alexmester.navigation"
 }
-
-dependencies {
-    api(libs.androidx.navigation.compose)
-    api(libs.kotlinx.serialization.json)
-}
