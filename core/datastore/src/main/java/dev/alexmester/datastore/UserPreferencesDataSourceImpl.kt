@@ -24,10 +24,10 @@ import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.utils.constants.LaskConstants.ANONIM
 import dev.alexmester.utils.constants.LaskConstants.DELIMITER
 import dev.alexmester.utils.date.DateUtils.isYesterday
+import dev.alexmester.utils.statistic.StatisticUtils.MAX_LEVEL
 import dev.alexmester.utils.statistic.StatisticUtils.xpForLevel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-
 
 class UserPreferencesDataSourceImpl(
     private val dataStore: DataStore<Preferences>,
@@ -156,12 +156,19 @@ class UserPreferencesDataSourceImpl(
             var xp = (prefs[KEY_CURRENT_XP] ?: 0f) + xpDelta
             var level = prefs[KEY_CURRENT_LEVEL] ?: 1
 
-            while (true) {
+            while (level < MAX_LEVEL) {
                 val needed = xpForLevel(level)
+                if (needed <= 0f) break
+
                 if (xp >= needed) {
                     xp -= needed
                     level++
                 } else break
+            }
+
+            if (level >= MAX_LEVEL) {
+                level = MAX_LEVEL
+                xp = 0f
             }
 
             prefs[KEY_CURRENT_XP] = xp
