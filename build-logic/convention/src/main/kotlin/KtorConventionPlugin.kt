@@ -13,6 +13,7 @@ class KtorConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("ktor.client.content.negotiation").get())
                 add("implementation", libs.findLibrary("ktor.client.logging").get())
                 add("implementation", libs.findLibrary("ktor.serialization.kotlinx.json").get())
+                add("implementation", libs.findLibrary("logging.interceptor").get())
             }
         }
     }

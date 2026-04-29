@@ -58,11 +58,9 @@ dependencies {
     implementation(project(":feature:bookmarks:impl"))
     implementation(project(":feature:profile:impl"))
     implementation(project(":feature:search:impl"))
-
-
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.profileinstaller:profileinstaller:1.4.1")
+    
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.profileinstaller)
 
 //    "baselineProfile"(project(":macrobenchmark"))
 }
