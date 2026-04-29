@@ -1,15 +1,15 @@
 package dev.alexmester.impl
 
-import dev.alexmester.impl.domain.usecase.GetLastCachedAtUseCase
+import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-class GetLastCachedAtUseCaseTest {
+class GetCachedAtTrendsUseCaseTest {
 
     private val repository = FakeNewsFeedRepository()
-    private val useCase = GetLastCachedAtUseCase(repository)
+    private val useCase = GetCachedAtTrendsUseCase(repository)
 
     @Test
     fun `given no cached data, returns null`() = runTest {
