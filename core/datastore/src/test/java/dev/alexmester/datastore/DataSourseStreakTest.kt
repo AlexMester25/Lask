@@ -37,9 +37,6 @@ class DataSourseStreakTest {
 
     private suspend fun prefs() = dataSource.userPreferences.first()
 
-    /**
-     * Следует установить значение серии равным 1, если предыдущая дата отсутствует.
-     */
     @Test
     fun `should set streak to 1 when no previous date`() = runTest {
         dataSource.updateStreak("2026-04-25")

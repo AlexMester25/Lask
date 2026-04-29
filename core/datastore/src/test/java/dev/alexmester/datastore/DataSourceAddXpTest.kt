@@ -90,10 +90,7 @@ class DataSourceAddXpTest {
 
     @Test
     fun `given existing xp then accumulates correctly`() = runTest {
-        // сначала даём немного XP
         dataSource.addXp(5f)
-
-        // потом ещё
         dataSource.addXp(3f)
 
         val prefs = dataStore.data.first()
