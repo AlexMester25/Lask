@@ -24,9 +24,7 @@
 
 ### API
 - **https://worldnewsapi.com/**
-
 ---
-
 ## ✨ Key Features
 
 - **News Feed** — main feed of news and trends.
