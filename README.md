@@ -7,31 +7,19 @@
 ### Language and Platform
 - **Kotlin**
 - **Android (minSdk 26, targetSdk 36)**
-
-### UI
 - **Jetpack Compose**
 - **Material 3**
 - **Navigation Compose**
-
-### Architecture and State
 - **Modular Feature/Core Architecture**
 - **MVI Approach**
 - **Repository + UseCase**
-
-### DI
 - **Koin**
-
-### Data and Network
 - **Ktor Client**
 - **Kotlinx Serialization**
 - **Room** (local cache and user state)
 - **DataStore** (user settings)
-
-### Media and Images
 - **Coil 3**
 - **Media3 (ExoPlayer)**
-
-### Asynchrony and Utilities
 - **Kotlin Coroutines / Flow**
 
 ### API
