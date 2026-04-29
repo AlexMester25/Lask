@@ -43,10 +43,10 @@ class DataSourceAddXpTest {
         val delta = 5f // < 10
 
         dataSource.addXp(delta)
-        val prefs = dataStore.data.first()
+        val prefs = dataSource.userPreferences.first()
 
-        assertEquals(1, prefs[KEY_CURRENT_LEVEL])
-        assertEquals(5f, prefs[KEY_CURRENT_XP]!!, 0.0001f)
+        assertEquals(1, prefs.currentLevel)
+        assertEquals(5f, prefs.currentXp, 0.0001f)
     }
 
     @Test
@@ -54,10 +54,10 @@ class DataSourceAddXpTest {
         val delta = xpForLevel(1)
 
         dataSource.addXp(delta)
-        val prefs = dataStore.data.first()
+        val prefs = dataSource.userPreferences.first()
 
-        assertEquals(2, prefs[KEY_CURRENT_LEVEL])
-        assertEquals(0f, prefs[KEY_CURRENT_XP]!!, 0.0001f)
+        assertEquals(2, prefs.currentLevel)
+        assertEquals(0f, prefs.currentXp, 0.0001f)
     }
 
     @Test
@@ -65,10 +65,10 @@ class DataSourceAddXpTest {
         val delta = 40f
 
         dataSource.addXp(delta)
-        val prefs = dataStore.data.first()
+        val prefs = dataSource.userPreferences.first()
 
-        assertEquals(2, prefs[KEY_CURRENT_LEVEL])
-        assertEquals(30f, prefs[KEY_CURRENT_XP]!!, 0.0001f)
+        assertEquals(2, prefs.currentLevel)
+        assertEquals(30f, prefs.currentXp, 0.0001f)
     }
 
     @Test
@@ -76,16 +76,10 @@ class DataSourceAddXpTest {
         val delta = 200f
 
         dataSource.addXp(delta)
-        val prefs = dataStore.data.first()
+        val prefs = dataSource.userPreferences.first()
 
-        // считаем вручную:
-        // lvl1: 10 → осталось 190
-        // lvl2: ~35 → осталось 155
-        // lvl3: ~72 → осталось 83
-        // lvl4: ~121 → НЕ хватает
-
-        assertEquals(4, prefs[KEY_CURRENT_LEVEL])
-        assertEquals(83f, prefs[KEY_CURRENT_XP]!!, 1f)
+        assertEquals(4, prefs.currentLevel)
+        assertEquals(83f, prefs.currentXp, 1f)
     }
 
     @Test
@@ -93,10 +87,10 @@ class DataSourceAddXpTest {
         dataSource.addXp(5f)
         dataSource.addXp(3f)
 
-        val prefs = dataStore.data.first()
+        val prefs = dataSource.userPreferences.first()
 
-        assertEquals(1, prefs[KEY_CURRENT_LEVEL])
-        assertEquals(8f, prefs[KEY_CURRENT_XP]!!, 0.0001f)
+        assertEquals(1, prefs.currentLevel)
+        assertEquals(8f, prefs.currentXp, 0.0001f)
     }
 
     @Test
@@ -104,10 +98,10 @@ class DataSourceAddXpTest {
         dataSource.addXp(7f)
         dataSource.addXp(5f)
 
-        val prefs = dataStore.data.first()
+        val prefs = dataSource.userPreferences.first()
 
-        assertEquals(2, prefs[KEY_CURRENT_LEVEL])
-        assertEquals(2f, prefs[KEY_CURRENT_XP]!!, 0.0001f)
+        assertEquals(2, prefs.currentLevel)
+        assertEquals(2f, prefs.currentXp, 0.0001f)
     }
 
     @Test
@@ -117,9 +111,9 @@ class DataSourceAddXpTest {
         }
 
         dataSource.addXp(1000f)
-        val prefs = dataStore.data.first()
+        val prefs = dataSource.userPreferences.first()
 
-        assertEquals(50, prefs[KEY_CURRENT_LEVEL])
-        assertEquals(0f, prefs[KEY_CURRENT_XP]!!, 0.0001f)
+        assertEquals(50, prefs.currentLevel)
+        assertEquals(0f, prefs.currentXp, 0.0001f)
     }
 }

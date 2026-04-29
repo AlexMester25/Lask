@@ -30,11 +30,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewsFeedViewModel(
-    private val observeFeedClusters: ObserveTrendsUseCase,
-    private val refreshFeed: RefreshTrendsUseCase,
-    private val observeReadArticleIds: ObserveReadArticleIdsTrendsUseCase,
-    private val getCurrentLocale: GetCurrentLocaleTrendsUseCase,
-    private val getLastCachedAt: GetCachedAtTrendsUseCase,
+    private val observeFeedClustersUseCase: ObserveTrendsUseCase,
+    private val refreshFeedUseCase: RefreshTrendsUseCase,
+    private val observeReadArticleIdsUseCase: ObserveReadArticleIdsTrendsUseCase,
+    private val getCurrentLocaleUseCase: GetCurrentLocaleTrendsUseCase,
+    private val getLastCachedAtUseCase: GetCachedAtTrendsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<NewsFeedState>(NewsFeedState.Loading)
@@ -43,7 +43,7 @@ class NewsFeedViewModel(
     private val _sideEffects = Channel<NewsFeedSideEffect>(Channel.BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
 
-    val readArticleIds: StateFlow<Set<Long>> = observeReadArticleIds()
+    val readArticleIds: StateFlow<Set<Long>> = observeReadArticleIdsUseCase()
         .map { it.toSet() }
         .stateIn(
             scope = viewModelScope,
@@ -70,7 +70,7 @@ class NewsFeedViewModel(
     }
 
     private fun observeClusters() {
-        observeFeedClusters()
+        observeFeedClustersUseCase()
             .onEach { (clusters, prefs) ->
                 processClusterUpdate(
                     clusters = clusters,
@@ -117,7 +117,7 @@ class NewsFeedViewModel(
         _state.update {
             NewsFeedReducer.onClustersLoaded(
                 clusters = clusters,
-                lastCachedAt = getLastCachedAt(),
+                lastCachedAt = getLastCachedAtUseCase(),
                 country = country,
             )
         }
@@ -125,7 +125,7 @@ class NewsFeedViewModel(
 
     private fun requestFeedRefresh() {
         viewModelScope.launch {
-            handleRefreshResult(refreshFeed())
+            handleRefreshResult(refreshFeedUseCase())
         }
     }
 
@@ -139,7 +139,7 @@ class NewsFeedViewModel(
     private suspend fun handleRefreshSuccess(updatedItemsCount: Int) {
         if (updatedItemsCount != 0) return
 
-        val (country, language) = getCurrentLocale()
+        val (country, language) = getCurrentLocaleUseCase()
         val currentClusters = _state.value.contentOrNull?.clusters.orEmpty()
 
         if (currentClusters.isEmpty()) {

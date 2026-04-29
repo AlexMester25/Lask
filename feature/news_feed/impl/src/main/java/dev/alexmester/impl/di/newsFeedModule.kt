@@ -47,11 +47,11 @@ val newsFeedModule = module {
 
     viewModel {
         NewsFeedViewModel(
-            observeFeedClusters = get(),
-            refreshFeed = get(),
-            observeReadArticleIds = get(),
-            getCurrentLocale = get(),
-            getLastCachedAt = get(),
+            observeFeedClustersUseCase = get(),
+            refreshFeedUseCase = get(),
+            observeReadArticleIdsUseCase = get(),
+            getCurrentLocaleUseCase = get(),
+            getLastCachedAtUseCase = get(),
         )
     }
 }
