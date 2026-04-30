@@ -11,6 +11,7 @@ import dev.alexmester.impl.di.searchModule
 import dev.alexmester.lask.splash_screen.splashModule
 import dev.alexmester.lask.theme_switch.themeSwitchModule
 import dev.alexmester.network.di.networkModule
+import dev.alexmester.platform.dispatchers.platformModule
 
 object AppModules {
     val all = listOf(
@@ -22,6 +23,7 @@ object AppModules {
         networkModule,
         databaseModule,
         dataStoreModule,
+        platformModule,
         // Features
         newsFeedModule,
         exploreModule,
