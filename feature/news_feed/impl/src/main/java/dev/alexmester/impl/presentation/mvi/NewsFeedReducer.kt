@@ -1,6 +1,7 @@
 package dev.alexmester.newsfeed.impl.presentation.feed
 
 import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.models.news.NewsCluster
 
 object NewsFeedReducer {
@@ -22,10 +23,12 @@ object NewsFeedReducer {
         clusters: List<NewsCluster>,
         lastCachedAt: Long?,
         country: String,
+        language: String,
     ): NewsFeedState =
         NewsFeedState.Content(
             clusters = clusters,
             country = country,
+            language = language,
             lastCachedAt = lastCachedAt,
             contentState = ContentState.Idle,
         )

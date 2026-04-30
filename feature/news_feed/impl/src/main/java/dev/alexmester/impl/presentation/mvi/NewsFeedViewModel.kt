@@ -2,38 +2,47 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.impl.domain.usecase.GetCurrentLocaleTrendsUseCase
+import dev.alexmester.datastore.model.UserPreferences
 import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
-import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
+import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
-import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.result.AppResult
+import dev.alexmester.models.result.onFailure
+import dev.alexmester.models.result.onSuccess
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedIntent
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedReducer
+import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedReducer.reduce
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedSideEffect
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
 import dev.alexmester.newsfeed.impl.presentation.feed.contentOrNull
 import dev.alexmester.newsfeed.impl.presentation.feed.isOffline
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class NewsFeedViewModel(
     private val observeFeedClustersUseCase: ObserveTrendsUseCase,
     private val refreshFeedUseCase: RefreshTrendsUseCase,
     private val observeReadArticleIdsUseCase: ObserveReadArticleIdsTrendsUseCase,
-    private val getCurrentLocaleUseCase: GetCurrentLocaleTrendsUseCase,
     private val getLastCachedAtUseCase: GetCachedAtTrendsUseCase,
 ) : ViewModel() {
 
@@ -51,12 +60,8 @@ class NewsFeedViewModel(
             initialValue = emptySet(),
         )
 
-    private var selectedCountry: String? = null
-    private var selectedLanguage: String? = null
-    private var isInitialLoadHandled = false
-
     init {
-        observeClusters()
+        observeLocaleAndBootstrap()
     }
 
     fun handleIntent(intent: NewsFeedIntent) {
@@ -66,97 +71,77 @@ class NewsFeedViewModel(
             is NewsFeedIntent.ArticleClick -> emitSideEffect(
                 NewsFeedSideEffect.NavigateToArticle(intent.articleId, intent.articleUrl)
             )
+            else -> Unit
         }
     }
 
-    private fun observeClusters() {
-        observeFeedClustersUseCase()
-            .onEach { (clusters, prefs) ->
-                processClusterUpdate(
-                    clusters = clusters,
-                    country = prefs.defaultCountry,
-                    language = prefs.defaultLanguage
-                )
+    private fun observeLocaleAndBootstrap() {
+        val clustersFlow = observeFeedClustersUseCase()
+            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+
+        clustersFlow
+            .map { (_, prefs) -> prefs.defaultCountry to prefs.defaultLanguage }
+            .distinctUntilChanged()
+            .flatMapLatest { (country, language) ->
+                _state.value = NewsFeedState.Loading
+                requestFeedRefreshAndObserve(country, language, clustersFlow)
             }
             .launchIn(viewModelScope)
     }
 
-    private suspend fun processClusterUpdate(clusters: List<NewsCluster>, country: String, language: String) {
-        when {
-            isLocaleChanged(country,language) ->
-                handleLocaleChanged(country,language)
-            !isInitialLoadHandled -> initLoad(clusters, country,language)
-            else -> showCache(clusters, country)
-        }
-    }
+    private fun requestFeedRefreshAndObserve(
+        country: String,
+        language: String,
+        clustersFlow: SharedFlow<Pair<List<NewsCluster>, UserPreferences>>,
+    ): Flow<Unit> = flow {
+        handleRefreshResult(refreshFeedUseCase(), country, language)
 
-    private fun isLocaleChanged(newCountry: String, newLanguage: String): Boolean =
-        (selectedCountry != null && selectedCountry != newCountry) ||
-                (selectedLanguage != null &&  selectedLanguage != newLanguage)
-
-    private fun handleLocaleChanged(newCountry: String, newLanguage: String) {
-        selectedCountry = newCountry
-        selectedLanguage = newLanguage
-        isInitialLoadHandled = false
-        _state.update { NewsFeedState.Loading }
-        requestFeedRefresh()
-    }
-
-    private suspend fun initLoad(clusters: List<NewsCluster>, country: String, language: String) {
-        selectedCountry = country
-        selectedLanguage = language
-        isInitialLoadHandled = true
-        showCache(clusters, country)
-        requestFeedRefresh()
-    }
-
-    private suspend fun showCache(clusters: List<NewsCluster>, country: String) {
-        if (_state.value.isOffline) return
-        if (clusters.isEmpty()) return
-
-        _state.update {
-            NewsFeedReducer.onClustersLoaded(
-                clusters = clusters,
-                lastCachedAt = getLastCachedAtUseCase(),
-                country = country,
-            )
+        clustersFlow.collect { (clusters, _) ->
+            if (_state.value.isOffline) return@collect
+            if (clusters.isNotEmpty()) {
+                _state.update {
+                    NewsFeedReducer.onClustersLoaded(
+                        clusters = clusters,
+                        lastCachedAt = getLastCachedAtUseCase(),
+                        country = country,
+                        language = language
+                    )
+                }
+            }
         }
     }
 
     private fun requestFeedRefresh() {
         viewModelScope.launch {
-            handleRefreshResult(refreshFeedUseCase())
+            val country = _state.value.contentOrNull?.country ?: SupportedLocales.FALLBACK_COUNTRY
+            val language = _state.value.contentOrNull?.language ?: SupportedLocales.FALLBACK_LANGUAGE
+            handleRefreshResult(refreshFeedUseCase(), country, language)
         }
     }
 
-    private suspend fun handleRefreshResult(result: AppResult<Int>) {
-        when (result) {
-            is AppResult.Success -> handleRefreshSuccess(result.data)
-            is AppResult.Failure -> handleRefreshFailure(result.error)
+    private fun handleRefreshResult(
+        result: AppResult<Int>,
+        country: String,
+        language: String,
+    ) {
+        result.onSuccess { result ->
+            if (result == 0) {
+                val currentClusters = _state.value.contentOrNull?.clusters.orEmpty()
+                if (currentClusters.isEmpty()) {
+                    _state.update { NewsFeedReducer.onEmpty(country, language) }
+                }
+            }
+        }.onFailure { error ->
+            val currentState = _state.value
+            val newState = NewsFeedReducer.onNetworkError(
+                state = currentState,
+                error = error,
+                cachedClusters = currentState.contentOrNull?.clusters.orEmpty(),
+                lastCachedAt = currentState.contentOrNull?.lastCachedAt,
+            )
+            _state.update { newState }
+            emitSideEffect(NewsFeedSideEffect.ShowError(error))
         }
-    }
-
-    private suspend fun handleRefreshSuccess(updatedItemsCount: Int) {
-        if (updatedItemsCount != 0) return
-
-        val (country, language) = getCurrentLocaleUseCase()
-        val currentClusters = _state.value.contentOrNull?.clusters.orEmpty()
-
-        if (currentClusters.isEmpty()) {
-            _state.update { NewsFeedReducer.onEmpty(country, language) }
-        }
-    }
-
-    private fun handleRefreshFailure(error: NetworkError) {
-        val currentState = _state.value
-        val newState = NewsFeedReducer.onNetworkError(
-            state = currentState,
-            error = error,
-            cachedClusters = currentState.contentOrNull?.clusters.orEmpty(),
-            lastCachedAt = currentState.contentOrNull?.lastCachedAt,
-        )
-        _state.update { newState }
-        emitSideEffect(NewsFeedSideEffect.ShowError(error))
     }
 
     private fun emitSideEffect(effect: NewsFeedSideEffect) {
