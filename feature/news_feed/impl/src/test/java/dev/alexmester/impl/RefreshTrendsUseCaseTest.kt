@@ -1,6 +1,5 @@
 package dev.alexmester.impl
 
-import dev.alexmester.datastore.model.UserPreferences
 import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.result.AppResult
@@ -13,14 +12,12 @@ import org.junit.Test
 class RefreshTrendsUseCaseTest {
 
     private val repository = FakeNewsFeedRepository()
-    private val prefsSource = FakeUserPreferencesDataSource()
     private lateinit var useCase: RefreshTrendsUseCase
 
     @Before
     fun setUp() {
         useCase = RefreshTrendsUseCase(
             repository = repository,
-            preferencesDataSource = prefsSource,
         )
     }
 
@@ -35,26 +32,9 @@ class RefreshTrendsUseCaseTest {
     }
 
     @Test
-    fun `given default prefs, passes fallback country and language to repository`() = runTest {
-        useCase()
-
-        assertEquals("us", repository.lastRefreshCountry)
-        assertEquals("en", repository.lastRefreshLanguage)
-    }
-
-    @Test
-    fun `given custom prefs, passes configured country and language to repository`() = runTest {
-        prefsSource.emit(UserPreferences(defaultCountry = "de", defaultLanguage = "de"))
-
-        useCase()
-
-        assertEquals("de", repository.lastRefreshCountry)
-        assertEquals("de", repository.lastRefreshLanguage)
-    }
-
-    @Test
-    fun `given repo returns NoInternet, propagates Failure with NoInternet error`() = runTest {
-        repository.refreshResult = AppResult.Failure(NetworkError.NoInternet())
+    fun `given repo returns NoInternet, propagates Failure`() = runTest {
+        repository.refreshResult =
+            AppResult.Failure(NetworkError.NoInternet())
 
         val result = useCase()
 
@@ -63,8 +43,9 @@ class RefreshTrendsUseCaseTest {
     }
 
     @Test
-    fun `given repo returns RateLimit, propagates Failure with RateLimit error`() = runTest {
-        repository.refreshResult = AppResult.Failure(NetworkError.RateLimit(retryAfterSeconds = 60))
+    fun `given repo returns RateLimit, propagates Failure`() = runTest {
+        repository.refreshResult =
+            AppResult.Failure(NetworkError.RateLimit(retryAfterSeconds = 60))
 
         val result = useCase()
 
@@ -74,7 +55,7 @@ class RefreshTrendsUseCaseTest {
     }
 
     @Test
-    fun `when called sequentially, executes both calls`() = runTest {
+    fun `when called sequentially, increments refresh count`() = runTest {
         repository.refreshResult = AppResult.Success(10)
 
         useCase()
