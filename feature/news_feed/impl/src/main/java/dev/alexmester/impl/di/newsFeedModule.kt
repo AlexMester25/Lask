@@ -4,7 +4,6 @@ import dev.alexmester.impl.data.local.NewsFeedLocalDataSource
 import dev.alexmester.impl.data.remote.NewsFeedApiService
 import dev.alexmester.impl.data.repository.NewsFeedRepositoryImpl
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
-import dev.alexmester.impl.domain.usecase.GetCurrentLocaleTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
@@ -34,23 +33,19 @@ val newsFeedModule = module {
         NewsFeedRepositoryImpl(
             remote = get(),
             local = get(),
-            preferencesDataSource = get()
         )
     }
 
     factory { ObserveTrendsUseCase(repository = get(), preferencesDataSource = get()) }
     factory { ObserveReadArticleIdsTrendsUseCase(repository = get()) }
-    factory { GetCurrentLocaleTrendsUseCase(repository = get()) }
     factory { GetCachedAtTrendsUseCase(repository = get()) }
     single { RefreshTrendsUseCase(repository = get(), preferencesDataSource = get()) }
-
 
     viewModel {
         NewsFeedViewModel(
             observeFeedClustersUseCase = get(),
             refreshFeedUseCase = get(),
             observeReadArticleIdsUseCase = get(),
-            getCurrentLocaleUseCase = get(),
             getLastCachedAtUseCase = get(),
         )
     }

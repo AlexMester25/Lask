@@ -45,8 +45,6 @@ class FakeNewsFeedRepository : NewsFeedRepository {
     }
 
     override suspend fun getLastCachedAt(): Long? = lastCachedAt
-
-    override suspend fun getCurrentLocale(): Pair<String, String>  = currentLocale
 }
 
 // ── Test builders ─────────────────────────────────────────────────────────────

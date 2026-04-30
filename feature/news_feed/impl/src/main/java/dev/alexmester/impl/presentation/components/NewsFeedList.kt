@@ -38,8 +38,6 @@ internal fun NewsFeedList(
                 items = cluster.articles,
                 key = { it.id },
             ) { article ->
-                val isLast = article == cluster.articles.last()
-
                 LaskArticleCard(
                     modifier = Modifier.animateItem(),
                     article = article,

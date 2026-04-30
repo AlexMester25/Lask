@@ -1,6 +1,7 @@
 package dev.alexmester.newsfeed.impl.presentation.feed
 
 import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.models.news.NewsCluster
 
 sealed interface NewsFeedState {
@@ -11,13 +12,14 @@ sealed interface NewsFeedState {
         ) : NewsFeedState
     data class Content(
         val clusters: List<NewsCluster>,
-        val country: String = "en",
+        val country: String = SupportedLocales.FALLBACK_COUNTRY,
+        val language: String = SupportedLocales.FALLBACK_LANGUAGE,
         val lastCachedAt: Long? = null,
         val contentState: ContentState = ContentState.Idle,
     ) : NewsFeedState
     data class Empty(
-        val country: String = "en",
-        val language: String = "us",
+        val country: String = SupportedLocales.FALLBACK_COUNTRY,
+        val language: String = SupportedLocales.FALLBACK_LANGUAGE,
         val isRefreshing: Boolean = false,
     ) : NewsFeedState
 }

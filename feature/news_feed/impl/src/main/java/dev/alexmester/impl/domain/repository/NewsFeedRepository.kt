@@ -16,6 +16,4 @@ interface NewsFeedRepository {
     ): AppResult<Int>
 
     suspend fun getLastCachedAt(): Long?
-
-    suspend fun getCurrentLocale(): Pair<String, String>
 }

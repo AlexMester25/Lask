@@ -7,13 +7,9 @@ import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
-import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.models.result.onFailure
-import dev.alexmester.models.result.onSuccess
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedIntent
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedReducer
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedReducer.reduce
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedSideEffect
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
@@ -21,17 +17,21 @@ import dev.alexmester.newsfeed.impl.presentation.feed.contentOrNull
 import dev.alexmester.newsfeed.impl.presentation.feed.isOffline
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -52,6 +52,8 @@ class NewsFeedViewModel(
     private val _sideEffects = Channel<NewsFeedSideEffect>(Channel.BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
 
+    private val _refreshTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
     val readArticleIds: StateFlow<Set<Long>> = observeReadArticleIdsUseCase()
         .map { it.toSet() }
         .stateIn(
@@ -62,12 +64,13 @@ class NewsFeedViewModel(
 
     init {
         observeLocaleAndBootstrap()
+        observeManualRefresh()
     }
 
     fun handleIntent(intent: NewsFeedIntent) {
-        _state.update { NewsFeedReducer.reduce(it, intent) }
+        _state.update { reduce(it, intent) }
         when (intent) {
-            is NewsFeedIntent.Refresh -> requestFeedRefresh()
+            is NewsFeedIntent.Refresh -> _refreshTrigger.tryEmit(Unit)
             is NewsFeedIntent.ArticleClick -> emitSideEffect(
                 NewsFeedSideEffect.NavigateToArticle(intent.articleId, intent.articleUrl)
             )
@@ -84,37 +87,45 @@ class NewsFeedViewModel(
             .distinctUntilChanged()
             .flatMapLatest { (country, language) ->
                 _state.value = NewsFeedState.Loading
-                requestFeedRefreshAndObserve(country, language, clustersFlow)
+                bootstrapAndObserve(country, language, clustersFlow)
             }
             .launchIn(viewModelScope)
     }
 
-    private fun requestFeedRefreshAndObserve(
+    private fun observeManualRefresh() {
+        _refreshTrigger
+            .onEach {
+                val content = _state.value.contentOrNull
+                val country = content?.country ?: "us"
+                val language = content?.language ?: "en"
+                handleRefreshResult(refreshFeedUseCase(), country, language)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun bootstrapAndObserve(
         country: String,
         language: String,
         clustersFlow: SharedFlow<Pair<List<NewsCluster>, UserPreferences>>,
     ): Flow<Unit> = flow {
-        handleRefreshResult(refreshFeedUseCase(), country, language)
-
-        clustersFlow.collect { (clusters, _) ->
-            if (_state.value.isOffline) return@collect
-            if (clusters.isNotEmpty()) {
-                _state.update {
-                    NewsFeedReducer.onClustersLoaded(
-                        clusters = clusters,
-                        lastCachedAt = getLastCachedAtUseCase(),
-                        country = country,
-                        language = language
-                    )
+        coroutineScope {
+            // Подписка на кэш — показывает данные сразу как они есть
+            launch {
+                clustersFlow.collect { (clusters, _) ->
+                    if (_state.value.isOffline) return@collect
+                    if (clusters.isNotEmpty()) {
+                        handleIntent(
+                            NewsFeedIntent.ClustersLoaded(
+                                clusters = clusters,
+                                country = country,
+                                language = language,
+                                lastCachedAt = getLastCachedAtUseCase(),
+                            )
+                        )
+                    }
                 }
             }
-        }
-    }
-
-    private fun requestFeedRefresh() {
-        viewModelScope.launch {
-            val country = _state.value.contentOrNull?.country ?: SupportedLocales.FALLBACK_COUNTRY
-            val language = _state.value.contentOrNull?.language ?: SupportedLocales.FALLBACK_LANGUAGE
+            // Refresh идёт параллельно — кэш уже виден пока грузится сеть
             handleRefreshResult(refreshFeedUseCase(), country, language)
         }
     }
@@ -124,23 +135,22 @@ class NewsFeedViewModel(
         country: String,
         language: String,
     ) {
-        result.onSuccess { result ->
-            if (result == 0) {
-                val currentClusters = _state.value.contentOrNull?.clusters.orEmpty()
-                if (currentClusters.isEmpty()) {
-                    _state.update { NewsFeedReducer.onEmpty(country, language) }
-                }
+        val content = _state.value.contentOrNull
+        when (result) {
+            is AppResult.Success -> {
+                handleIntent(NewsFeedIntent.RefreshSuccess(result.data, country, language))
+                handleIntent(NewsFeedIntent.RefreshComplete)
             }
-        }.onFailure { error ->
-            val currentState = _state.value
-            val newState = NewsFeedReducer.onNetworkError(
-                state = currentState,
-                error = error,
-                cachedClusters = currentState.contentOrNull?.clusters.orEmpty(),
-                lastCachedAt = currentState.contentOrNull?.lastCachedAt,
-            )
-            _state.update { newState }
-            emitSideEffect(NewsFeedSideEffect.ShowError(error))
+            is AppResult.Failure -> {
+                handleIntent(
+                    NewsFeedIntent.RefreshFailure(
+                        error = result.error,
+                        cachedClusters = content?.clusters.orEmpty(),
+                        lastCachedAt = content?.lastCachedAt,
+                    )
+                )
+                emitSideEffect(NewsFeedSideEffect.ShowError(result.error))
+            }
         }
     }
 
@@ -148,3 +158,4 @@ class NewsFeedViewModel(
         viewModelScope.launch { _sideEffects.send(effect) }
     }
 }
+

@@ -24,11 +24,6 @@ class NewsFeedLocalDataSource(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
 
-    /**
-     * Flow кластеров ленты с актуальным user state.
-     * Обновляется автоматически при любом изменении feed_cache,
-     * articles или article_user_state.
-     */
     fun observeFeedClusters(): Flow<List<NewsCluster>> =
         feedCacheDao.observeFeedWithState(TRENDS_FEED)
             .map { rows -> rows.toClusters() }
@@ -41,15 +36,6 @@ class NewsFeedLocalDataSource(
             feedCacheDao.getLastCachedAt(TRENDS_FEED)
         }
 
-    /**
-     * Атомарная замена ленты:
-     * 1. Удаляем старый feed_cache для FEED_TOP
-     * 2. Вставляем новые articles с IGNORE (не затираем существующие)
-     * 3. Вставляем новый feed_cache с REPLACE
-     * 4. Удаляем orphaned articles (нет в cache и нет активного user state)
-     *
-     * Всё в одной транзакции — UI никогда не увидит пустую ленту.
-     */
     suspend fun replaceFeedCache(
         articles: List<ArticleEntity>,
         feedCache: List<FeedCacheEntity>,

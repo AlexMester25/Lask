@@ -17,7 +17,6 @@ import kotlinx.coroutines.withContext
 class NewsFeedRepositoryImpl(
     private val remote: NewsFeedApiService,
     private val local: NewsFeedLocalDataSource,
-    private val preferencesDataSource: UserPreferencesDataSource,
 ) : NewsFeedRepository {
 
     override fun observeFeedClusters(): Flow<List<NewsCluster>> =
@@ -42,9 +41,4 @@ class NewsFeedRepositoryImpl(
 
     override suspend fun getLastCachedAt(): Long? =
         local.getLastCachedAt()
-
-    override suspend fun getCurrentLocale(): Pair<String, String> {
-        val prefs = preferencesDataSource.userPreferences.first()
-        return prefs.defaultCountry to prefs.defaultLanguage
-    }
 }
