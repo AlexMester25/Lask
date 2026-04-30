@@ -1,62 +1,61 @@
 package dev.alexmester.newsfeed.impl.presentation.feed
 
+import dev.alexmester.impl.domain.model.FeedResult
 import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.news.NewsCluster
+
 
 object NewsFeedReducer {
 
-    fun reduce(state: NewsFeedState, intent: NewsFeedIntent): NewsFeedState = when (intent) {
+    fun reduce(
+        clusters: List<NewsCluster>,
+        feedResult: FeedResult,
+        country: String,
+        language: String,
+        lastCachedAt: Long?,
+    ): NewsFeedState = when (feedResult) {
 
-        is NewsFeedIntent.Refresh -> when (state) {
-            is NewsFeedState.Content -> state.copy(contentState = ContentState.Refreshing)
-            is NewsFeedState.Error -> state.copy(isRefreshing = true)
-            is NewsFeedState.Empty -> state.copy(isRefreshing = true)
-            else -> state
+        is FeedResult.Loading -> when {
+            clusters.isNotEmpty() -> NewsFeedState.Content(
+                clusters = clusters,
+                country = country,
+                language = language,
+                lastCachedAt = lastCachedAt,
+                contentState = ContentState.Refreshing,
+            )
+            else -> NewsFeedState.Loading
         }
 
-        is NewsFeedIntent.ClustersLoaded -> NewsFeedState.Content(
-            clusters = intent.clusters,
-            country = intent.country,
-            language = intent.language,
-            lastCachedAt = intent.lastCachedAt,
-            contentState = ContentState.Idle,
-        )
-
-        is NewsFeedIntent.RefreshSuccess -> when {
-            intent.count == 0 && state.contentOrNull?.clusters.isNullOrEmpty() ->
-                NewsFeedState.Empty(
-                    country = intent.country,
-                    language = intent.language,
-                    isRefreshing = false,
-                )
-            else -> state
+        is FeedResult.Success -> when {
+            clusters.isNotEmpty() -> NewsFeedState.Content(
+                clusters = clusters,
+                country = country,
+                language = language,
+                lastCachedAt = lastCachedAt,
+                contentState = ContentState.Idle,
+            )
+            else -> NewsFeedState.Empty(country = country, language = language)
         }
 
-        is NewsFeedIntent.RefreshComplete -> when (state) {
-            is NewsFeedState.Content -> state.copy(contentState = ContentState.Idle)
-            is NewsFeedState.Empty -> state.copy(isRefreshing = false)
-            is NewsFeedState.Error -> state.copy(isRefreshing = false)
-            else -> state
-        }
-
-        is NewsFeedIntent.RefreshFailure -> when {
-            // Нет интернета и есть кэш — показываем offline баннер
-            intent.error is NetworkError.NoInternet && intent.cachedClusters.isNotEmpty() ->
+        is FeedResult.Error -> when {
+            feedResult.error is NetworkError.NoInternet && clusters.isNotEmpty() ->
                 NewsFeedState.Content(
-                    clusters = intent.cachedClusters,
-                    country = state.contentOrNull?.country ?: "us",
-                    language = state.contentOrNull?.language ?: "en",
-                    lastCachedAt = intent.lastCachedAt,
-                    contentState = ContentState.Offline(intent.lastCachedAt),
+                    clusters = clusters,
+                    country = country,
+                    language = language,
+                    lastCachedAt = lastCachedAt,
+                    contentState = ContentState.Offline(lastCachedAt),
                 )
-            // Стейт уже Content (кэш показан) — не перекрываем ошибкой,
-            // только сбрасываем refreshing, ошибка уйдёт через sideEffect
-            state is NewsFeedState.Content ->
-                state.copy(contentState = ContentState.Idle)
-            // Кэша нет совсем — показываем экран ошибки
-            else ->
-                NewsFeedState.Error(errorType = intent.error, isRefreshing = false)
+            clusters.isNotEmpty() -> NewsFeedState.Content(
+                clusters = clusters,
+                country = country,
+                language = language,
+                lastCachedAt = lastCachedAt,
+                contentState = ContentState.Idle,
+            )
+            else -> NewsFeedState.Error(errorType = feedResult.error)
         }
 
-        is NewsFeedIntent.ArticleClick -> state
+        is FeedResult.Idle -> NewsFeedState.Loading
     }
 }
