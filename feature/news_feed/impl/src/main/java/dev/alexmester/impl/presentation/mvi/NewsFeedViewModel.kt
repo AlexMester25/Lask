@@ -14,10 +14,8 @@ import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedSideEffect
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -25,21 +23,18 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NewsFeedViewModel(
-    private val observeFeedClustersUseCase: ObserveTrendsUseCase,
-    private val refreshFeedUseCase: RefreshTrendsUseCase,
+    private val observeTrendsUseCase: ObserveTrendsUseCase,
+    private val refreshTrendsUseCase: RefreshTrendsUseCase,
     private val observeReadArticleIdsUseCase: ObserveReadArticleIdsTrendsUseCase,
-    private val getLastCachedAtUseCase: GetCachedAtTrendsUseCase,
+    private val getCachedAtTrendsUseCase: GetCachedAtTrendsUseCase,
 ) : ViewModel() {
 
     // -------------------- SIDE EFFECTS --------------------
@@ -62,7 +57,7 @@ class NewsFeedViewModel(
 
     // -------------------- BASE FLOWS --------------------
 
-    private val clustersFlow = observeFeedClustersUseCase()
+    private val clustersFlow = observeTrendsUseCase()
         .shareIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -70,11 +65,14 @@ class NewsFeedViewModel(
         )
 
     private val localeFlow = clustersFlow
-        .map { (_, prefs) -> prefs.defaultCountry to prefs.defaultLanguage }
+        .map { combineData ->
+            combineData.preferences.defaultCountry to
+                    combineData.preferences.defaultLanguage
+        }
         .distinctUntilChanged()
 
     private val lastCachedAtFlow = flow {
-        emit(getLastCachedAtUseCase())
+        emit(getCachedAtTrendsUseCase())
     }
 
     // -------------------- REFRESH PIPELINE --------------------
@@ -86,7 +84,7 @@ class NewsFeedViewModel(
         .flatMapLatest {
             flow {
                 emit(FeedResult.Loading)
-                val result = refreshFeedUseCase()
+                val result = refreshTrendsUseCase()
                 emit(
                     when (result) {
                         is AppResult.Success -> FeedResult.Success
@@ -104,13 +102,13 @@ class NewsFeedViewModel(
         clustersFlow,
         refreshFlow,
         lastCachedAtFlow
-    ) { (clusters, prefs), feedResult, lastCachedAt ->
+    ) { combineData , feedResult, lastCachedAt ->
 
         NewsFeedReducer.reduce(
-            clusters = clusters,
+            clusters = combineData.clusters,
             feedResult = feedResult,
-            country = prefs.defaultCountry,
-            language = prefs.defaultLanguage,
+            country = combineData.preferences.defaultCountry,
+            language = combineData.preferences.defaultLanguage,
             lastCachedAt = lastCachedAt,
         )
     }

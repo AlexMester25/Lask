@@ -1,5 +1,6 @@
 package dev.alexmester.impl
 
+import dev.alexmester.datastore.model.UserPreferences
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.news.NewsCluster
@@ -12,18 +13,37 @@ class FakeNewsFeedRepository : NewsFeedRepository {
 
     private val _clusters = MutableStateFlow<List<NewsCluster>>(emptyList())
     private val _readIds = MutableStateFlow<List<Long>>(emptyList())
+    private val _userPrefs = MutableStateFlow(
+        UserPreferences(
+            defaultCountry = "us",
+            defaultLanguage = "en"
+        )
+    )
 
     var refreshResult: AppResult<Int> = AppResult.Success(10)
     var lastCachedAt: Long? = null
-    var currentLocale: Pair<String, String> = "us" to "en"
     var refreshCallCount: Int = 0
         private set
 
-    var lastRefreshCountry: String? = null
-        private set
+    override fun observeFeedClusters(): Flow<List<NewsCluster>> =
+        _clusters.asStateFlow()
 
-    var lastRefreshLanguage: String? = null
-        private set
+    override fun observeReadArticleIds(): Flow<List<Long>> =
+        _readIds.asStateFlow()
+
+    override fun observeUserPreferences(): Flow<UserPreferences> =
+        _userPrefs.asStateFlow()
+
+    override suspend fun refreshFeed(): AppResult<Int> {
+        refreshCallCount++
+        return refreshResult
+    }
+
+    override suspend fun getLastCachedAt(): Long? = lastCachedAt
+
+    fun emitUserPreferences(prefs: UserPreferences) {
+        _userPrefs.value = prefs
+    }
 
     fun emitClusters(clusters: List<NewsCluster>) {
         _clusters.value = clusters
@@ -32,19 +52,6 @@ class FakeNewsFeedRepository : NewsFeedRepository {
     fun emitReadIds(ids: List<Long>) {
         _readIds.value = ids
     }
-
-    override fun observeFeedClusters(): Flow<List<NewsCluster>> = _clusters.asStateFlow()
-
-    override fun observeReadArticleIds(): Flow<List<Long>> = _readIds.asStateFlow()
-
-    override suspend fun refreshFeed(country: String, language: String): AppResult<Int> {
-        refreshCallCount++
-        lastRefreshCountry = country
-        lastRefreshLanguage = language
-        return refreshResult
-    }
-
-    override suspend fun getLastCachedAt(): Long? = lastCachedAt
 }
 
 // ── Test builders ─────────────────────────────────────────────────────────────

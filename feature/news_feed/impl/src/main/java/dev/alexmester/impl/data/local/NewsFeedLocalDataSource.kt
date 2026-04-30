@@ -21,7 +21,6 @@ class NewsFeedLocalDataSource(
     private val articleDao: ArticleDao,
     private val feedCacheDao: FeedCacheDao,
     private val userStateDao: ArticleUserStateDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
 
     fun observeFeedClusters(): Flow<List<NewsCluster>> =
@@ -32,19 +31,15 @@ class NewsFeedLocalDataSource(
         userStateDao.observeReadArticleIds()
 
     suspend fun getLastCachedAt(): Long? =
-        withContext(ioDispatcher) {
-            feedCacheDao.getLastCachedAt(TRENDS_FEED)
-        }
+        feedCacheDao.getLastCachedAt(TRENDS_FEED)
 
     suspend fun replaceFeedCache(
         articles: List<ArticleEntity>,
         feedCache: List<FeedCacheEntity>,
-    ) = withContext(ioDispatcher) {
-        db.withTransaction {
-            feedCacheDao.clearFeed(TRENDS_FEED)
-            articleDao.insertArticles(articles)
-            feedCacheDao.insertFeedCache(feedCache)
-            articleDao.deleteOrphaned()
-        }
+    ) = db.withTransaction {
+        feedCacheDao.clearFeed(TRENDS_FEED)
+        articleDao.insertArticles(articles)
+        feedCacheDao.insertFeedCache(feedCache)
+        articleDao.deleteOrphaned()
     }
 }

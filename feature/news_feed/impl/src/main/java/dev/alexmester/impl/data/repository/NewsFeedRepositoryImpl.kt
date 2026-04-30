@@ -2,6 +2,7 @@ package dev.alexmester.impl.data.repository
 
 import dev.alexmester.database.entity.FeedCacheEntity.Companion.TRENDS_FEED
 import dev.alexmester.datastore.UserPreferencesDataSource
+import dev.alexmester.datastore.model.UserPreferences
 import dev.alexmester.impl.data.local.NewsFeedLocalDataSource
 import dev.alexmester.impl.data.mapper.toEntities
 import dev.alexmester.impl.data.remote.NewsFeedApiService
@@ -9,15 +10,21 @@ import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.network.extension.safeApiCall
-import kotlinx.coroutines.Dispatchers
+import dev.alexmester.platform.dispatchers.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 class NewsFeedRepositoryImpl(
     private val remote: NewsFeedApiService,
     private val local: NewsFeedLocalDataSource,
+    private val preferencesDataSource: UserPreferencesDataSource,
+    private val dispatchers: DispatcherProvider,
 ) : NewsFeedRepository {
+
+    private val mutex = Mutex()
 
     override fun observeFeedClusters(): Flow<List<NewsCluster>> =
         local.observeFeedClusters()
@@ -25,20 +32,31 @@ class NewsFeedRepositoryImpl(
     override fun observeReadArticleIds(): Flow<List<Long>> =
         local.observeReadArticleIds()
 
-    override suspend fun refreshFeed(
-        country: String,
-        language: String,
-    ): AppResult<Int> = safeApiCall {
-        val response = remote.getTopNews(sourceCountry = country, language = language)
+    override fun observeUserPreferences(): Flow<UserPreferences> =
+        preferencesDataSource.userPreferences
 
-        val (articles, feedCache) = withContext(Dispatchers.Default) {
-            response.topNews.toEntities(TRENDS_FEED)
+    override suspend fun refreshFeed(): AppResult<Int> =
+        mutex.withLock {
+            withContext(dispatchers.io) {
+                safeApiCall {
+                    val prefs = preferencesDataSource.userPreferences.first()
+                    val response = remote.getTopNews(
+                        sourceCountry = prefs.defaultCountry,
+                        language = prefs.defaultLanguage
+                    )
+
+                    val (articles, feedCache) = withContext(dispatchers.default) {
+                        response.topNews.toEntities(TRENDS_FEED)
+                    }
+
+                    local.replaceFeedCache(articles = articles, feedCache = feedCache)
+                    response.topNews.size
+                }
+            }
         }
 
-        local.replaceFeedCache(articles = articles, feedCache = feedCache)
-        response.topNews.size
-    }
-
     override suspend fun getLastCachedAt(): Long? =
-        local.getLastCachedAt()
+        withContext(dispatchers.io) {
+            local.getLastCachedAt()
+        }
 }
