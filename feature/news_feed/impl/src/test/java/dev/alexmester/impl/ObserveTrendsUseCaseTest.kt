@@ -3,97 +3,152 @@ package dev.alexmester.impl
 import app.cash.turbine.test
 import dev.alexmester.datastore.model.UserPreferences
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
+import dev.alexmester.models.news.NewsCluster
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 class ObserveTrendsUseCaseTest {
 
     private val repository = FakeNewsFeedRepository()
-    private val prefsSource = FakeUserPreferencesDataSource()
     private lateinit var useCase: ObserveTrendsUseCase
 
     @Before
     fun setUp() {
         useCase = ObserveTrendsUseCase(
             repository = repository,
-            preferencesDataSource = prefsSource,
         )
     }
 
     @Test
-    fun `given empty cache, emits empty clusters paired with current prefs`() = runTest {
-        useCase().test {
-            val (clusters, prefs) = awaitItem()
+    fun `should emit combined data when both flows have values`() = runTest {
+        val clusters = listOf(buildCluster(1))
+        val prefs = UserPreferences("de", "de")
 
-            assertTrue(clusters.isEmpty())
-            assertEquals("us", prefs.defaultCountry)
-            assertEquals("en", prefs.defaultLanguage)
+        repository.emitClusters(clusters)
+        repository.emitUserPreferences(prefs)
+
+        useCase().test {
+            val item = awaitItem()
+
+            assertEquals(clusters, item.clusters)
+            assertEquals(prefs, item.preferences)
+
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `given clusters in repo, emits clusters paired with current prefs`() = runTest {
-        val inputClusters = listOf(buildCluster(1), buildCluster(2))
-        repository.emitClusters(inputClusters)
+    fun `should emit new value when clusters change`() = runTest {
+        val prefs = UserPreferences("us", "en")
+        repository.emitUserPreferences(prefs)
+
+        val cluster1 = listOf(buildCluster(1))
+        val cluster2 = listOf(buildCluster(2))
+
+        repository.emitClusters(cluster1)
 
         useCase().test {
-            val (clusters, prefs) = awaitItem()
+            val first = awaitItem()
+            assertEquals(cluster1, first.clusters)
 
-            assertEquals(inputClusters, clusters)
-            assertEquals("us", prefs.defaultCountry)
+            repository.emitClusters(cluster2)
+
+            val second = awaitItem()
+            assertEquals(cluster2, second.clusters)
+            assertEquals(prefs, second.preferences)
+
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `when prefs change, re-emits with updated prefs keeping same clusters`() = runTest {
-        val inputClusters = listOf(buildCluster(1))
-        repository.emitClusters(inputClusters)
+    fun `should emit new value when preferences change`() = runTest {
+        val clusters = listOf(buildCluster(1))
+        repository.emitClusters(clusters)
+
+        val prefs1 = UserPreferences("us", "en")
+        val prefs2 = UserPreferences("de", "de")
+
+        repository.emitUserPreferences(prefs1)
 
         useCase().test {
-            awaitItem()
+            val first = awaitItem()
+            assertEquals(prefs1, first.preferences)
 
-            prefsSource.emit(UserPreferences(defaultCountry = "gb", defaultLanguage = "en"))
-            val (clusters, updatedPrefs) = awaitItem()
+            repository.emitUserPreferences(prefs2)
 
-            assertEquals(inputClusters, clusters)
-            assertEquals("gb", updatedPrefs.defaultCountry)
+            val second = awaitItem()
+            assertEquals(prefs2, second.preferences)
+            assertEquals(clusters, second.clusters)
+
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `when clusters change, re-emits with updated clusters keeping same prefs`() = runTest {
+    fun `should always combine latest values`() = runTest {
+        val cluster1 = listOf(buildCluster(1))
+        val cluster2 = listOf(buildCluster(2))
+
+        val prefs1 = UserPreferences("us", "en")
+        val prefs2 = UserPreferences("fr", "fr")
+
+        repository.emitClusters(cluster1)
+        repository.emitUserPreferences(prefs1)
+
         useCase().test {
-            awaitItem()
+            val first = awaitItem()
+            assertEquals(cluster1, first.clusters)
+            assertEquals(prefs1, first.preferences)
 
-            val newClusters = listOf(buildCluster(5))
-            repository.emitClusters(newClusters)
+            // 1️⃣ меняем clusters
+            repository.emitClusters(cluster2)
 
-            val (clusters, prefs) = awaitItem()
+            val second = awaitItem()
+            assertEquals(cluster2, second.clusters)
+            assertEquals(prefs1, second.preferences)
 
-            assertEquals(newClusters, clusters)
-            assertEquals("us", prefs.defaultCountry)
+            // 2️⃣ меняем prefs
+            repository.emitUserPreferences(prefs2)
+
+            val third = awaitItem()
+            assertEquals(cluster2, third.clusters)
+            assertEquals(prefs2, third.preferences)
+
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `when both clusters and prefs change, emits two separate updates`() = runTest {
+    fun `should emit immediately because stateflows have initial values`() = runTest {
         useCase().test {
+            val item = awaitItem()
+
+            assertEquals(emptyList<NewsCluster>(), item.clusters)
+            assertEquals("us", item.preferences.defaultCountry)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit exact number of updates`() = runTest {
+        val clusters = listOf(buildCluster(1))
+
+        repository.emitClusters(clusters)
+
+        useCase().test {
+            awaitItem() // initial
+
+            repository.emitUserPreferences(UserPreferences("de", "de"))
             awaitItem()
 
-            repository.emitClusters(listOf(buildCluster(1)))
+            repository.emitUserPreferences(UserPreferences("fr", "fr"))
             awaitItem()
 
-            prefsSource.emit(UserPreferences(defaultCountry = "de", defaultLanguage = "de"))
-            val (_, prefs) = awaitItem()
-
-            assertEquals("de", prefs.defaultCountry)
+            expectNoEvents()
             cancelAndIgnoreRemainingEvents()
         }
     }
