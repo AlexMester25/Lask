@@ -12,9 +12,7 @@ import dev.alexmester.impl.domain.usecase.ObserveIsBookmarkedUseCase
 import dev.alexmester.impl.domain.usecase.ToggleBookmarkUseCase
 import dev.alexmester.impl.domain.usecase.TranslateTextsUseCase
 import dev.alexmester.impl.presentation.mvi.ArticleDetailViewModel
-import dev.alexmester.models.di.DISPATCHER_IO
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val articleDetailModule = module {
@@ -23,7 +21,6 @@ val articleDetailModule = module {
         ArticleDetailLocalDataSource(
             articleDao = get(),
             userStateDao = get(),
-            ioDispatcher = get(named(DISPATCHER_IO)),
         )
     }
 
@@ -31,7 +28,8 @@ val articleDetailModule = module {
         ArticleDetailRepositoryImpl(
             local = get(),
             translateApiService = get(),
-            preferencesDataSource = get()
+            preferencesDataSource = get(),
+            dispatchers = get()
         )
     }
 
