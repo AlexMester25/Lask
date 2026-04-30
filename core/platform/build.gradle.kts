@@ -1,5 +1,6 @@
 plugins {
     id("myapp.android.library")
+    id("myapp.koin")
 }
 
 android {

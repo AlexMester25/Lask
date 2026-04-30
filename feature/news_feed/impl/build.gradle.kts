@@ -23,5 +23,5 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:utils"))
 
-    implementation("com.github.AlexMester25:SwipeSnack:0.3.3")
+    implementation(libs.swipesnack)
 }

@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":core:models"))
     implementation(project(":core:ui"))
     implementation(project(":core:utils"))
+    implementation(project(":core:platform"))
 
     implementation(libs.swipesnack)
 }
