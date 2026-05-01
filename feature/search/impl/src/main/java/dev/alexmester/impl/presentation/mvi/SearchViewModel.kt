@@ -2,6 +2,7 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.domain.model.SearchFilters
 import dev.alexmester.impl.domain.usecase.GetReadArticleIdsSearchUseCase
 import dev.alexmester.impl.domain.usecase.SearchUseCase
@@ -37,12 +38,12 @@ class SearchViewModel(
 
     val readArticleIds: StateFlow<Set<Long>> =
         getReadArticleIdsSearchUseCase()
-        .map { it.toSet() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptySet(),
-        )
+            .map { it.toSet() }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptySet(),
+            )
 
     private var debounceJob: Job? = null
     private var loadMoreJob: Job? = null
@@ -58,11 +59,18 @@ class SearchViewModel(
             is SearchIntent.ArticleClick -> emitSideEffect(
                 SearchSideEffect.NavigateToArticle(intent.articleId, intent.articleUrl)
             )
-            is SearchIntent.ClearQuery -> {
-                _state.update { it.copy(query = "", results = emptyList(), hasSearched = false, error = null) }
-                debounceJob?.cancel()
-            }
+            is SearchIntent.ClearQuery -> clearQuery()
+            is SearchIntent.ClearFilter -> clearFilter()
+            is SearchIntent.OpenFilter -> openFilter(intent.filterType)
         }
+    }
+
+    private fun clearFilter() {
+        _state.update { it.copy(openedFilterType = null) }
+    }
+
+    private fun openFilter(filterType: FilterType) {
+        _state.update { it.copy(openedFilterType = filterType) }
     }
 
     private fun onQueryChanged(query: String) {
@@ -76,6 +84,18 @@ class SearchViewModel(
             delay(DEBOUNCE_MS)
             performSearch()
         }
+    }
+
+    private fun clearQuery() {
+        _state.update {
+            it.copy(
+                query = "",
+                results = emptyList(),
+                hasSearched = false,
+                error = null
+            )
+        }
+        debounceJob?.cancel()
     }
 
     private fun onFiltersChanged(filters: SearchFilters) {
@@ -92,22 +112,20 @@ class SearchViewModel(
 
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            searchUseCase(
-                current.query,
-                current.filters
-            ).onSuccess { result ->
-                _state.update {
-                    it.copy(results = result, isLoading = false, hasSearched = true)
+            searchUseCase(current.query, current.filters)
+                .onSuccess { result ->
+                    _state.update {
+                        it.copy(results = result, isLoading = false, hasSearched = true)
+                    }
+                }.onFailure { error ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            hasSearched = true,
+                            error = error,
+                        )
+                    }
                 }
-            }.onFailure { error ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        hasSearched = true,
-                        error = error,
-                    )
-                }
-            }
         }
     }
 

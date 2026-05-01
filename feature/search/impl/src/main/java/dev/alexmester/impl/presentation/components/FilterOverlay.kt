@@ -51,10 +51,7 @@ fun FilterOverlay(
         FilterType.SORT -> {
             SortDirectionPickerScreen(
                 sortAscending = filters.sortAscending,
-                onSelect = { asc ->
-                    onFiltersChanged(filters.copy(sortAscending = asc))
-                    onBack()
-                },
+                onSelect = { asc -> onFiltersChanged(filters.copy(sortAscending = asc)) },
                 onBack = onBack,
             )
         }

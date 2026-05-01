@@ -19,9 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -29,10 +26,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.presentation.components.FilterOverlay
 import dev.alexmester.impl.presentation.components.SearchFilterRow
 import dev.alexmester.impl.presentation.components.SearchList
-import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.presentation.mvi.SearchIntent
 import dev.alexmester.impl.presentation.mvi.SearchSideEffect
 import dev.alexmester.impl.presentation.mvi.SearchState
@@ -77,20 +74,18 @@ internal fun SearchScreenContent(
     readArticleIds: Set<Long>,
     onIntent: (SearchIntent) -> Unit,
 ) {
-    var activeFilter by remember { mutableStateOf<FilterType?>(null) }
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
 
-
-    if (activeFilter != null) {
+    state.openedFilterType?.let { openedFilterType ->
         FilterOverlay(
-            filterType = activeFilter!!,
+            filterType = openedFilterType,
             filters = state.filters,
             onFiltersChanged = { newFilters ->
                 onIntent(SearchIntent.FiltersChanged(newFilters))
-                activeFilter = null
+                onIntent(SearchIntent.ClearFilter)
             },
-            onBack = { activeFilter = null },
+            onBack = { onIntent(SearchIntent.ClearFilter) },
         )
         return
     }
@@ -133,7 +128,7 @@ internal fun SearchScreenContent(
             onFilterClick = { filterType ->
                 keyboard?.hide()
                 focus.clearFocus()
-                activeFilter = filterType
+                onIntent(SearchIntent.OpenFilter(filterType))
             },
             onFilterDismiss = { filterType ->
                 val cleared = when (filterType) {

@@ -6,7 +6,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import dev.alexmester.ui.R
 import dev.alexmester.ui.components.buttons.LaskBackButton
 import dev.alexmester.ui.components.buttons.LaskTextButton
 import dev.alexmester.ui.desing_system.LaskColors
@@ -34,7 +36,7 @@ internal fun FilterPickerTopBar(
         actions = {
             if (showApply) {
                 LaskTextButton(
-                    text = "Apply",
+                    text = stringResource(R.string.apply),
                     textColor = if (isApplyEnabled) MaterialTheme.LaskColors.brand_blue
                     else MaterialTheme.LaskColors.textSecondary,
                     onClick = onApply,

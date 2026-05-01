@@ -1,7 +1,13 @@
 package dev.alexmester.ui.components.buttons
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.alexmester.ui.R
 import dev.alexmester.ui.desing_system.LaskColors
@@ -35,6 +42,7 @@ import dev.alexmester.ui.desing_system.LaskTypography
 enum class LaskChipButtonVariants{
     Filters, Interests
 }
+
 @Composable
 fun LaskChipButton(
     modifier: Modifier = Modifier,
@@ -54,86 +62,129 @@ fun LaskChipButton(
     Row(
         modifier = modifier
             .clip(shape)
-            .border(
-                width = 1.dp,
-                color = borderColor,
-                shape = shape
-            )
+            .border(width = 1.dp, color = borderColor, shape = shape)
             .background(background)
-            .clickable { onClick() }
+            .clickable(onClick = onClick)
+            .animateContentSize()
             .padding(vertical = 8.dp)
-            .padding(start = 16.dp,end = 8.dp)
-            .animateContentSize(),
+            .padding(start = 16.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        AnimatedContent(targetState = isSelected) { isSelected ->
-            if (isSelected) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    leadingLocaleIcon?.let {
-                        Text(
-                            text = leadingLocaleIcon,
-                            style = MaterialTheme.LaskTypography.footnote,
-                        )
-                    }
-                    leadingIcon?.let {
-                        Icon(
-                            imageVector = it,
-                            contentDescription = null,
-                            tint = LaskPalette.TextPrimaryDark
-                        )
-                    }
-                    Text(
-                        text = text,
-                        style = MaterialTheme.LaskTypography.body1SemiBold,
-                        color = MaterialTheme.LaskColors.textPrimary
-                    )
-                    Icon(
-                        modifier = Modifier
-                            .size(20.dp)
-                            .clip(CircleShape)
-                            .clickable { onDismiss() },
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
-                        contentDescription = null,
-                        tint = LaskPalette.TextPrimaryDark
-                    )
-                }
+        AnimatedContent(
+            targetState = isSelected,
+            transitionSpec = {
+                if (targetState > initialState) {
+                    slideInVertically { height -> height } + fadeIn() togetherWith
+                            slideOutVertically { height -> -height } + fadeOut()
+                } else {
+                    slideInVertically { height -> -height } + fadeIn() togetherWith
+                            slideOutVertically { height -> height } + fadeOut()
+                }.using(
+                    SizeTransform(clip = false)
+                )
+            },
+            label = "chip_content",
+        ) { selected ->
+            if (selected) {
+                SelectedChipContent(
+                    text = text,
+                    localeIcon = leadingLocaleIcon,
+                    leadingIcon = leadingIcon,
+                    onDismiss = onDismiss,
+                )
             } else {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = text,
-                        style = MaterialTheme.LaskTypography.body1SemiBold,
-                        color = MaterialTheme.LaskColors.textPrimary
-                    )
-                    when(variant){
-                        LaskChipButtonVariants.Filters ->{
-                            Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = null,
-                                tint = MaterialTheme.LaskColors.textPrimary
-                            )
-                        }
-
-                        LaskChipButtonVariants.Interests -> {
-                            Icon(
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .clip(CircleShape)
-                                    .clickable { onDismiss() },
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
-                                contentDescription = null,
-                                tint = LaskPalette.TextPrimaryDark
-                            )
-                        }
-                    }
-                }
+                UnselectedChipContent(
+                    text = text,
+                    variant = variant,
+                    onDismiss = onDismiss,
+                )
             }
+        }
+    }
+}
+
+
+@Composable
+private fun ChipLeadingContent(
+    localeIcon: String?,
+    icon: ImageVector?,
+) {
+    localeIcon?.let {
+        Text(
+            text = it,
+            style = MaterialTheme.LaskTypography.footnote,
+        )
+    }
+    icon?.let {
+        Icon(
+            imageVector = it,
+            contentDescription = null,
+            tint = LaskPalette.TextPrimaryDark,
+        )
+    }
+}
+
+@Composable
+private fun ChipDismissIcon(
+    size: Dp = 20.dp,
+    onDismiss: () -> Unit,
+) {
+    Icon(
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+            .clickable(onClick = onDismiss),
+        imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
+        contentDescription = null,
+        tint = LaskPalette.TextPrimaryDark,
+    )
+}
+
+
+@Composable
+private fun SelectedChipContent(
+    text: String,
+    localeIcon: String?,
+    leadingIcon: ImageVector?,
+    onDismiss: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        ChipLeadingContent(localeIcon = localeIcon, icon = leadingIcon)
+        Text(
+            text = text,
+            style = MaterialTheme.LaskTypography.body1SemiBold,
+            color = MaterialTheme.LaskColors.textPrimary,
+        )
+        ChipDismissIcon(size = 20.dp, onDismiss = onDismiss)
+    }
+}
+
+@Composable
+private fun UnselectedChipContent(
+    text: String,
+    variant: LaskChipButtonVariants,
+    onDismiss: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.LaskTypography.body1SemiBold,
+            color = MaterialTheme.LaskColors.textPrimary,
+        )
+        when (variant) {
+            LaskChipButtonVariants.Filters -> Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = Icons.Default.KeyboardArrowDown,
+                contentDescription = null,
+                tint = MaterialTheme.LaskColors.textPrimary,
+            )
+            LaskChipButtonVariants.Interests -> ChipDismissIcon(size = 16.dp, onDismiss = onDismiss)
         }
     }
 }
