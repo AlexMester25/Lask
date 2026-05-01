@@ -57,8 +57,9 @@ class ExploreViewModel(
 
     fun handleIntent(intent: ExploreIntent) {
         when (intent) {
-            ExploreIntent.Refresh -> refresh()
-            ExploreIntent.LoadMore -> loadMore()
+            is ExploreIntent.Refresh -> refresh()
+            is ExploreIntent.LoadMore -> loadMore()
+            is ExploreIntent.RetryLoadMore -> retryLoadMore()
             is ExploreIntent.ArticleClick ->
                 emitSideEffect(
                     ExploreSideEffect.NavigateToArticle(
@@ -137,7 +138,7 @@ class ExploreViewModel(
         val current = _state.value.contentOrNull ?: return
         if (current.isLoadingMore || current.isRefreshing || current.endReached) return
 
-        _state.updateContent { it.copy(isLoadingMore = true) }
+        _state.updateContent { it.copy(isLoadingMore = true, loadMoreError = false) }
 
         viewModelScope.launch {
             loadMore(offset = current.articles.size)
@@ -151,7 +152,12 @@ class ExploreViewModel(
                     }
                 }
                 .onFailure { error ->
-                    _state.updateContent { it.copy(isLoadingMore = false) }
+                    _state.updateContent {
+                        it.copy(
+                            isLoadingMore = false,
+                            loadMoreError = true,
+                        )
+                    }
 
                     emitSideEffect(
                         ExploreSideEffect.ShowError(
@@ -160,6 +166,11 @@ class ExploreViewModel(
                     )
                 }
         }
+    }
+
+    private fun retryLoadMore() {
+        _state.updateContent { it.copy(loadMoreError = false) }
+        loadMore()
     }
 
     private fun handleError(error: NetworkError) {
