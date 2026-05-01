@@ -1,7 +1,6 @@
 package dev.alexmester.impl.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,11 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SearchOff
@@ -27,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -37,7 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.alexmester.impl.presentation.components.FilterOverlay
 import dev.alexmester.impl.presentation.components.SearchFilterRow
-import dev.alexmester.impl.presentation.mvi.FilterType
+import dev.alexmester.impl.presentation.components.SearchList
+import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.presentation.mvi.SearchIntent
 import dev.alexmester.impl.presentation.mvi.SearchSideEffect
 import dev.alexmester.impl.presentation.mvi.SearchState
@@ -45,12 +40,9 @@ import dev.alexmester.impl.presentation.mvi.SearchViewModel
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.buttons.LaskTextButton
 import dev.alexmester.ui.components.input_field.LaskTextField
-import dev.alexmester.ui.components.list_card.LaskArticleCard
 import dev.alexmester.ui.components.notification_screen.LaskNotificationScreen
 import dev.alexmester.ui.components.notification_screen.NotificationType
 import dev.alexmester.ui.desing_system.LaskColors
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -88,6 +80,7 @@ internal fun SearchScreenContent(
     var activeFilter by remember { mutableStateOf<FilterType?>(null) }
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
+
 
     if (activeFilter != null) {
         FilterOverlay(
@@ -180,61 +173,19 @@ internal fun SearchScreenContent(
                         ),
                     )
                 }
-
-                state.results.isNotEmpty() -> {
-                    val listState = rememberLazyListState()
-                    LaunchedEffect(listState) {
-                        snapshotFlow {
-                            val layoutInfo = listState.layoutInfo
-                            val totalItems = layoutInfo.totalItemsCount
-                            val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                            lastVisible >= totalItems - 4
-                        }
-                            .distinctUntilChanged()
-                            .filter { it }
-                            .collect { onIntent(SearchIntent.LoadMore) }
-                    }
-
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        items(state.results, key = { "${it.id}-${it.publishDate}" }) { article ->
-                            LaskArticleCard(
-                                modifier = Modifier.fillMaxWidth(),
-                                article = article,
-                                isRead = article.id in readArticleIds,
-                                onClick = {
-                                    onIntent(SearchIntent.ArticleClick(article.id, article.url))
-                                },
-                            )
-                        }
-
-                        if (state.isLoadingMore) {
-                            item {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    horizontalArrangement = Arrangement.Center,
-                                ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp),
-                                        color = MaterialTheme.LaskColors.brand_blue,
-                                        trackColor = MaterialTheme.LaskColors.brand_blue10,
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
                 !state.hasSearched && state.query.isEmpty() -> {
                     LaskNotificationScreen(
                         type = NotificationType.Warning(
                             text = stringResource(R.string.warning_search_news),
                             image = Icons.Default.Search
                         ),
+                    )
+                }
+                state.results.isNotEmpty() -> {
+                    SearchList(
+                        state = state,
+                        readArticleIds = readArticleIds,
+                        onIntent = onIntent
                     )
                 }
             }

@@ -11,6 +11,7 @@ data class SearchState(
     val results: List<NewsArticle> = emptyList(),
     val isLoading: Boolean = false,
     val isLoadingMore: Boolean = false,
+    val loadMoreError: Boolean = false,
     val endReached: Boolean = false,
     val error: NetworkError? = null,
     val hasSearched: Boolean = false,

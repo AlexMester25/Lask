@@ -53,6 +53,7 @@ class SearchViewModel(
             is SearchIntent.FiltersChanged -> onFiltersChanged(intent.filters)
             is SearchIntent.Search -> performSearch()
             is SearchIntent.LoadMore -> loadMore()
+            is SearchIntent.RetryLoadMore -> retryLoadMore()
             is SearchIntent.Cancel -> emitSideEffect(SearchSideEffect.NavigateBack)
             is SearchIntent.ArticleClick -> emitSideEffect(
                 SearchSideEffect.NavigateToArticle(intent.articleId, intent.articleUrl)
@@ -112,12 +113,11 @@ class SearchViewModel(
 
     private fun loadMore() {
         val current = _state.value
-        if (current.isLoadingMore || current.isLoading || current.endReached) return
         if (current.query.length < MIN_QUERY_LENGTH) return
         if (loadMoreJob?.isActive == true) return
 
         loadMoreJob = viewModelScope.launch {
-            _state.update { it.copy(isLoadingMore = true) }
+            _state.update { it.copy(isLoadingMore = true, loadMoreError = false) }
             searchUseCase(
                 query = current.query,
                 filters = current.filters,
@@ -132,10 +132,15 @@ class SearchViewModel(
                 }
             }.onFailure {
                 _state.update {
-                    it.copy(isLoadingMore = false)
+                    it.copy(isLoadingMore = false, loadMoreError = true)
                 }
             }
         }
+    }
+
+    private fun retryLoadMore() {
+        _state.update { it.copy(loadMoreError = false) }
+        loadMore()
     }
 
     private fun emitSideEffect(effect: SearchSideEffect) {

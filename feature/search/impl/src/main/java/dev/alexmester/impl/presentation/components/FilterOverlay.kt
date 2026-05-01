@@ -7,7 +7,7 @@ import dev.alexmester.impl.presentation.components.filter_picker.CountryPickerSc
 import dev.alexmester.impl.presentation.components.filter_picker.DateRangePickerScreen
 import dev.alexmester.impl.presentation.components.filter_picker.LanguagePickerScreen
 import dev.alexmester.impl.presentation.components.filter_picker.SortDirectionPickerScreen
-import dev.alexmester.impl.presentation.mvi.FilterType
+import dev.alexmester.impl.domain.model.FilterType
 
 @Composable
 fun FilterOverlay(

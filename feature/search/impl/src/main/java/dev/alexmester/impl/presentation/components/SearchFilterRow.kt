@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.alexmester.impl.domain.model.SearchFilters
-import dev.alexmester.impl.presentation.mvi.FilterType
+import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.ui.components.buttons.LaskChipButton
 import dev.alexmester.utils.locale.LocaleUtils
 import dev.alexmester.utils.locale.LocaleUtils.countryCodeToFlagEmoji
