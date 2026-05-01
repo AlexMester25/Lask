@@ -12,15 +12,20 @@ import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedIntent
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedReducer
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedSideEffect
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
+import dev.alexmester.ui.R
+import dev.alexmester.ui.uitext.UiText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -28,6 +33,7 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NewsFeedViewModel(
@@ -37,25 +43,12 @@ class NewsFeedViewModel(
     private val getCachedAtTrendsUseCase: GetCachedAtTrendsUseCase,
 ) : ViewModel() {
 
-    // -------------------- SIDE EFFECTS --------------------
-
-    private val _sideEffects = MutableSharedFlow<NewsFeedSideEffect>(
-        extraBufferCapacity = 1
-    )
+    private val _sideEffects = MutableSharedFlow<NewsFeedSideEffect>(extraBufferCapacity = 1)
     val sideEffects = _sideEffects.asSharedFlow()
 
-    private fun emitSideEffect(effect: NewsFeedSideEffect) {
-        _sideEffects.tryEmit(effect)
-    }
+    private val _feedResult = MutableStateFlow<FeedResult>(FeedResult.Idle)
 
-    // -------------------- TRIGGERS --------------------
-
-    private val refreshTrigger = MutableSharedFlow<Unit>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-
-    // -------------------- BASE FLOWS --------------------
+    private var refreshJob: Job? = null
 
     private val clustersFlow = observeTrendsUseCase()
         .shareIn(
@@ -64,46 +57,11 @@ class NewsFeedViewModel(
             replay = 1
         )
 
-    private val localeFlow = clustersFlow
-        .map { combineData ->
-            combineData.preferences.defaultCountry to
-                    combineData.preferences.defaultLanguage
-        }
-        .distinctUntilChanged()
-
-    private val lastCachedAtFlow = flow {
-        emit(getCachedAtTrendsUseCase())
-    }
-
-    // -------------------- REFRESH PIPELINE --------------------
-
-    private val refreshFlow: Flow<FeedResult> = merge(
-        refreshTrigger,
-        localeFlow.map { Unit }
-    )
-        .flatMapLatest {
-            flow {
-                emit(FeedResult.Loading)
-                val result = refreshTrendsUseCase()
-                emit(
-                    when (result) {
-                        is AppResult.Success -> FeedResult.Success
-                        is AppResult.Failure -> {
-                            emitSideEffect(NewsFeedSideEffect.ShowError(result.error))
-                            FeedResult.Error(result.error)
-                        }
-                    }
-                )
-            }
-        }
-        .onStart { emit(FeedResult.Idle) }
-
     val state: StateFlow<NewsFeedState> = combine(
         clustersFlow,
-        refreshFlow,
-        lastCachedAtFlow
-    ) { combineData , feedResult, lastCachedAt ->
-
+        _feedResult,
+        flow { emit(getCachedAtTrendsUseCase()) },
+    ) { combineData, feedResult, lastCachedAt ->
         NewsFeedReducer.reduce(
             clusters = combineData.clusters,
             feedResult = feedResult,
@@ -128,16 +86,47 @@ class NewsFeedViewModel(
                 initialValue = emptySet()
             )
 
+    init {
+        refresh()
+
+        viewModelScope.launch {
+            clustersFlow
+                .map { it.preferences.defaultCountry to it.preferences.defaultLanguage }
+                .distinctUntilChanged()
+                .drop(1)
+                .collect { refresh() }
+        }
+    }
+
     fun handleIntent(intent: NewsFeedIntent) {
         when (intent) {
-            is NewsFeedIntent.Refresh -> refreshTrigger.tryEmit(Unit)
-            is NewsFeedIntent.ArticleClick -> emitSideEffect(
-                NewsFeedSideEffect.NavigateToArticle(
-                    intent.articleId,
-                    intent.articleUrl
-                )
+            is NewsFeedIntent.Refresh -> refresh()
+            is NewsFeedIntent.ArticleClick -> _sideEffects.tryEmit(
+                NewsFeedSideEffect.NavigateToArticle(intent.articleId, intent.articleUrl)
             )
         }
     }
+
+    private fun refresh() {
+        refreshJob?.cancel()
+        refreshJob = viewModelScope.launch {
+            _feedResult.value = FeedResult.Loading
+            when (val result = refreshTrendsUseCase()) {
+                is AppResult.Success -> {
+                    if (result.data == 0){
+                        _sideEffects.tryEmit(NewsFeedSideEffect.ShowWarning(
+                            UiText.StringResource(R.string.locale_incompatible)
+                        ))
+                        _feedResult.value = FeedResult.Success
+                    } else _feedResult.value = FeedResult.Success
+                }
+                is AppResult.Failure -> {
+                    _sideEffects.tryEmit(NewsFeedSideEffect.ShowError(result.error))
+                    _feedResult.value = FeedResult.Error(result.error)
+                }
+            }
+        }
+    }
+
 }
 

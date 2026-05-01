@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import com.snackbar.snackswipe.SnackSwipeController
 import com.snackbar.snackswipe.showSnackSwipe
@@ -44,6 +45,7 @@ fun SnackSwipeController.showBookmarkSnackbar(
 fun SnackSwipeController.showWarningSnackbar(
     backgroundColor: Color,
     text: String,
+    imageVector: ImageVector = Icons.Default.Interests
 ) {
     showSnackSwipe(
         backgroundColor = backgroundColor,
@@ -56,7 +58,7 @@ fun SnackSwipeController.showWarningSnackbar(
         },
         icon = {
             Icon(
-                imageVector = Icons.Default.Interests,
+                imageVector = imageVector,
                 contentDescription = null,
                 tint = MaterialTheme.LaskColors.warning,
             )

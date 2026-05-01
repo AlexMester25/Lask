@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,6 +36,7 @@ import dev.alexmester.ui.components.notification_screen.LaskNotificationScreen
 import dev.alexmester.ui.components.notification_screen.NotificationType
 import dev.alexmester.ui.components.pull_to_refresh_box.LaskPullToRefreshBox
 import dev.alexmester.ui.components.snackbar.showErrorSnackbar
+import dev.alexmester.ui.components.snackbar.showWarningSnackbar
 import dev.alexmester.ui.desing_system.LaskColors
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -45,7 +48,8 @@ fun NewsFeedScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val readArticleIds by viewModel.readArticleIds.collectAsStateWithLifecycle()
     val stateRefreshBox = rememberPullToRefreshState()
-    val backgroundColorSnack = MaterialTheme.LaskColors.error
+    val backgroundColorSnackError = MaterialTheme.LaskColors.error
+    val backgroundColorSnackWarning = MaterialTheme.LaskColors.brand_blue10
     val context = LocalContext.current
 
     SnackSwipeBox(
@@ -58,10 +62,17 @@ fun NewsFeedScreen(
                         if (state.isContent) {
                             val messageError = NetworkErrorUiMapper.toUiText(effect.message).asString(context)
                             snackSwipeController.showErrorSnackbar(
-                                backgroundColor = backgroundColorSnack,
+                                backgroundColor = backgroundColorSnackError,
                                 text = messageError
                             )
                         }
+                    }
+                    is NewsFeedSideEffect.ShowWarning -> {
+                        snackSwipeController.showWarningSnackbar(
+                            backgroundColor = backgroundColorSnackWarning,
+                            text = effect.message.asString(context),
+                            imageVector = Icons.Default.Error
+                        )
                     }
                     is NewsFeedSideEffect.NavigateToArticle -> {
                         onArticleClick(effect.articleId, effect.articleUrl)

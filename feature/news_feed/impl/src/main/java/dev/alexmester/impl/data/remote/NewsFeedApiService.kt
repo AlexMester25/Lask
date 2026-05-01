@@ -9,36 +9,44 @@ import io.ktor.client.request.parameter
 import java.time.LocalDate
 import java.time.ZoneOffset
 
+
 class NewsFeedApiService(private val client: HttpClient) {
 
     suspend fun getTopNews(
         sourceCountry: String,
-        language: String? = null,
-        date: String? = null,
+        language: String,
         maxNewsPerCluster: Int = 5,
     ): TopNewsResponseDto {
-        val requestDate = date ?: LocalDate.now(ZoneOffset.UTC).toString()
+        val today = LocalDate.now(ZoneOffset.UTC).toString()
 
-        val response = client.get(ApiRoutes.News.TOP_NEWS) {
-            parameter("source-country", sourceCountry)
-            language?.let { parameter("language", it) }
-            parameter("date", requestDate)
-            parameter("headlines-only", false)
-            parameter("max-news-per-cluster", maxNewsPerCluster)
-        }.body<TopNewsResponseDto>()
+        val todayResponse = fetchTopNews(
+            sourceCountry = sourceCountry,
+            language = language,
+            date = today,
+            maxNewsPerCluster = maxNewsPerCluster,
+        )
 
+        if (todayResponse.topNews.isNotEmpty()) return todayResponse
 
-        if (response.topNews.isEmpty() && date == null) {
-            val yesterday = LocalDate.now(ZoneOffset.UTC).minusDays(1).toString()
-            return client.get(ApiRoutes.News.TOP_NEWS) {
-                parameter("source-country", sourceCountry)
-                language?.let { parameter("language", it) }
-                parameter("date", yesterday)
-                parameter("headlines-only", false)
-                parameter("max-news-per-cluster", maxNewsPerCluster)
-            }.body()
-        }
-
-        return response
+        val yesterday = LocalDate.now(ZoneOffset.UTC).minusDays(1).toString()
+        return fetchTopNews(
+            sourceCountry = sourceCountry,
+            language = language,
+            date = yesterday,
+            maxNewsPerCluster = maxNewsPerCluster,
+        )
     }
+
+    private suspend fun fetchTopNews(
+        sourceCountry: String,
+        language: String,
+        date: String,
+        maxNewsPerCluster: Int,
+    ): TopNewsResponseDto = client.get(ApiRoutes.News.TOP_NEWS) {
+        parameter("source-country", sourceCountry)
+        parameter("language", language)
+        parameter("date", date)
+        parameter("headlines-only", false)
+        parameter("max-news-per-cluster", maxNewsPerCluster)
+    }.body()
 }
