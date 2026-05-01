@@ -3,13 +3,13 @@ package dev.alexmester.network.extension
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.network.error.NetworkErrorMapper
+import kotlin.coroutines.cancellation.CancellationException
 
-/**
- * Безопасная обёртка для всех API вызовов в data-слоях feature-модулей.
- */
 suspend fun <T> safeApiCall(block: suspend () -> T): AppResult<T> {
     return try {
         AppResult.Success(block())
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: NetworkError) {
         AppResult.Failure(e)
     } catch (e: Exception) {
