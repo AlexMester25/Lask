@@ -13,14 +13,14 @@ class RefreshExploreUseCase(
 
     private val mutex = Mutex()
 
-    suspend operator fun invoke(pageSize: Int = PAGE_SIZE): AppResult<Int> =
+    suspend operator fun invoke(): AppResult<Int> =
         mutex.withTryLock {
-            val (query, language) = getQuery() ?: return AppResult.Success(0)
+            val (query, language) = getQuery()
+            if (query.isEmpty()) return@withTryLock AppResult.Success(0)
 
             repository.refresh(
                 query = query,
                 language = language,
-                pageSize = pageSize
             )
         } ?: AppResult.Success(0)
 }

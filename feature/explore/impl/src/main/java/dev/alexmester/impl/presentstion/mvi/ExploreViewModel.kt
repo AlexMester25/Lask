@@ -51,8 +51,8 @@ class ExploreViewModel(
             )
 
     init {
-        observeLocalCache()
         bootstrap()
+        observeExploreCache()
     }
 
     fun handleIntent(intent: ExploreIntent) {
@@ -70,18 +70,16 @@ class ExploreViewModel(
         }
     }
 
-    private fun observeLocalCache() {
-        observeArticles()
-            .onEach { articles ->
-                if (articles.isEmpty()) return@onEach
-                _state.update { current ->
-                    when (current) {
-                        is ExploreState.Content -> current.copy(articles = articles)
-                        else -> ExploreState.Content(articles = articles)
-                    }
+    private fun observeExploreCache() {
+        observeArticles().onEach { articles ->
+            if (articles.isEmpty()) return@onEach
+            _state.update { current ->
+                when (current) {
+                    is ExploreState.Content -> current.copy(articles = articles)
+                    else -> ExploreState.Content(articles = articles)
                 }
             }
-            .launchIn(viewModelScope)
+        }.launchIn(viewModelScope)
     }
 
     private fun bootstrap() {
@@ -94,7 +92,7 @@ class ExploreViewModel(
     private fun refresh() {
         _state.update { current ->
             when (current) {
-                is ExploreState.Content -> current.copy(isRefreshing = true, isOffline = false)
+                is ExploreState.Content -> current.copy(isRefreshing = true)
                 is ExploreState.Error -> current.copy(isRefreshing = true)
                 is ExploreState.EmptyInterests -> current.copy(isRefreshing = true)
                 else -> current
@@ -123,8 +121,6 @@ class ExploreViewModel(
                             isRefreshing = false,
                             isLoadingMore = false,
                             endReached = result < PAGE_SIZE,
-                            lastCachedAt = getLastCachedAt(),
-                            isOffline = false,
                         )
                     }
                 }
@@ -147,7 +143,6 @@ class ExploreViewModel(
                         it.copy(
                             isLoadingMore = false,
                             endReached = result < PAGE_SIZE,
-                            isOffline = false,
                         )
                     }
                 }
@@ -158,7 +153,6 @@ class ExploreViewModel(
                             loadMoreError = true,
                         )
                     }
-
                     emitSideEffect(
                         ExploreSideEffect.ShowError(
                             NetworkErrorUiMapper.toUiText(error)
@@ -179,9 +173,9 @@ class ExploreViewModel(
         _state.update { current ->
             when {
                 error is NetworkError.NoInternet &&
-                current is ExploreState.Content &&
-                current.articles.isNotEmpty() -> {
-                    current.copy(isRefreshing = false, isOffline = true)
+                        current is ExploreState.Content &&
+                        current.articles.isNotEmpty() -> {
+                    current.copy(isRefreshing = false)
                 }
 
                 current is ExploreState.Content ->

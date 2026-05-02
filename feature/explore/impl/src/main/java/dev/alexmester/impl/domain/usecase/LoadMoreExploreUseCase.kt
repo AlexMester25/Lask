@@ -13,17 +13,14 @@ class LoadMoreExploreUseCase(
 
     private val mutex = Mutex()
 
-    suspend operator fun invoke(
-        pageSize: Int = PAGE_SIZE,
-        offset: Int,
-    ): AppResult<Int> =
+    suspend operator fun invoke(offset: Int): AppResult<Int> =
         mutex.withTryLock {
-            val (query, language) = getQuery() ?: return AppResult.Success(0)
+            val (query, language) = getQuery()
+            if (query.isEmpty()) return@withTryLock AppResult.Success(0)
 
             repository.loadMore(
                 query = query,
                 language = language,
-                pageSize = pageSize,
                 offset = offset
             )
         } ?: AppResult.Success(0)

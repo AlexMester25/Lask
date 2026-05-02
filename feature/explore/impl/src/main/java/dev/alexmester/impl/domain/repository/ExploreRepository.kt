@@ -13,13 +13,11 @@ interface ExploreRepository {
     suspend fun refresh(
         query: String,
         language: String,
-        pageSize: Int,
     ): AppResult<Int>
 
     suspend fun loadMore(
         query: String,
         language: String,
-        pageSize: Int,
         offset: Int,
     ): AppResult<Int>
 

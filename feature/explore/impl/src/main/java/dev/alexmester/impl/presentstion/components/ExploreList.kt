@@ -48,7 +48,7 @@ internal fun ExploreList(
     }
 
     LaunchedEffect(shouldLoadMore.value) {
-        if (shouldLoadMore.value) {
+        if (shouldLoadMore.value && !state.loadMoreError) {
             onIntent(ExploreIntent.LoadMore)
         }
     }
@@ -84,11 +84,13 @@ internal fun ExploreList(
             when {
                 state.isLoadingMore -> {
                     LaskPaginationLoading()
+                    Spacer(modifier = Modifier.height(bottomPadding + 64.dp))
                 }
                 state.loadMoreError -> {
                     LaskPaginationError(
                         onRetry = { onIntent(ExploreIntent.RetryLoadMore) }
                     )
+                    Spacer(modifier = Modifier.height(bottomPadding + 64.dp))
                 }
                 else -> {
                     Spacer(modifier = Modifier.height(bottomPadding + 64.dp))

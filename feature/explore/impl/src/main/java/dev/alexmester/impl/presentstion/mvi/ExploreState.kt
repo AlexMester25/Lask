@@ -23,7 +23,6 @@ sealed interface ExploreState {
         val isLoadingMore: Boolean = false,
         val endReached: Boolean = false,
         val lastCachedAt: Long? = null,
-        val isOffline: Boolean = false,
         val loadMoreError: Boolean = false,
     ) : ExploreState
 }

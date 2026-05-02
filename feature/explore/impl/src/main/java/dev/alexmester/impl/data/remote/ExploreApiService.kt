@@ -2,6 +2,7 @@ package dev.alexmester.impl.data.remote
 
 import dev.alexmester.impl.data.remote.dto.SearchNewsResponseDto
 import dev.alexmester.network.endpoints.ApiRoutes
+import dev.alexmester.utils.constants.LaskConstants.PAGE_SIZE
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -15,7 +16,7 @@ class ExploreApiService(
         text: String,
         language: String,
         offset: Int,
-        number: Int,
+        number: Int = PAGE_SIZE,
     ): SearchNewsResponseDto =
         client.get(ApiRoutes.News.SEARCH_NEWS) {
             parameter("text", text)

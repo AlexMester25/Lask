@@ -26,7 +26,6 @@ val exploreModule = module {
             articleDao = get(),
             feedCacheDao = get(),
             userStateDao = get(),
-            ioDispatcher = get(named(DISPATCHER_IO)),
         )
     }
 
@@ -34,6 +33,7 @@ val exploreModule = module {
         ExploreRepositoryImpl(
             remote = get(),
             local = get(),
+            dispatchers = get()
         )
     }
 
