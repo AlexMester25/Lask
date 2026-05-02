@@ -1,7 +1,6 @@
 package dev.alexmester.utils.constants
 
 object LaskConstants {
-    const val DELIMITER = "|||"
     const val DELIMITER_POINT = '.'
     const val TEXT_ECLIPSE = "..."
     const val SEPARATOR_OR = " OR "

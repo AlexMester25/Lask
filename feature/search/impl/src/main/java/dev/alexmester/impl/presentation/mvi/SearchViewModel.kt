@@ -2,6 +2,7 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.alexmester.error.NetworkErrorUiMapper
 import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.domain.model.SearchFilters
 import dev.alexmester.impl.domain.usecase.GetReadArticleIdsSearchUseCase
@@ -148,10 +149,13 @@ class SearchViewModel(
                         endReached = result.size < PAGE_SIZE,
                     )
                 }
-            }.onFailure {
+            }.onFailure { error ->
                 _state.update {
                     it.copy(isLoadingMore = false, loadMoreError = true)
                 }
+                emitSideEffect(SearchSideEffect.ShowError(
+                    NetworkErrorUiMapper.toUiText(error)
+                ))
             }
         }
     }

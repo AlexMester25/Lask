@@ -50,6 +50,7 @@
 
     <!-- Common -->
     <string name="unknown_author">Unknown author</string>
+    <string name="apply">Apply</string>
 
     <!-- Profile -->
     <string name="profile_article_read">Article Read</string>

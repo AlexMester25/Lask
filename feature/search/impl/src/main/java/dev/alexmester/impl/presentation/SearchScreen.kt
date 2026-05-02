@@ -5,11 +5,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SearchOff
@@ -21,11 +24,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.snackbar.snackswipe.SnackSwipeBox
 import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.presentation.components.FilterOverlay
 import dev.alexmester.impl.presentation.components.SearchFilterRow
@@ -39,6 +44,7 @@ import dev.alexmester.ui.components.buttons.LaskTextButton
 import dev.alexmester.ui.components.input_field.LaskTextField
 import dev.alexmester.ui.components.notification_screen.LaskNotificationScreen
 import dev.alexmester.ui.components.notification_screen.NotificationType
+import dev.alexmester.ui.components.snackbar.showErrorSnackbar
 import dev.alexmester.ui.desing_system.LaskColors
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -50,22 +56,35 @@ fun SearchScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val readArticleIds by viewModel.readArticleIds.collectAsStateWithLifecycle()
+    val backgroundColorSnackError = MaterialTheme.LaskColors.error
+    val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.sideEffects.collect { effect ->
-            when (effect) {
-                SearchSideEffect.NavigateBack -> onCancel()
-                is SearchSideEffect.NavigateToArticle ->
-                    onArticleClick(effect.articleId, effect.articleUrl)
+    SnackSwipeBox(
+        modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
+    ) { snackSwipeController ->
+        LaunchedEffect(Unit) {
+            viewModel.sideEffects.collect { effect ->
+                when (effect) {
+                    is SearchSideEffect.NavigateBack -> onCancel()
+                    is SearchSideEffect.ShowError -> {
+                        snackSwipeController.showErrorSnackbar(
+                            backgroundColor = backgroundColorSnackError,
+                            text = effect.message.asString(context)
+                        )
+                    }
+
+                    is SearchSideEffect.NavigateToArticle ->
+                        onArticleClick(effect.articleId, effect.articleUrl)
+                }
             }
         }
-    }
 
-    SearchScreenContent(
-        state = state,
-        readArticleIds = readArticleIds,
-        onIntent = viewModel::handleIntent,
-    )
+        SearchScreenContent(
+            state = state,
+            readArticleIds = readArticleIds,
+            onIntent = viewModel::handleIntent,
+        )
+    }
 }
 
 @Composable

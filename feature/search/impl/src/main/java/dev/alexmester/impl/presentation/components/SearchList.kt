@@ -40,7 +40,7 @@ fun SearchList(
     }
 
     LaunchedEffect(shouldLoadMore.value) {
-        if (shouldLoadMore.value) {
+        if (shouldLoadMore.value && !state.loadMoreError) {
             onIntent(SearchIntent.LoadMore)
         }
     }
@@ -64,11 +64,13 @@ fun SearchList(
             when {
                 state.isLoadingMore -> {
                     LaskPaginationLoading()
+                    Spacer(modifier = Modifier.height(64.dp))
                 }
                 state.loadMoreError -> {
                     LaskPaginationError(
                         onRetry = { onIntent(SearchIntent.RetryLoadMore) }
                     )
+                    Spacer(modifier = Modifier.height(64.dp))
                 }
                 else -> {
                     Spacer(modifier = Modifier.height(64.dp))
