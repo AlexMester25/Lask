@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExploreOff
+import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -132,7 +133,24 @@ private fun ExploreScreenContent(
                         onRetry = { onIntent(ExploreIntent.Refresh) },
                     )
                 }
-
+                is ExploreState.EmptyResult -> {
+                    LaskPullToRefreshBox(
+                        modifier = Modifier.fillMaxSize(),
+                        isRefreshing = state.isRefreshing,
+                        onRefresh = { onIntent(ExploreIntent.Refresh) },
+                        state = stateRefreshBox,
+                    ) {
+                        LaskNotificationScreen(
+                            type = NotificationType.Warning(
+                                text = stringResource(R.string.warning_explore_content_empty),
+                                image = Icons.Default.SearchOff
+                            ),
+                            showRetry = true,
+                            isRetrying = false,
+                            onRetry = { onIntent(ExploreIntent.Refresh) },
+                        )
+                    }
+                }
                 is ExploreState.Content -> {
                     LaskPullToRefreshBox(
                         modifier = Modifier.fillMaxSize(),

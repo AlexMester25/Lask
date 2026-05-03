@@ -25,6 +25,7 @@ val explore = module {
             articleDao = get(),
             feedCacheDao = get(),
             userStateDao = get(),
+            preferencesDataSource = get()
         )
     }
 
@@ -36,13 +37,12 @@ val explore = module {
         )
     }
 
-    factory { GetInterestsExploreUseCase(preferencesDataSource = get()) }
+    factory { GetInterestsExploreUseCase(repository = get()) }
     factory { GetLastCachedAtExploreUseCase(repository = get()) }
     factory { LoadMoreExploreUseCase(repository = get(), getQuery = get()) }
     factory { ObserveArticlesExploreUseCase(repository = get()) }
     factory { ObserveReadArticleIdsExploreUseCase(repository = get()) }
     factory { RefreshExploreUseCase(repository = get(), getQuery = get()) }
-
 
     viewModel {
         ExploreViewModel(

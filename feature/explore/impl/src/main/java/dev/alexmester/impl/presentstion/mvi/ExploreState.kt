@@ -17,6 +17,10 @@ sealed interface ExploreState {
         val isRefreshing: Boolean = false
     ) : ExploreState
 
+    data class EmptyResult(
+        val isRefreshing: Boolean = false
+    ) : ExploreState
+
     data class Content(
         val articles: List<NewsArticle>,
         val isRefreshing: Boolean = false,
@@ -33,6 +37,13 @@ val ExploreState.contentOrNull: ExploreState.Content?
 val ExploreState.isContent: Boolean
     get() = this is ExploreState.Content
 
+fun ExploreState.withRefreshing(isRefreshing: Boolean): ExploreState = when (this) {
+    is ExploreState.Content -> copy(isRefreshing = isRefreshing)
+    is ExploreState.Error -> copy(isRefreshing = isRefreshing)
+    is ExploreState.EmptyInterests -> copy(isRefreshing = isRefreshing)
+    is ExploreState.EmptyResult -> copy(isRefreshing = isRefreshing)
+    is ExploreState.Loading -> this
+}
 inline fun MutableStateFlow<ExploreState>.updateContent(
     block: (ExploreState.Content) -> ExploreState.Content
 ) {

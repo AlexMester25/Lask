@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="lask">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-04-21T14:37:00.768927900Z">
+        <DropdownSelection timestamp="2026-05-01T12:40:39.989077300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\swagg\.android\avd\Pixel_9.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=ALDE6R2B10001187" />
             </handle>
           </Target>
         </DropdownSelection>

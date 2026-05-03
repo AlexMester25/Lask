@@ -1,5 +1,6 @@
 package dev.alexmester.impl.domain.repository
 
+import dev.alexmester.impl.domain.model.ExploreQuery
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,8 @@ interface ExploreRepository {
     fun observeArticles(): Flow<List<NewsArticle>>
 
     fun observeReadArticleIds(): Flow<List<Long>>
+
+    suspend fun getExploreQuery(): ExploreQuery
 
     suspend fun refresh(
         query: String,

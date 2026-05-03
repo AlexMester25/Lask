@@ -17,6 +17,7 @@
     <string name="warning_empty_bookmarks">Empty bookmarks</string>
     <string name="warning_no_resutl_for_query">No results found for %1$s</string>
     <string name="warning_search_news">Search news by keyword</string>
+    <string name="warning_explore_content_empty">Failed to generate feed. Please change your interests.</string>
 
     <!-- bottombar tabs -->
     <string name="tab_top_news">Trends</string>

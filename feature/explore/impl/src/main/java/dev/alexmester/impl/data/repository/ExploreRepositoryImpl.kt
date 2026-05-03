@@ -4,6 +4,7 @@ import dev.alexmester.database.entity.FeedCacheEntity.Companion.EXPLORE_FEED
 import dev.alexmester.impl.data.local.ExploreLocalDataSource
 import dev.alexmester.impl.data.mapper.toEntities
 import dev.alexmester.impl.data.remote.ExploreApiService
+import dev.alexmester.impl.domain.model.ExploreQuery
 import dev.alexmester.impl.domain.repository.ExploreRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
@@ -18,9 +19,14 @@ class ExploreRepositoryImpl(
     private val dispatchers: DispatcherProvider
 ) : ExploreRepository {
 
-    override fun observeArticles(): Flow<List<NewsArticle>> = local.observeFeedArticles()
+    override fun observeArticles(): Flow<List<NewsArticle>> =
+        local.observeFeedArticles()
 
-    override fun observeReadArticleIds(): Flow<List<Long>> = local.observeReadArticleIds()
+    override fun observeReadArticleIds(): Flow<List<Long>> =
+        local.observeReadArticleIds()
+
+    override suspend fun getExploreQuery(): ExploreQuery =
+        local.getExploreQuery()
 
     override suspend fun refresh(
         query: String,

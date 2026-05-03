@@ -1,17 +1,11 @@
 package dev.alexmester.impl.domain.usecase
 
-import dev.alexmester.datastore.UserPreferencesDataSource
-import dev.alexmester.utils.constants.LaskConstants
-import kotlinx.coroutines.flow.first
+import dev.alexmester.impl.domain.model.ExploreQuery
+import dev.alexmester.impl.domain.repository.ExploreRepository
 
 class GetInterestsExploreUseCase(
-    private val preferencesDataSource: UserPreferencesDataSource,
+    private val repository: ExploreRepository,
 ) {
-    suspend operator fun invoke(): Pair<String, String> {
-        val prefs = preferencesDataSource.userPreferences.first()
-
-        val query = prefs.interests.joinToString(separator = LaskConstants.SEPARATOR_OR)
-
-        return query to prefs.defaultLanguage
-    }
+    suspend operator fun invoke(): ExploreQuery =
+        repository.getExploreQuery()
 }

@@ -3,6 +3,7 @@ package dev.alexmester.impl.presentstion.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.error.NetworkErrorUiMapper
+import dev.alexmester.impl.domain.model.RefreshResult
 import dev.alexmester.impl.domain.usecase.GetLastCachedAtExploreUseCase
 import dev.alexmester.impl.domain.usecase.LoadMoreExploreUseCase
 import dev.alexmester.impl.domain.usecase.ObserveArticlesExploreUseCase
@@ -90,44 +91,18 @@ class ExploreViewModel(
     }
 
     private fun refresh() {
-        _state.update { current ->
-            when (current) {
-                is ExploreState.Content -> current.copy(isRefreshing = true)
-                is ExploreState.Error -> current.copy(isRefreshing = true)
-                is ExploreState.EmptyInterests -> current.copy(isRefreshing = true)
-                else -> current
-            }
-        }
+        _state.update { it.withRefreshing(true) }
 
         viewModelScope.launch {
             refreshExplore()
-                .onSuccess { result ->
-                    val currentState = _state.value
-                    if (result == 0) {
-                        if (!currentState.isContent) {
-                            _state.value = ExploreState.EmptyInterests(isRefreshing = false)
-                            return@launch
-                        } else {
-                            emitSideEffect(
-                                ExploreSideEffect.ShowWarning(
-                                    UiText.StringResource(R.string.interests_you_not_added)
-                                )
-                            )
-                        }
-                    }
-                    _state.update { current ->
-                        ExploreState.Content(
-                            articles = current.contentOrNull?.articles.orEmpty(),
-                            isRefreshing = false,
-                            isLoadingMore = false,
-                            endReached = result < PAGE_SIZE,
-                        )
-                    }
-                }
-                .onFailure { error ->
-                    handleError(error)
-                }
+                .onSuccess { result -> handleRefreshResult(result) }
+                .onFailure { error -> handleError(error) }
         }
+    }
+
+    private fun retryLoadMore() {
+        _state.updateContent { it.copy(loadMoreError = false) }
+        loadMore()
     }
 
     private fun loadMore() {
@@ -138,53 +113,91 @@ class ExploreViewModel(
 
         viewModelScope.launch {
             loadMore(offset = current.articles.size)
-                .onSuccess { result ->
-                    _state.updateContent {
-                        it.copy(
-                            isLoadingMore = false,
-                            endReached = result < PAGE_SIZE,
-                        )
-                    }
-                }
+                .onSuccess { result -> handleLoadMoreResult(result) }
                 .onFailure { error ->
-                    _state.updateContent {
-                        it.copy(
-                            isLoadingMore = false,
-                            loadMoreError = true,
-                        )
-                    }
-                    emitSideEffect(
-                        ExploreSideEffect.ShowError(
-                            NetworkErrorUiMapper.toUiText(error)
-                        )
-                    )
+                    _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
+                    emitSideEffect(ExploreSideEffect.ShowError(NetworkErrorUiMapper.toUiText(error)))
                 }
         }
     }
 
-    private fun retryLoadMore() {
-        _state.updateContent { it.copy(loadMoreError = false) }
-        loadMore()
+    private fun handleRefreshResult(result: RefreshResult) {
+        val hasCache = _state.value.isContent
+
+        when (result) {
+            is RefreshResult.NoInterests -> handleEmptyResult(
+                hasCache = hasCache,
+                warningRes = R.string.interests_you_not_added,
+                emptyState = ExploreState.EmptyInterests(isRefreshing = false),
+            )
+
+            is RefreshResult.EmptySearchResult -> handleEmptyResult(
+                hasCache = hasCache,
+                warningRes = R.string.warning_explore_content_empty,
+                emptyState = ExploreState.EmptyResult(isRefreshing = false),
+            )
+
+            is RefreshResult.Success -> _state.update { current ->
+                ExploreState.Content(
+                    articles = current.contentOrNull?.articles.orEmpty(),
+                    isRefreshing = false,
+                    isLoadingMore = false,
+                    endReached = result.count < PAGE_SIZE,
+                )
+            }
+        }
+    }
+
+    private fun handleLoadMoreResult(result: RefreshResult) {
+        when (result) {
+            is RefreshResult.NoInterests -> {
+                _state.updateContent { it.copy(isLoadingMore = false, endReached = true) }
+                emitSideEffect(
+                    ExploreSideEffect.ShowWarning(
+                        UiText.StringResource(R.string.interests_you_not_added)
+                    )
+                )
+            }
+
+            is RefreshResult.EmptySearchResult -> {
+                _state.updateContent { it.copy(isLoadingMore = false, endReached = true) }
+                emitSideEffect(
+                    ExploreSideEffect.ShowWarning(
+                        UiText.StringResource(R.string.warning_explore_content_empty)
+                    )
+                )
+            }
+
+            is RefreshResult.Success -> {
+                _state.updateContent {
+                    it.copy(
+                        isLoadingMore = false,
+                        endReached = result.count < PAGE_SIZE,
+                    )
+                }
+            }
+        }
+    }
+
+    private fun handleEmptyResult(
+        hasCache: Boolean,
+        warningRes: Int,
+        emptyState: ExploreState,
+    ) {
+        if (hasCache) {
+            _state.update { it.withRefreshing(false) }
+            emitSideEffect(ExploreSideEffect.ShowWarning(UiText.StringResource(warningRes)))
+        } else {
+            _state.value = emptyState
+        }
     }
 
     private fun handleError(error: NetworkError) {
-        val message = NetworkErrorUiMapper.toUiText(error)
-
         _state.update { current ->
-            when {
-                error is NetworkError.NoInternet &&
-                        current is ExploreState.Content &&
-                        current.articles.isNotEmpty() -> {
-                    current.copy(isRefreshing = false)
-                }
-
-                current is ExploreState.Content ->
-                    current.copy(isRefreshing = false)
-
-                else -> ExploreState.Error(error)
-            }
+            if (current is ExploreState.Content) current.copy(isRefreshing = false)
+            else ExploreState.Error(error)
         }
-        emitSideEffect(ExploreSideEffect.ShowError(message))
+        emitSideEffect(ExploreSideEffect.ShowError(NetworkErrorUiMapper.toUiText(error)))
     }
 
     private fun emitSideEffect(effect: ExploreSideEffect) {
