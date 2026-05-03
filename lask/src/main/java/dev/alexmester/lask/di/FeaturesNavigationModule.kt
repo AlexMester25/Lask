@@ -14,7 +14,7 @@ import dev.alexmester.impl.navigation.ProfileImpl
 import dev.alexmester.impl.navigation.SearchImpl
 import org.koin.dsl.module
 
-val featuresNavigationModule = module {
+val featuresNavigation = module {
     single<SearchApi> { SearchImpl(articleDetailApi = get()) }
     single<NewsFeedApi> { NewsFeedImpl(articleDetailApi = get()) }
     single<ExploreApi> { ExploreImpl(articleDetailApi = get(), searchApi = get()) }

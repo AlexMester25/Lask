@@ -24,7 +24,7 @@ import dev.alexmester.impl.presentation.system.mvi.SystemViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-val profileModule = module {
+val profile = module {
 
     single {
         ProfileLocalDataSource(

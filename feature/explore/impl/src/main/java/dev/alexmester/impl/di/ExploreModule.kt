@@ -11,13 +11,12 @@ import dev.alexmester.impl.domain.usecase.ObserveArticlesExploreUseCase
 import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsExploreUseCase
 import dev.alexmester.impl.domain.usecase.RefreshExploreUseCase
 import dev.alexmester.impl.presentstion.mvi.ExploreViewModel
-import dev.alexmester.models.di.DISPATCHER_IO
 import dev.alexmester.network.di.Clients
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val exploreModule = module {
+val explore = module {
     single { ExploreApiService(client = get(named(Clients.WORLD_NEWS))) }
 
     single {

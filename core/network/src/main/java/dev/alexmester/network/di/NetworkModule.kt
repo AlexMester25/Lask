@@ -16,7 +16,7 @@ enum class Clients {
     TRANSLATE,
 }
 
-val networkModule = module {
+val network = module {
     single(named(Clients.WORLD_NEWS)) {
         createBaseClient().config {
             install(DefaultRequest) {

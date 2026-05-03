@@ -1,35 +1,35 @@
 package dev.alexmester.lask.di
 
-import dev.alexmester.database.di.databaseModule
-import dev.alexmester.datastore.di.dataStoreModule
+import dev.alexmester.database.di.database
+import dev.alexmester.datastore.di.dataStore
 import dev.alexmester.impl.di.articleDetailModule
 import dev.alexmester.impl.di.bookmarksModule
-import dev.alexmester.impl.di.exploreModule
-import dev.alexmester.impl.di.newsFeedModule
-import dev.alexmester.impl.di.profileModule
-import dev.alexmester.impl.di.searchModule
-import dev.alexmester.lask.splash_screen.splashModule
-import dev.alexmester.lask.theme_switch.themeSwitchModule
-import dev.alexmester.network.di.networkModule
-import dev.alexmester.platform.dispatchers.platformModule
+import dev.alexmester.impl.di.explore
+import dev.alexmester.impl.di.newsFeed
+import dev.alexmester.impl.di.profile
+import dev.alexmester.impl.di.search
+import dev.alexmester.lask.splash_screen.splash
+import dev.alexmester.lask.theme_switch.themeSwitch
+import dev.alexmester.network.di.network
+import dev.alexmester.platform.dispatchers.platform
 
 object AppModules {
     val all = listOf(
-        appScopeModule,
-        splashModule,
-        themeSwitchModule,
-        featuresNavigationModule,
+        appScope,
+        splash,
+        themeSwitch,
+        featuresNavigation,
         // Core
-        networkModule,
-        databaseModule,
-        dataStoreModule,
-        platformModule,
+        network,
+        database,
+        dataStore,
+        platform,
         // Features
-        newsFeedModule,
-        exploreModule,
+        newsFeed,
+        explore,
         articleDetailModule,
         bookmarksModule,
-        profileModule,
-        searchModule
+        profile,
+        search
     )
 }

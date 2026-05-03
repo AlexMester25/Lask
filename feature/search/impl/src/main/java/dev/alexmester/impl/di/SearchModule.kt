@@ -2,7 +2,6 @@ package dev.alexmester.impl.di
 
 import dev.alexmester.impl.data.remote.SearchApiService
 import dev.alexmester.impl.data.repository.SearchRepositoryImpl
-import dev.alexmester.impl.domain.interactor.SearchInteractor
 import dev.alexmester.impl.domain.repository.SearchRepository
 import dev.alexmester.impl.domain.usecase.GetReadArticleIdsSearchUseCase
 import dev.alexmester.impl.domain.usecase.SearchUseCase
@@ -12,7 +11,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val searchModule = module {
+val search = module {
 
     single { SearchApiService(client = get(named(Clients.WORLD_NEWS))) }
 

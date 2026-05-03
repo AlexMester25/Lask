@@ -6,7 +6,7 @@ import dev.alexmester.database.di.DatabaseConstants.DB_NAME
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
-val databaseModule = module {
+val database = module {
 
     single {
         Room.databaseBuilder(

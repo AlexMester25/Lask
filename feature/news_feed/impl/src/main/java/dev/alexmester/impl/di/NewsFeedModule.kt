@@ -14,7 +14,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val newsFeedModule = module {
+val newsFeed = module {
 
     single { NewsFeedApiService(client = get(named(Clients.WORLD_NEWS))) }
 

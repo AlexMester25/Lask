@@ -2,6 +2,6 @@ package dev.alexmester.platform.dispatchers
 
 import org.koin.dsl.module
 
-val platformModule = module {
+val platform = module {
     single<DispatcherProvider> { DefaultDispatcherProvider() }
 }

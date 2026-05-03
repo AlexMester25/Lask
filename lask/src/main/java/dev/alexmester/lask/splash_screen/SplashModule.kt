@@ -7,7 +7,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-val splashModule = module {
+val splash = module {
     viewModel {
         SplashViewModel(
             preferencesDataSource = get(),

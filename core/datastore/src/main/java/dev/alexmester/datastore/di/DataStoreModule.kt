@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 private val Context.dataStore by preferencesDataStore(name = DATASTORE_NAME)
 
-val dataStoreModule = module {
+val dataStore = module {
 
     single<UserPreferencesDataSource>{
         UserPreferencesDataSourceImpl(
