@@ -28,6 +28,7 @@ sealed interface ExploreState {
         val endReached: Boolean = false,
         val lastCachedAt: Long? = null,
         val loadMoreError: Boolean = false,
+        val refreshId: Int = 0,
     ) : ExploreState
 }
 

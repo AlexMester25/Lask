@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -75,10 +76,8 @@ class ExploreViewModel(
         observeArticles().onEach { articles ->
             if (articles.isEmpty()) return@onEach
             _state.update { current ->
-                when (current) {
-                    is ExploreState.Content -> current.copy(articles = articles)
-                    else -> ExploreState.Content(articles = articles)
-                }
+                if (current is ExploreState.Content) current.copy(articles = articles)
+                else current
             }
         }.launchIn(viewModelScope)
     }
@@ -86,6 +85,11 @@ class ExploreViewModel(
     private fun bootstrap() {
         viewModelScope.launch {
             _state.value = ExploreState.Loading
+
+            val cached = observeArticles().first()
+            if (cached.isNotEmpty()) {
+                _state.value = ExploreState.Content(articles = cached)
+            }
             refresh()
         }
     }
@@ -95,25 +99,35 @@ class ExploreViewModel(
 
         viewModelScope.launch {
             refreshExplore()
-                .onSuccess { result -> handleRefreshResult(result) }
-                .onFailure { error -> handleError(error) }
+                .onSuccess { result ->
+                    handleRefreshResult(result)
+                }
+                .onFailure { error ->
+                    handleError(error)
+                }
         }
     }
 
     private fun retryLoadMore() {
-        _state.updateContent { it.copy(loadMoreError = false) }
+        _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = false) }
         loadMore()
     }
 
     private fun loadMore() {
-        val current = _state.value.contentOrNull ?: return
-        if (current.isLoadingMore || current.isRefreshing || current.endReached) return
+        val current = _state.value.contentOrNull ?: run {
+            return
+        }
+        if (current.isLoadingMore || current.isRefreshing || current.endReached) {
+            return
+        }
 
         _state.updateContent { it.copy(isLoadingMore = true, loadMoreError = false) }
 
         viewModelScope.launch {
             loadMore(offset = current.articles.size)
-                .onSuccess { result -> handleLoadMoreResult(result) }
+                .onSuccess { result ->
+                    handleLoadMoreResult(result)
+                }
                 .onFailure { error ->
                     _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
                     emitSideEffect(ExploreSideEffect.ShowError(NetworkErrorUiMapper.toUiText(error)))
@@ -125,17 +139,23 @@ class ExploreViewModel(
         val hasCache = _state.value.isContent
 
         when (result) {
-            is RefreshResult.NoInterests -> handleEmptyResult(
-                hasCache = hasCache,
-                warningRes = R.string.interests_you_not_added,
-                emptyState = ExploreState.EmptyInterests(isRefreshing = false),
-            )
+            is RefreshResult.NoInterests -> {
+                _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
+                handleEmptyResult(
+                    hasCache = hasCache,
+                    warningRes = R.string.interests_you_not_added,
+                    emptyState = ExploreState.EmptyInterests(isRefreshing = false),
+                )
+            }
 
-            is RefreshResult.EmptySearchResult -> handleEmptyResult(
-                hasCache = hasCache,
-                warningRes = R.string.warning_explore_content_empty,
-                emptyState = ExploreState.EmptyResult(isRefreshing = false),
-            )
+            is RefreshResult.EmptySearchResult -> {
+                _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
+                handleEmptyResult(
+                    hasCache = hasCache,
+                    warningRes = R.string.warning_explore_content_empty,
+                    emptyState = ExploreState.EmptyResult(isRefreshing = false),
+                )
+            }
 
             is RefreshResult.Success -> _state.update { current ->
                 ExploreState.Content(
@@ -143,6 +163,7 @@ class ExploreViewModel(
                     isRefreshing = false,
                     isLoadingMore = false,
                     endReached = result.count < PAGE_SIZE,
+                    refreshId = (current.contentOrNull?.refreshId ?: 0) + 1,
                 )
             }
         }
@@ -151,23 +172,21 @@ class ExploreViewModel(
     private fun handleLoadMoreResult(result: RefreshResult) {
         when (result) {
             is RefreshResult.NoInterests -> {
-                _state.updateContent { it.copy(isLoadingMore = false, endReached = true) }
+                _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
                 emitSideEffect(
                     ExploreSideEffect.ShowWarning(
                         UiText.StringResource(R.string.interests_you_not_added)
                     )
                 )
             }
-
             is RefreshResult.EmptySearchResult -> {
-                _state.updateContent { it.copy(isLoadingMore = false, endReached = true) }
+                _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
                 emitSideEffect(
                     ExploreSideEffect.ShowWarning(
                         UiText.StringResource(R.string.warning_explore_content_empty)
                     )
                 )
             }
-
             is RefreshResult.Success -> {
                 _state.updateContent {
                     it.copy(

@@ -38,7 +38,7 @@ class ExploreRepositoryImpl(
                 language = language,
                 offset = 0,
             )
-
+            if (response.news.isEmpty()) return@safeApiCall 0
             val (articles, cache) = withContext(dispatchers.default) {
                 response.news.toEntities(feedType = EXPLORE_FEED, positionStart = 0)
             }
@@ -59,7 +59,7 @@ class ExploreRepositoryImpl(
                 language = language,
                 offset = offset,
             )
-
+            if (response.news.isEmpty()) return@safeApiCall 0
             val (articles, cache) = withContext(dispatchers.default) {
                 response.news.toEntities(feedType = EXPLORE_FEED, positionStart = offset)
             }

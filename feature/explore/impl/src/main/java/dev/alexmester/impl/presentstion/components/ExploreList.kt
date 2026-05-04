@@ -47,7 +47,7 @@ internal fun ExploreList(
         }
     }
 
-    LaunchedEffect(shouldLoadMore.value) {
+    LaunchedEffect(shouldLoadMore.value,state.refreshId) {
         if (shouldLoadMore.value && !state.loadMoreError) {
             onIntent(ExploreIntent.LoadMore)
         }
