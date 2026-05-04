@@ -14,14 +14,14 @@ import org.koin.dsl.module
 val bookmarksModule = module {
 
     single {
-        BookmarksLocalDataSource(
-            userStateDao = get(),
-            ioDispatcher = get(named(DISPATCHER_IO)),
-        )
+        BookmarksLocalDataSource(userStateDao = get())
     }
 
     single<BookmarksRepository> {
-        BookmarksRepositoryImpl(local = get())
+        BookmarksRepositoryImpl(
+            local = get(),
+            dispatchers = get()
+        )
     }
 
     factory { ObserveBookmarksUseCase(repository = get()) }
