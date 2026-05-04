@@ -9,12 +9,16 @@ import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_CURRENT_XP
 import dev.alexmester.utils.statistic.StatisticUtils.xpForLevel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.File
+
+private const val FILE_NAME = "xp_add_test_datastore"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DataSourceAddXpTest {
@@ -25,95 +29,120 @@ class DataSourceAddXpTest {
     private lateinit var dataStore: DataStore<Preferences>
     private lateinit var dataSource: UserPreferencesDataSource
 
-    @Before
-    fun setUp() {
+    private fun TestScope.setupDataSource() {
         dataStore = PreferenceDataStoreFactory.create(
-            scope = mainDispatcherRule.scope,
+            scope = backgroundScope,
             produceFile = {
-                File.createTempFile("xp_test_datastore", ".preferences_pb").apply {
+                File.createTempFile(FILE_NAME, ".preferences_pb").apply {
                     deleteOnExit()
                 }
-            },
+            }
         )
         dataSource = UserPreferencesDataSourceImpl(dataStore)
     }
 
     @Test
-    fun `given empty store when addXp below threshold then keeps level and accumulates xp`() = runTest {
-        val delta = 5f // < 10
+    fun `given empty store when addXp below threshold then keeps level and accumulates xp`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            setupDataSource()
 
-        dataSource.addXp(delta)
-        val prefs = dataSource.userPreferences.first()
+            dataSource.addXp(5f)
+            advanceUntilIdle()
 
-        assertEquals(1, prefs.currentLevel)
-        assertEquals(5f, prefs.currentXp, 0.0001f)
-    }
+            val prefs = dataSource.userPreferences.first()
 
-    @Test
-    fun `given exact threshold xp then level up with zero remainder`() = runTest {
-        val delta = xpForLevel(1)
-
-        dataSource.addXp(delta)
-        val prefs = dataSource.userPreferences.first()
-
-        assertEquals(2, prefs.currentLevel)
-        assertEquals(0f, prefs.currentXp, 0.0001f)
-    }
-
-    @Test
-    fun `given xp above threshold then level up and keep remainder`() = runTest {
-        val delta = 40f
-
-        dataSource.addXp(delta)
-        val prefs = dataSource.userPreferences.first()
-
-        assertEquals(2, prefs.currentLevel)
-        assertEquals(30f, prefs.currentXp, 0.0001f)
-    }
-
-    @Test
-    fun `given large xp then multiple level ups`() = runTest {
-        val delta = 200f
-
-        dataSource.addXp(delta)
-        val prefs = dataSource.userPreferences.first()
-
-        assertEquals(4, prefs.currentLevel)
-        assertEquals(83f, prefs.currentXp, 1f)
-    }
-
-    @Test
-    fun `given existing xp then accumulates correctly`() = runTest {
-        dataSource.addXp(5f)
-        dataSource.addXp(3f)
-
-        val prefs = dataSource.userPreferences.first()
-
-        assertEquals(1, prefs.currentLevel)
-        assertEquals(8f, prefs.currentXp, 0.0001f)
-    }
-
-    @Test
-    fun `given existing xp when threshold reached then levels up`() = runTest {
-        dataSource.addXp(7f)
-        dataSource.addXp(5f)
-
-        val prefs = dataSource.userPreferences.first()
-
-        assertEquals(2, prefs.currentLevel)
-        assertEquals(2f, prefs.currentXp, 0.0001f)
-    }
-
-    @Test
-    fun `given max level then no further leveling`() = runTest {
-        dataStore.edit {
-            it[KEY_CURRENT_LEVEL] = 50
+            assertEquals(1, prefs.currentLevel)
+            assertEquals(5f, prefs.currentXp, 0.0001f)
         }
 
-        dataSource.addXp(1000f)
-        val prefs = dataSource.userPreferences.first()
+    @Test
+    fun `given exact threshold xp then level up with zero remainder`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            setupDataSource()
 
-        assertEquals(50, prefs.currentLevel)
-        assertEquals(0f, prefs.currentXp, 0.0001f)
-    }
+            dataSource.addXp(xpForLevel(1))
+            advanceUntilIdle()
+
+            val prefs = dataSource.userPreferences.first()
+
+            assertEquals(2, prefs.currentLevel)
+            assertEquals(0f, prefs.currentXp, 0.0001f)
+        }
+
+    @Test
+    fun `given xp above threshold then level up and keep remainder`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            setupDataSource()
+
+            dataSource.addXp(40f)
+            advanceUntilIdle()
+
+            val prefs = dataSource.userPreferences.first()
+
+            assertEquals(2, prefs.currentLevel)
+            assertEquals(30f, prefs.currentXp, 0.0001f)
+        }
+
+    @Test
+    fun `given large xp then multiple level ups`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            setupDataSource()
+
+            dataSource.addXp(200f)
+            advanceUntilIdle()
+
+            val prefs = dataSource.userPreferences.first()
+
+            assertEquals(4, prefs.currentLevel)
+            assertEquals(83f, prefs.currentXp, 1f)
+        }
+
+    @Test
+    fun `given existing xp then accumulates correctly`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            setupDataSource()
+
+            dataSource.addXp(5f)
+            dataSource.addXp(3f)
+            advanceUntilIdle()
+
+            val prefs = dataSource.userPreferences.first()
+
+            assertEquals(1, prefs.currentLevel)
+            assertEquals(8f, prefs.currentXp, 0.0001f)
+        }
+
+    @Test
+    fun `given existing xp when threshold reached then levels up`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            setupDataSource()
+
+            dataSource.addXp(7f)
+            dataSource.addXp(5f)
+            advanceUntilIdle()
+
+            val prefs = dataSource.userPreferences.first()
+
+            assertEquals(2, prefs.currentLevel)
+            assertEquals(2f, prefs.currentXp, 0.0001f)
+        }
+
+    @Test
+    fun `given max level then no further leveling`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            setupDataSource()
+
+            dataStore.edit {
+                it[KEY_CURRENT_LEVEL] = 50
+            }
+            advanceUntilIdle()
+
+            dataSource.addXp(1000f)
+            advanceUntilIdle()
+
+            val prefs = dataSource.userPreferences.first()
+
+            assertEquals(50, prefs.currentLevel)
+            assertEquals(0f, prefs.currentXp, 0.0001f)
+        }
 }
