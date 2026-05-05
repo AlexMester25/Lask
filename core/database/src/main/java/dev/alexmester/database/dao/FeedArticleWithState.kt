@@ -1,11 +1,7 @@
-package dev.alexmester.database.entity
+package dev.alexmester.database.dao
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "articles")
-data class ArticleEntity(
-    @PrimaryKey val id: Long,
+data class FeedArticleWithState(
+    val id: Long,
     val title: String,
     val text: String?,
     val summary: String?,
@@ -18,4 +14,6 @@ data class ArticleEntity(
     val language: String?,
     val sourceCountry: String?,
     val sentiment: Double?,
+    val clusterId: Int,
+    val position: Int,
 )

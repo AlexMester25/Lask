@@ -2,7 +2,7 @@ package dev.alexmester.database.di
 
 import androidx.room.Room
 import dev.alexmester.database.AppDatabase
-import dev.alexmester.database.di.DatabaseConstants.DB_NAME
+import dev.alexmester.database.DatabaseConstants.DB_NAME
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -23,7 +23,3 @@ val database = module {
     single { get<AppDatabase>().feedCacheDao() }
 }
 
-object DatabaseConstants {
-    const val DB_NAME = "lask_database"
-    const val DB_VERSION = 5
-}
