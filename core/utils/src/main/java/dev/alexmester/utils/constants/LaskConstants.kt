@@ -8,6 +8,7 @@ object LaskConstants {
 
     const val MAX_TRANSLATE_CHARS = 5_000
     const val PAGE_SIZE = 20
+    const val MAX_INTERESTS = 20
     const val XP_PER_READ = 25f
     const val XP_PER_CLAP = 10f
 }

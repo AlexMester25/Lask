@@ -70,6 +70,11 @@
     <string name="interests_add">Добавить</string>
     <string name="interests_you_interests">Ваши интересы</string>
     <string name="interests_you_not_added">Вы не добавили никаких интересов.</string>
+    <string name="interests_error_too_short">Минимум 2 символа</string>
+    <string name="interests_error_too_long">Максимум 30 символов</string>
+    <string name="interests_error_no_letters">Должна быть хотя бы одна буква</string>
+    <string name="interests_error_invalid_chars">Допустимы буквы, цифры и дефис</string>
+    <string name="interests_error_already_exists">Такой интерес уже добавлен</string>
 
     <!-- System -->
     <string name="system_theme">Тема</string>

@@ -12,6 +12,7 @@
     <string name="error_translation_failed">Translation failed. Please try again.</string>
     <string name="error_translation_text_too_long">Text is too long to translate</string>
 
+
     <!-- common warning -->
     <string name="warning_no_articles">No articles yet</string>
     <string name="warning_empty_bookmarks">Empty bookmarks</string>
@@ -72,6 +73,11 @@
     <string name="interests_add">Add</string>
     <string name="interests_you_interests">You Interests</string>
     <string name="interests_you_not_added">You not added any interests</string>
+    <string name="interests_error_too_short">At least 2 characters required</string>
+    <string name="interests_error_too_long">Maximum 30 characters allowed</string>
+    <string name="interests_error_no_letters">Must contain at least one letter</string>
+    <string name="interests_error_invalid_chars">Only letters, numbers and hyphens are allowed</string>
+    <string name="interests_error_already_exists">This interest is already added</string>
 
     <!-- System -->
     <string name="system_theme">Theme</string>

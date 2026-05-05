@@ -125,10 +125,12 @@ class UserPreferencesDataSourceImpl(
     override suspend fun addInterest(keyword: String) {
         val normalized = keyword.trim().lowercase()
         if (normalized.isBlank()) return
+        if (normalized.length !in 2..30) return
+        if (!normalized.any { it.isLetter() }) return
 
         dataStore.edit { prefs ->
             val current = prefs[KEY_INTERESTS] ?: emptySet()
-            if (normalized !in current) {
+            if (normalized !in current && current.size < 20) {
                 prefs[KEY_INTERESTS] = current + normalized
             }
         }

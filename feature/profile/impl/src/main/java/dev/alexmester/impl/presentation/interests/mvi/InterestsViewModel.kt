@@ -2,7 +2,6 @@ package dev.alexmester.impl.presentation.interests.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.datastore.UserPreferencesDataSource
 import dev.alexmester.impl.domain.usecase.AddInterestUseCase
 import dev.alexmester.impl.domain.usecase.ObserveUserPreferencesUseCase
 import dev.alexmester.impl.domain.usecase.RemoveInterestUseCase

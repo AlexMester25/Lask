@@ -1,19 +1,29 @@
 package dev.alexmester.impl.presentation.interests
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Interests
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,11 +33,13 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.alexmester.impl.presentation.interests.components.InterestsErrorRow
 import dev.alexmester.impl.presentation.interests.components.InterestsTopBar
 import dev.alexmester.impl.presentation.interests.mvi.InterestsIntent
 import dev.alexmester.impl.presentation.interests.mvi.InterestsSideEffect
 import dev.alexmester.impl.presentation.interests.mvi.InterestsState
 import dev.alexmester.impl.presentation.interests.mvi.InterestsViewModel
+import dev.alexmester.impl.presentation.interests.mvi.toUiString
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.buttons.LaskChipButton
 import dev.alexmester.ui.components.buttons.LaskChipButtonVariants
@@ -112,14 +124,11 @@ internal fun InterestsScreenContent(
                     isEnable = state.canAdd
                 )
             }
+            InterestsErrorRow(
+                validationError = state.validationError
+            )
 
             if (state.interests.isNotEmpty()) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = stringResource(R.string.interests_you_interests),
-                    style = MaterialTheme.LaskTypography.footnote,
-                    color = MaterialTheme.LaskColors.textSecondary,
-                )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
