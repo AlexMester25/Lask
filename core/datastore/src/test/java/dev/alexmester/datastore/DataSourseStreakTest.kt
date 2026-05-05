@@ -9,8 +9,6 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import java.io.File
 
@@ -18,9 +16,6 @@ private const val FILE_NAME = "streak_test_datastore"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DataSourseStreakTest {
-
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var dataStore: DataStore<Preferences>
     private lateinit var dataSource: UserPreferencesDataSource
@@ -40,8 +35,7 @@ class DataSourseStreakTest {
     private suspend fun prefs() = dataSource.userPreferences.first()
 
     @Test
-    fun `should set streak to 1 when no previous date`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `should set streak to 1 when no previous date`() = runTest {
             setupDataSource()
 
             dataSource.updateStreak("2026-04-25")
@@ -54,8 +48,7 @@ class DataSourseStreakTest {
         }
 
     @Test
-    fun `should not change streak when same day`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `should not change streak when same day`() = runTest {
             setupDataSource()
 
             dataSource.updateStreak("2026-04-25")
@@ -69,8 +62,7 @@ class DataSourseStreakTest {
         }
 
     @Test
-    fun `should increment streak when yesterday`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `should increment streak when yesterday`() = runTest {
             setupDataSource()
 
             dataSource.updateStreak("2026-04-24")
@@ -84,8 +76,7 @@ class DataSourseStreakTest {
         }
 
     @Test
-    fun `should reset streak when day skipped`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `should reset streak when day skipped`() = runTest {
             setupDataSource()
 
             dataSource.updateStreak("2026-04-20")
@@ -99,8 +90,7 @@ class DataSourseStreakTest {
         }
 
     @Test
-    fun `should reset streak when stored date is invalid`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `should reset streak when stored date is invalid`() = runTest {
             setupDataSource()
 
             dataSource.updateStreak("invalid-date")

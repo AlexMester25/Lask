@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import java.io.File
 
@@ -19,9 +17,6 @@ private const val FILE_NAME = "remove_interests_test_datastore"
 @ExperimentalCoroutinesApi
 @OptIn(ExperimentalCoroutinesApi::class)
 class DataSourceRemoveInterestsTest {
-
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var dataStore: DataStore<Preferences>
     private lateinit var dataSource: UserPreferencesDataSource
@@ -39,8 +34,7 @@ class DataSourceRemoveInterestsTest {
     }
 
     @Test
-    fun `removeInterest removes existing keyword`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `removeInterest removes existing keyword`() = runTest {
             setupDataSource()
 
             dataSource.addInterest("Kotlin")
@@ -56,8 +50,7 @@ class DataSourceRemoveInterestsTest {
         }
 
     @Test
-    fun `removeInterest does nothing if keyword not exists`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `removeInterest does nothing if keyword not exists`() = runTest {
             setupDataSource()
 
             dataSource.addInterest("Kotlin")
@@ -74,8 +67,7 @@ class DataSourceRemoveInterestsTest {
         }
 
     @Test
-    fun `removeInterest is case insensitive`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `removeInterest is case insensitive`() = runTest {
             setupDataSource()
 
             dataSource.addInterest("Kotlin")
@@ -90,8 +82,7 @@ class DataSourceRemoveInterestsTest {
         }
 
     @Test
-    fun `removeInterest handles blank input gracefully`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `removeInterest handles blank input gracefully`() = runTest {
             setupDataSource()
 
             dataSource.addInterest("Kotlin")
@@ -109,8 +100,7 @@ class DataSourceRemoveInterestsTest {
         }
 
     @Test
-    fun `removeInterest removes only one occurrence even if somehow duplicated`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `removeInterest removes only one occurrence even if somehow duplicated`() = runTest {
             setupDataSource()
 
             dataSource.addInterest("kotlin")

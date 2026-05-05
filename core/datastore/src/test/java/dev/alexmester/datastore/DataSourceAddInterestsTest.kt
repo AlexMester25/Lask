@@ -3,15 +3,12 @@ package dev.alexmester.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_INTERESTS
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import java.io.File
 
@@ -19,9 +16,6 @@ private const val FILE_NAME = "add_interests_test_datastore"
 
 @ExperimentalCoroutinesApi
 class DataSourceAddInterestsTest {
-
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var dataStore: DataStore<Preferences>
     private lateinit var dataSource: UserPreferencesDataSource
@@ -39,8 +33,7 @@ class DataSourceAddInterestsTest {
     }
 
     @Test
-    fun `addInterest adds new keyword`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `addInterest adds new keyword`() = runTest {
             setupDataSource()
 
             dataSource.addInterest("Kotlin")
@@ -52,8 +45,7 @@ class DataSourceAddInterestsTest {
         }
 
     @Test
-    fun `addInterest does not add duplicates`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `addInterest does not add duplicates`() = runTest {
             setupDataSource()
 
             dataSource.addInterest("kotlin")
@@ -67,8 +59,7 @@ class DataSourceAddInterestsTest {
         }
 
     @Test
-    fun `blank interest does not change datastore`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `blank interest does not change datastore`() = runTest {
             setupDataSource()
 
             val before = dataSource.userPreferences.first().interests
@@ -84,8 +75,7 @@ class DataSourceAddInterestsTest {
         }
 
     @Test
-    fun `addInterest accumulates multiple interests`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `addInterest accumulates multiple interests`() = runTest {
             setupDataSource()
 
             dataSource.addInterest("Kotlin")
@@ -99,8 +89,7 @@ class DataSourceAddInterestsTest {
         }
 
     @Test
-    fun `addInterest is case insensitive`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `addInterest is case insensitive`() = runTest {
             setupDataSource()
 
             dataSource.addInterest("Kotlin")

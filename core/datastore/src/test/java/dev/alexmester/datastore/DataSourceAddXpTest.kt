@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_CURRENT_LEVEL
-import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_CURRENT_XP
 import dev.alexmester.utils.statistic.StatisticUtils.xpForLevel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -13,8 +12,6 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import java.io.File
 
@@ -22,9 +19,6 @@ private const val FILE_NAME = "xp_add_test_datastore"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DataSourceAddXpTest {
-
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var dataStore: DataStore<Preferences>
     private lateinit var dataSource: UserPreferencesDataSource
@@ -42,8 +36,7 @@ class DataSourceAddXpTest {
     }
 
     @Test
-    fun `given empty store when addXp below threshold then keeps level and accumulates xp`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `given empty store when addXp below threshold then keeps level and accumulates xp`() = runTest {
             setupDataSource()
 
             dataSource.addXp(5f)
@@ -56,8 +49,7 @@ class DataSourceAddXpTest {
         }
 
     @Test
-    fun `given exact threshold xp then level up with zero remainder`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `given exact threshold xp then level up with zero remainder`() = runTest {
             setupDataSource()
 
             dataSource.addXp(xpForLevel(1))
@@ -70,8 +62,7 @@ class DataSourceAddXpTest {
         }
 
     @Test
-    fun `given xp above threshold then level up and keep remainder`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `given xp above threshold then level up and keep remainder`() = runTest {
             setupDataSource()
 
             dataSource.addXp(40f)
@@ -84,8 +75,7 @@ class DataSourceAddXpTest {
         }
 
     @Test
-    fun `given large xp then multiple level ups`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `given large xp then multiple level ups`() = runTest {
             setupDataSource()
 
             dataSource.addXp(200f)
@@ -98,8 +88,7 @@ class DataSourceAddXpTest {
         }
 
     @Test
-    fun `given existing xp then accumulates correctly`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `given existing xp then accumulates correctly`() = runTest {
             setupDataSource()
 
             dataSource.addXp(5f)
@@ -113,8 +102,7 @@ class DataSourceAddXpTest {
         }
 
     @Test
-    fun `given existing xp when threshold reached then levels up`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `given existing xp when threshold reached then levels up`() = runTest {
             setupDataSource()
 
             dataSource.addXp(7f)
@@ -128,8 +116,7 @@ class DataSourceAddXpTest {
         }
 
     @Test
-    fun `given max level then no further leveling`() =
-        runTest(mainDispatcherRule.testDispatcher) {
+    fun `given max level then no further leveling`() = runTest {
             setupDataSource()
 
             dataStore.edit {
