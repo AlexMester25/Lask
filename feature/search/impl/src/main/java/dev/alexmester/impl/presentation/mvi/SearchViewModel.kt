@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private const val DEBOUNCE_MS = 500L
-private const val MIN_QUERY_LENGTH = 2
+private const val MIN_QUERY_LENGTH = 3
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
@@ -109,8 +109,6 @@ class SearchViewModel(
 
     private fun performSearch() {
         val current = _state.value
-        if (current.query.length < MIN_QUERY_LENGTH) return
-
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
             searchUseCase(current.query, current.filters)

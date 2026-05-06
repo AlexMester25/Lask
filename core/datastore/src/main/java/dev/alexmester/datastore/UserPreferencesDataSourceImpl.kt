@@ -22,6 +22,7 @@ import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_PROFILE_NAME
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_STREAK_COUNT
 import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.utils.constants.LaskConstants.ANONIM
+import dev.alexmester.utils.constants.LaskConstants.MAX_INTERESTS
 import dev.alexmester.utils.date.DateUtils.isYesterday
 import dev.alexmester.utils.statistic.StatisticUtils.MAX_LEVEL
 import dev.alexmester.utils.statistic.StatisticUtils.xpForLevel
@@ -130,7 +131,7 @@ class UserPreferencesDataSourceImpl(
 
         dataStore.edit { prefs ->
             val current = prefs[KEY_INTERESTS] ?: emptySet()
-            if (normalized !in current && current.size < 20) {
+            if (normalized !in current && current.size < MAX_INTERESTS) {
                 prefs[KEY_INTERESTS] = current + normalized
             }
         }

@@ -11,6 +11,8 @@ sealed class NetworkError : Exception() {
 
     class Timeout : NetworkError()
 
+    class BadGateway: NetworkError()
+
     data class HttpError(
         val code: Int,
         override val message: String? = null

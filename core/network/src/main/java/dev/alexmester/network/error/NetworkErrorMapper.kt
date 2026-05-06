@@ -27,7 +27,7 @@ internal object NetworkErrorMapper {
                     code = 422,
                     message = "Text is too long for translation"
                 )
-
+                502 -> NetworkError.BadGateway()
                 429 -> {
                     val retryAfter = throwable.response.headers["Retry-After"]?.toLongOrNull()
                     NetworkError.RateLimit(retryAfterSeconds = retryAfter)
