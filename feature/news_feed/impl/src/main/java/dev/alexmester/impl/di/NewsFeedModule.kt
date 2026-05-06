@@ -20,7 +20,7 @@ val newsFeed = module {
 
     single {
         NewsFeedLocalDataSource(
-            db = get(),
+            transactionRunner = get(),
             articleDao = get(),
             feedCacheDao = get(),
             userStateDao = get(),

@@ -46,9 +46,6 @@ interface ArticleUserStateDao {
     """)
     suspend fun markAsRead(articleId: Long, readAt: Long)
 
-    @Query("SELECT isRead FROM article_user_state WHERE articleId = :articleId")
-    fun observeIsRead(articleId: Long): Flow<Boolean?>
-
     @Query("SELECT articleId FROM article_user_state WHERE isRead = 1")
     fun observeReadArticleIds(): Flow<List<Long>>
 
@@ -74,9 +71,6 @@ interface ArticleUserStateDao {
 
     @Query("SELECT clapCount FROM article_user_state WHERE articleId = :articleId")
     fun observeClapCount(articleId: Long): Flow<Int?>
-
-    @Query("SELECT clapCount FROM article_user_state WHERE articleId = :articleId")
-    suspend fun getClapCount(articleId: Long): Int?
 
     @Query("""
         SELECT a.* FROM articles a

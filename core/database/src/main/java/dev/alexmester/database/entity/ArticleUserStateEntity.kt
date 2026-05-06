@@ -5,15 +5,6 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-/**
- * Состояние пользователя для статьи: прочитано / аплодировано / в закладках.
- *
- * FK NO_ACTION — статья не удаляется автоматически пока есть активный user state.
- * Очистка статей происходит вручную через ArticleDao.deleteOrphaned().
- *
- * [clapCount] заменяет отдельную таблицу claps и isLiked флаг —
- * isLiked = clapCount > 0, нет риска рассинхронизации.
- */
 @Entity(
     tableName = "article_user_state",
     foreignKeys = [
