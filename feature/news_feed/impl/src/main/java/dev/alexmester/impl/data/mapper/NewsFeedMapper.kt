@@ -7,9 +7,7 @@ import dev.alexmester.impl.data.remote.dto.NewsArticleDto
 import dev.alexmester.impl.data.remote.dto.NewsClusterDto
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.news.NewsCluster
-import kotlinx.serialization.json.Json
 
-private val json = Json { ignoreUnknownKeys = true }
 
 // ── DTO → ArticleEntity ───────────────────────────────────────────────────────
 
@@ -22,7 +20,7 @@ fun NewsArticleDto.toArticleEntity(): ArticleEntity = ArticleEntity(
     image = image,
     video = video,
     publishDate = publishDate,
-    authors = json.encodeToString(authors),
+    authors = authors,
     category = category,
     language = language,
     sourceCountry = sourceCountry,
@@ -73,7 +71,7 @@ fun FeedArticleWithState.toDomain(): NewsArticle = NewsArticle(
     image = image,
     video = video,
     publishDate = publishDate,
-    authors = json.decodeFromString(authors),
+    authors = authors,
     category = category,
     language = language,
     sourceCountry = sourceCountry,
@@ -109,7 +107,7 @@ fun ArticleEntity.toDomain(): NewsArticle = NewsArticle(
     image = image,
     video = video,
     publishDate = publishDate,
-    authors = json.decodeFromString(authors),
+    authors = authors,
     category = category,
     language = language,
     sourceCountry = sourceCountry,

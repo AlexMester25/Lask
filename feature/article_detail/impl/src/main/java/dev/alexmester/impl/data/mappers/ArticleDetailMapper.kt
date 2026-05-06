@@ -2,9 +2,6 @@ package dev.alexmester.impl.data.mappers
 
 import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.models.news.NewsArticle
-import kotlinx.serialization.json.Json
-
-private val json = Json { ignoreUnknownKeys = true }
 
 fun ArticleEntity.toDomain(): NewsArticle = NewsArticle(
     id = id,
@@ -15,7 +12,7 @@ fun ArticleEntity.toDomain(): NewsArticle = NewsArticle(
     image = image,
     video = video,
     publishDate = publishDate,
-    authors = json.decodeFromString(authors),
+    authors = authors,
     category = category,
     language = language,
     sourceCountry = sourceCountry,

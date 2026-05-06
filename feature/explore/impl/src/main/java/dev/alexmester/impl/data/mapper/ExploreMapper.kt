@@ -5,9 +5,7 @@ import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.database.entity.FeedCacheEntity
 import dev.alexmester.impl.data.remote.dto.ExploreNewsArticleDto
 import dev.alexmester.models.news.NewsArticle
-import kotlinx.serialization.json.Json
 
-private val json = Json { ignoreUnknownKeys = true }
 
 fun ExploreNewsArticleDto.toArticleEntity(): ArticleEntity = ArticleEntity(
     id = id,
@@ -18,7 +16,7 @@ fun ExploreNewsArticleDto.toArticleEntity(): ArticleEntity = ArticleEntity(
     image = image,
     video = video,
     publishDate = publishDate,
-    authors = json.encodeToString(authors),
+    authors = authors,
     category = category,
     language = language,
     sourceCountry = sourceCountry,
@@ -60,7 +58,7 @@ fun FeedArticleWithState.toDomain(): NewsArticle = NewsArticle(
     image = image,
     video = video,
     publishDate = publishDate,
-    authors = json.decodeFromString(authors),
+    authors = authors,
     category = category,
     language = language,
     sourceCountry = sourceCountry,

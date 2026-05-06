@@ -9,7 +9,7 @@ data class FeedArticleWithState(
     val image: String?,
     val video: String?,
     val publishDate: String,
-    val authors: String,
+    val authors: List<String>,
     val category: String?,
     val language: String?,
     val sourceCountry: String?,
