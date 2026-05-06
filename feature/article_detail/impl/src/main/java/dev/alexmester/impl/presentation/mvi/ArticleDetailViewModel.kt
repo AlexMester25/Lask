@@ -86,18 +86,24 @@ class ArticleDetailViewModel(
                 )
                 return@launch
             }
+            _state.value = ArticleDetailState.Content(
+                article = article,
+                autoTranslateLanguage = getAutoTranslateLanguageUseCase(),
+            )
             combine(
                 observeIsBookmarkedUseCase(articleId),
                 observeClapCountUseCase(articleId)
             ) { isBookmarked, clapCount ->
-                ArticleDetailState.Content(
-                    article = article,
-                    isBookmarked = isBookmarked,
-                    clapCount = clapCount,
-                    autoTranslateLanguage = getAutoTranslateLanguageUseCase(),
-                )
-            }.collect {
-                _state.value = it
+                isBookmarked to clapCount
+            }.collect { (isBookmarked, clapCount) ->
+                _state.update { current ->
+                    val content = current.contentOrNull ?: return@update current
+
+                    content.copy(
+                        isBookmarked = isBookmarked,
+                        clapCount = clapCount
+                    )
+                }
             }
         }
     }
@@ -119,23 +125,23 @@ class ArticleDetailViewModel(
                 targetLanguage = targetLang,
                 sourceLanguage = sourceLang,
             )
-            .onSuccess { (translatedTitle, translatedBody) ->
-                _state.update {
-                    it.contentOrNull?.copy(
-                        translationState = TranslationState.Translated,
-                        translatedTitle = translatedTitle,
-                        translatedText = translatedBody,
-                    ) ?: it
+                .onSuccess { (translatedTitle, translatedBody) ->
+                    _state.update {
+                        it.contentOrNull?.copy(
+                            translationState = TranslationState.Translated,
+                            translatedTitle = translatedTitle,
+                            translatedText = translatedBody,
+                        ) ?: it
+                    }
                 }
-            }
-            .onFailure { errorType ->
-                _state.update {
-                    it.contentOrNull?.copy(
-                        translationState = TranslationState.Idle
-                    ) ?: it
+                .onFailure { errorType ->
+                    _state.update {
+                        it.contentOrNull?.copy(
+                            translationState = TranslationState.Idle
+                        ) ?: it
+                    }
+                    emitSideEffect(ArticleDetailSideEffect.ShowError(errorType = errorType))
                 }
-                emitSideEffect(ArticleDetailSideEffect.ShowError(errorType = errorType))
-            }
         }
     }
 
