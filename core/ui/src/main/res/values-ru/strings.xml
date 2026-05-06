@@ -11,12 +11,14 @@
     <string name="error_retry">Повторить</string>
     <string name="error_translation_failed">Перевод не удался, попробуйте еще раз.</string>
     <string name="error_translation_text_too_long">Текст слишком длинный для перевода</string>
+    <string name="error_server">Ошибка сервера</string>
 
     <!-- common warning -->
     <string name="warning_no_articles">Статей пока нет</string>
     <string name="warning_empty_bookmarks">Избранных статей нет</string>
     <string name="warning_no_resutl_for_query">Результаты не найдены для %1$s</string>
     <string name="warning_search_news">Поиск новостей по ключевым словам</string>
+    <string name="warning_explore_content_empty">Не удалось сгенерировать ленту. Пожалуйста, измените свои интересы.</string>
 
     <!-- bottombar tabs -->
     <string name="tab_top_news">Тренды</string>

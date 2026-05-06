@@ -33,8 +33,8 @@ object LaskPalette {
     val ErrorDark = Color(0xFFE45F6D)
     val ErrorLight = Color(0xFFFF3B45)
 
-    val WarningDark = Color(0xFFFDAC65)
-    val WarningLight = Color(0xFFFF9232)
+    val WarningDark = Color(0xFFFFCF9E)
+    val WarningLight = Color(0xFFFF8200)
 
     val InformativeDark = Color(0xFF416BD6)
     val InformativeLight = Color(0xFF2D5BD0)
