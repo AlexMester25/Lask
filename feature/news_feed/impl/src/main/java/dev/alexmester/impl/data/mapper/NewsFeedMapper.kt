@@ -63,19 +63,19 @@ fun List<NewsClusterDto>.toEntities(feedType: String): Pair<List<ArticleEntity>,
 // ── FeedArticleWithState → Domain ─────────────────────────────────────────────
 
 fun FeedArticleWithState.toDomain(): NewsArticle = NewsArticle(
-    id = id,
-    title = title,
-    text = text,
-    summary = summary,
-    url = url,
-    image = image,
-    video = video,
-    publishDate = publishDate,
-    authors = authors,
-    category = category,
-    language = language,
-    sourceCountry = sourceCountry,
-    sentiment = sentiment,
+    id = article.id,
+    title = article.title,
+    text = article.text,
+    summary = article.summary,
+    url = article.url,
+    image = article.image,
+    video = article.video,
+    publishDate = article.publishDate,
+    authors = article.authors,
+    category = article.category,
+    language = article.language,
+    sourceCountry = article.sourceCountry,
+    sentiment = article.sentiment,
 )
 
 /**
