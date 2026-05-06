@@ -82,19 +82,24 @@ fun FeedArticleWithState.toDomain(): NewsArticle = NewsArticle(
  * Группируем плоский список FeedArticleWithState обратно в кластеры.
  * Порядок сохранён через clusterId + position (ORDER BY в запросе).
  */
-fun List<FeedArticleWithState>.toClusters(): List<NewsCluster> =
-    groupBy { it.clusterId }
-        .entries
-        .sortedBy { it.key }
-        .map { (clusterId, rows) ->
-            NewsCluster(
-                id = clusterId,
-                articles = rows
-                    .sortedBy { it.position }
-                    .map { it.toDomain() },
-            )
+fun List<FeedArticleWithState>.toClusters(): List<NewsCluster> {
+    if (isEmpty()) return emptyList()
+
+    val result = ArrayList<NewsCluster>()
+    var currentClusterId = this[0].clusterId
+    var buffer = ArrayList<NewsArticle>()
+
+    for (row in this) {
+        if (row.clusterId != currentClusterId) {
+            result.add(NewsCluster(currentClusterId, buffer))
+            currentClusterId = row.clusterId
+            buffer = ArrayList()
         }
-        .filter { it.articles.isNotEmpty() }
+        buffer.add(row.toDomain())
+    }
+    result.add(NewsCluster(currentClusterId, buffer))
+    return result
+}
 
 // ── ArticleEntity → Domain ────────────────────────────────────────────────────
 
