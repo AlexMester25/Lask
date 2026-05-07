@@ -5,7 +5,10 @@ import dev.alexmester.models.result.AppResult
 import dev.alexmester.network.error.NetworkErrorMapper
 import kotlin.coroutines.cancellation.CancellationException
 
-suspend fun <T> safeApiCall(block: suspend () -> T): AppResult<T> {
+suspend fun <T> safeApiCall(
+    mapper: NetworkErrorMapper,
+    block: suspend () -> T
+): AppResult<T> {
     return try {
         AppResult.Success(block())
     } catch (e: CancellationException) {
@@ -13,6 +16,6 @@ suspend fun <T> safeApiCall(block: suspend () -> T): AppResult<T> {
     } catch (e: NetworkError) {
         AppResult.Failure(e)
     } catch (e: Exception) {
-        AppResult.Failure(NetworkErrorMapper.map(e))
+        AppResult.Failure(mapper.map(e))
     }
 }
