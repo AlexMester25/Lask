@@ -6,6 +6,7 @@ import dev.alexmester.impl.domain.model.FeedResult
 import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
+import dev.alexmester.impl.domain.usecase.ObserveUserPreferencesTrendsUseCase
 import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedIntent
@@ -16,8 +17,6 @@ import dev.alexmester.ui.R
 import dev.alexmester.ui.uitext.UiText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,12 +24,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -40,6 +35,7 @@ class NewsFeedViewModel(
     private val observeTrendsUseCase: ObserveTrendsUseCase,
     private val refreshTrendsUseCase: RefreshTrendsUseCase,
     private val observeReadArticleIdsUseCase: ObserveReadArticleIdsTrendsUseCase,
+    private val observeUserPreferencesTrendsUseCase: ObserveUserPreferencesTrendsUseCase,
     private val getCachedAtTrendsUseCase: GetCachedAtTrendsUseCase,
 ) : ViewModel() {
 
@@ -50,7 +46,7 @@ class NewsFeedViewModel(
 
     private var refreshJob: Job? = null
 
-    private val clustersFlow = observeTrendsUseCase()
+    private val trendsDataFlow = observeTrendsUseCase()
         .shareIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -58,7 +54,7 @@ class NewsFeedViewModel(
         )
 
     val state: StateFlow<NewsFeedState> = combine(
-        clustersFlow,
+        trendsDataFlow,
         _feedResult,
         flow { emit(getCachedAtTrendsUseCase()) },
     ) { combineData, feedResult, lastCachedAt ->
@@ -87,14 +83,13 @@ class NewsFeedViewModel(
             )
 
     init {
-        refresh()
-
         viewModelScope.launch {
-            clustersFlow
-                .map { it.preferences.defaultCountry to it.preferences.defaultLanguage }
+            observeUserPreferencesTrendsUseCase()
+                .map { it.defaultCountry to it.defaultLanguage }
                 .distinctUntilChanged()
-                .drop(1)
-                .collect { refresh() }
+                .collect {
+                    refresh()
+                }
         }
     }
 
@@ -117,8 +112,8 @@ class NewsFeedViewModel(
                         _sideEffects.tryEmit(NewsFeedSideEffect.ShowWarning(
                             UiText.StringResource(R.string.locale_incompatible)
                         ))
-                        _feedResult.value = FeedResult.Success
-                    } else _feedResult.value = FeedResult.Success
+                    }
+                    _feedResult.value = FeedResult.Success
                 }
                 is AppResult.Failure -> {
                     _sideEffects.tryEmit(NewsFeedSideEffect.ShowError(result.error))
@@ -127,6 +122,5 @@ class NewsFeedViewModel(
             }
         }
     }
-
 }
 
