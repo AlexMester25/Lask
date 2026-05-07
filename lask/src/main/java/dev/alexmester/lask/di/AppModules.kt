@@ -15,6 +15,7 @@ import dev.alexmester.platform.dispatchers.platform
 
 object AppModules {
     val all = listOf(
+        appScope,
         splash,
         themeSwitch,
         featuresNavigation,
