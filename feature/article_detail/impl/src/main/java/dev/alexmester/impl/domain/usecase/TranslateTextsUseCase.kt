@@ -13,7 +13,7 @@ class TranslateTextsUseCase(
         title: String,
         bodyText: String,
         targetLanguage: String,
-        sourceLanguage: String?,
+        sourceLanguage: String,
     ): AppResult<Pair<String, String>> = supervisorScope {
         val translatedTitle = async {
             repository.translateText(title, targetLanguage, sourceLanguage)

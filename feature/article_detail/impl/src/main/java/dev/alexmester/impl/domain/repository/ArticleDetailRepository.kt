@@ -21,7 +21,7 @@ interface ArticleDetailRepository {
     suspend fun translateText(
         text: String,
         targetLanguage: String,
-        sourceLanguage: String? = null,
+        sourceLanguage: String,
     ): AppResult<String>
 
     suspend fun getAutoTranslateLanguage(): String

@@ -15,6 +15,7 @@ import dev.alexmester.utils.constants.LaskConstants.MAX_TRANSLATE_CHARS
 import dev.alexmester.utils.constants.LaskConstants.TEXT_ECLIPSE
 import dev.alexmester.utils.constants.LaskConstants.XP_PER_CLAP
 import dev.alexmester.utils.constants.LaskConstants.XP_PER_READ
+import dev.alexmester.utils.locale.LocaleCodeToTranslateApiMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -59,7 +60,7 @@ class ArticleDetailRepositoryImpl(
     override suspend fun translateText(
         text: String,
         targetLanguage: String,
-        sourceLanguage: String?,
+        sourceLanguage: String,
     ): AppResult<String> = withContext(dispatchers.io) {
         safeApiCall(errorMapper) {
             val truncated = if (text.length > MAX_TRANSLATE_CHARS) {
@@ -69,10 +70,12 @@ class ArticleDetailRepositoryImpl(
                         missingDelimiterValue = text.take(MAX_TRANSLATE_CHARS)
                     ) + TEXT_ECLIPSE
             } else text
+            val correctedSourceLang = LocaleCodeToTranslateApiMapper.mapToTranslateApiCode(sourceLanguage)
+            val correctedTargetLang = LocaleCodeToTranslateApiMapper.mapToTranslateApiCode(targetLanguage)
             val response = translateApiService.translate(
                 text = truncated,
-                targetLanguage = targetLanguage,
-                sourceLanguage = sourceLanguage,
+                sourceLanguage = correctedSourceLang,
+                targetLanguage = correctedTargetLang,
             )
             response.translations.translatedText
         }

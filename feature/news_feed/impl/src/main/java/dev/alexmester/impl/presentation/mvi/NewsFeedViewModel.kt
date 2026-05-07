@@ -108,13 +108,16 @@ class NewsFeedViewModel(
             _feedResult.value = FeedResult.Loading
             when (val result = refreshTrendsUseCase()) {
                 is AppResult.Success -> {
-                    if (result.data == 0){
-                        _sideEffects.tryEmit(NewsFeedSideEffect.ShowWarning(
-                            UiText.StringResource(R.string.locale_incompatible)
-                        ))
+                    if (result.data == 0) {
+                        _sideEffects.tryEmit(
+                            NewsFeedSideEffect.ShowWarning(
+                                UiText.StringResource(R.string.locale_incompatible)
+                            )
+                        )
                     }
                     _feedResult.value = FeedResult.Success
                 }
+
                 is AppResult.Failure -> {
                     _sideEffects.tryEmit(NewsFeedSideEffect.ShowError(result.error))
                     _feedResult.value = FeedResult.Error(result.error)

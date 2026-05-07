@@ -117,7 +117,7 @@ class ArticleDetailViewModel(
         viewModelScope.launch {
             val article = content.article
             val bodyText = article.text ?: article.summary ?: ""
-            val sourceLang = article.language
+            val sourceLang = "auto"
 
             translateTextsUseCase(
                 title = article.title,
