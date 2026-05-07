@@ -8,6 +8,7 @@ import dev.alexmester.impl.domain.model.ExploreQuery
 import dev.alexmester.impl.domain.repository.ExploreRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
+import dev.alexmester.network.error.WorldNewsErrorMapper
 import dev.alexmester.network.extension.safeApiCall
 import dev.alexmester.platform.dispatchers.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,8 @@ class ExploreRepositoryImpl(
     private val local: ExploreLocalDataSource,
     private val dispatchers: DispatcherProvider
 ) : ExploreRepository {
+
+    private val errorMapper = WorldNewsErrorMapper()
 
     override fun observeArticles(): Flow<List<NewsArticle>> =
         local.observeFeedArticles()
@@ -32,7 +35,7 @@ class ExploreRepositoryImpl(
         query: String,
         language: String,
     ): AppResult<Int> = withContext(dispatchers.io) {
-        safeApiCall {
+        safeApiCall(errorMapper) {
             val response = remote.searchNews(
                 text = query,
                 language = language,
@@ -53,7 +56,7 @@ class ExploreRepositoryImpl(
         language: String,
         offset: Int,
     ): AppResult<Int> = withContext(dispatchers.io) {
-        safeApiCall {
+        safeApiCall(errorMapper) {
             val response = remote.searchNews(
                 text = query,
                 language = language,

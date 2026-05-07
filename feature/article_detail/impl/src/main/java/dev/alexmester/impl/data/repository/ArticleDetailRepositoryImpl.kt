@@ -6,6 +6,7 @@ import dev.alexmester.impl.data.mappers.toDomain
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
+import dev.alexmester.network.error.TranslatePlusErrorMapper
 import dev.alexmester.network.extension.safeApiCall
 import dev.alexmester.network.translate.TranslateApiService
 import dev.alexmester.platform.dispatchers.DispatcherProvider
@@ -24,6 +25,8 @@ class ArticleDetailRepositoryImpl(
     private val preferencesDataSource: UserPreferencesDataSource,
     private val dispatchers: DispatcherProvider,
 ) : ArticleDetailRepository {
+
+    private val errorMapper = TranslatePlusErrorMapper()
 
     override suspend fun getArticleById(id: Long): NewsArticle? =
         withContext(dispatchers.io) {
@@ -58,7 +61,7 @@ class ArticleDetailRepositoryImpl(
         targetLanguage: String,
         sourceLanguage: String?,
     ): AppResult<String> = withContext(dispatchers.io) {
-        safeApiCall {
+        safeApiCall(errorMapper) {
             val truncated = if (text.length > MAX_TRANSLATE_CHARS) {
                 text.take(MAX_TRANSLATE_CHARS)
                     .substringBeforeLast(

@@ -32,7 +32,6 @@ abstract class BaseNetworkMapper : NetworkErrorMapper {
     protected open fun mapHttpError(throwable: ResponseException): NetworkError {
         val status = throwable.response.status.value
         return when (status) {
-            401 -> NetworkError.Unauthorized()
             402 -> NetworkError.PaymentRequired()
             502 -> NetworkError.BadGateway()
             429 -> {

@@ -23,40 +23,22 @@ object NetworkErrorUiMapper {
         is NetworkError.PaymentRequired -> UiText.StringResource(R.string.error_payment_required)
         is NetworkError.RateLimit -> UiText.StringResource(R.string.error_rate_limit)
         is NetworkError.BadGateway -> UiText.StringResource(R.string.error_server)
-        is NetworkError.HttpError -> when (error.code) {
-            422 -> UiText.StringResource(R.string.error_translation_text_too_long)
-            else -> UiText.StringResource(R.string.error_translation_failed)
-        }
+        is NetworkError.TranslateError -> UiText.StringResource(R.string.error_translation_failed)
         else -> UiText.StringResource(R.string.error_unknown)
     }
 
     @Composable
     fun mapToNotificationUi(error: NetworkError): NotificationUi {
-        return when (error) {
-            is NetworkError.NoInternet -> NotificationUi(
-                image = ImageVector.vectorResource(R.drawable.ic_no_internet_error),
-                text = toUiText(error).asString(),
-                tint = MaterialTheme.LaskColors.error
-            )
-
-            is NetworkError.PaymentRequired -> NotificationUi(
-                image = ImageVector.vectorResource(R.drawable.ic_payment_required),
-                text = toUiText(error).asString(),
-                tint = MaterialTheme.LaskColors.error
-            )
-
-            is NetworkError.RateLimit -> NotificationUi(
-                image = ImageVector.vectorResource(R.drawable.ic_rate_limit_error),
-                text = toUiText(error).asString(),
-                tint = MaterialTheme.LaskColors.error
-            )
-
-            else -> NotificationUi(
-                image = ImageVector.vectorResource(R.drawable.ic_unknow_error),
-                text = toUiText(error).asString(),
-                tint = MaterialTheme.LaskColors.error
-            )
-
+        val image = when (error) {
+            is NetworkError.NoInternet -> ImageVector.vectorResource(R.drawable.ic_no_internet_error)
+            is NetworkError.PaymentRequired -> ImageVector.vectorResource(R.drawable.ic_payment_required)
+            is NetworkError.RateLimit -> ImageVector.vectorResource(R.drawable.ic_rate_limit_error)
+            else -> ImageVector.vectorResource(R.drawable.ic_unknow_error)
         }
+        return NotificationUi(
+            image = image,
+            text = toUiText(error).asString(),
+            tint = MaterialTheme.LaskColors.error
+        )
     }
 }

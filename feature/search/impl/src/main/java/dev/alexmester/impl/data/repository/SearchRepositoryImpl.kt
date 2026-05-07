@@ -9,6 +9,7 @@ import dev.alexmester.impl.domain.model.SearchFilters
 import dev.alexmester.impl.domain.repository.SearchRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
+import dev.alexmester.network.error.WorldNewsErrorMapper
 import dev.alexmester.network.extension.safeApiCall
 import kotlinx.coroutines.flow.Flow
 
@@ -18,6 +19,8 @@ class SearchRepositoryImpl(
     private val userStateDao: ArticleUserStateDao,
 ) : SearchRepository {
 
+    private val errorMapper = WorldNewsErrorMapper()
+
     override fun getReadArticleIdsFlow(): Flow<List<Long>> =
         userStateDao.observeReadArticleIds()
 
@@ -26,7 +29,7 @@ class SearchRepositoryImpl(
         filters: SearchFilters,
         offset: Int,
         number: Int,
-    ): AppResult<List<NewsArticle>> = safeApiCall {
+    ): AppResult<List<NewsArticle>> = safeApiCall(errorMapper) {
         val dtos = remote.searchNews(
             query = query,
             filters = filters,

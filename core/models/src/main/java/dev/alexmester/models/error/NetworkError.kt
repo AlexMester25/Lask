@@ -5,13 +5,13 @@ sealed class NetworkError : Exception() {
 
     class NoInternet : NetworkError()
 
-    class Unauthorized : NetworkError()
-
     class PaymentRequired : NetworkError()
 
     class Timeout : NetworkError()
 
     class BadGateway: NetworkError()
+
+    class TranslateError: NetworkError()
 
     data class HttpError(
         val code: Int,

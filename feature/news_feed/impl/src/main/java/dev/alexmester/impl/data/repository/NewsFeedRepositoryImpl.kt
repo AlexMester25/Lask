@@ -9,6 +9,7 @@ import dev.alexmester.impl.data.remote.NewsFeedApiService
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.result.AppResult
+import dev.alexmester.network.error.WorldNewsErrorMapper
 import dev.alexmester.network.extension.safeApiCall
 import dev.alexmester.platform.dispatchers.DispatcherProvider
 import dev.alexmester.utils.locale.checkCompatibility
@@ -23,6 +24,8 @@ class NewsFeedRepositoryImpl(
     private val dispatchers: DispatcherProvider,
 ) : NewsFeedRepository {
 
+    private val errorMapper = WorldNewsErrorMapper()
+
     override fun observeFeedClusters(): Flow<List<NewsCluster>> =
         local.observeFeedClusters()
 
@@ -34,7 +37,7 @@ class NewsFeedRepositoryImpl(
 
     override suspend fun refreshFeed(): AppResult<Int> =
         withContext(dispatchers.io) {
-            safeApiCall {
+            safeApiCall(errorMapper) {
                 val prefs = preferencesDataSource.userPreferences.first()
                 if (checkCompatibility(
                         language = prefs.defaultLanguage,
