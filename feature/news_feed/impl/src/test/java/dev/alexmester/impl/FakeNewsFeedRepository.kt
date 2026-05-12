@@ -1,6 +1,7 @@
 package dev.alexmester.impl
 
 import dev.alexmester.datastore.model.UserPreferences
+import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.news.NewsCluster
@@ -20,9 +21,15 @@ class FakeNewsFeedRepository : NewsFeedRepository {
         )
     )
 
-    var refreshResult: AppResult<Int> = AppResult.Success(10)
+    var refreshResult: AppResult<RefreshFeedResult> =
+        AppResult.Success(RefreshFeedResult.Updated(10))
+
     var lastCachedAt: Long? = null
+
     var refreshCallCount: Int = 0
+        private set
+
+    var lastForce: Boolean = false
         private set
 
     override fun observeFeedClusters(): Flow<List<NewsCluster>> =
@@ -34,12 +41,17 @@ class FakeNewsFeedRepository : NewsFeedRepository {
     override fun observeUserPreferences(): Flow<UserPreferences> =
         _userPrefs.asStateFlow()
 
-    override suspend fun refreshFeed(): AppResult<Int> {
+    override suspend fun refreshFeed(
+        force: Boolean
+    ): AppResult<RefreshFeedResult> {
         refreshCallCount++
+        lastForce = force
+
         return refreshResult
     }
 
-    override suspend fun getLastCachedAt(): Long? = lastCachedAt
+    override suspend fun getLastCachedAt(): Long? =
+        lastCachedAt
 
     fun emitUserPreferences(prefs: UserPreferences) {
         _userPrefs.value = prefs

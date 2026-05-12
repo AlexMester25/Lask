@@ -3,6 +3,7 @@ package dev.alexmester.impl.presentation.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.impl.domain.model.FeedResult
+import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
@@ -83,14 +85,8 @@ class NewsFeedViewModel(
             )
 
     init {
-        viewModelScope.launch {
-            observeUserPreferencesTrendsUseCase()
-                .map { it.defaultCountry to it.defaultLanguage }
-                .distinctUntilChanged()
-                .collect {
-                    refresh()
-                }
-        }
+        observePreferencesChanges()
+        refresh()
     }
 
     fun handleIntent(intent: NewsFeedIntent) {
@@ -102,20 +98,42 @@ class NewsFeedViewModel(
         }
     }
 
-    private fun refresh() {
+    private fun observePreferencesChanges() {
+        viewModelScope.launch {
+            observeUserPreferencesTrendsUseCase()
+                .map { it.defaultCountry to it.defaultLanguage }
+                .distinctUntilChanged()
+                .drop(1)
+                .collect {
+                    refresh(force = true)
+                }
+        }
+    }
+
+    private fun refresh(force: Boolean = false) {
         refreshJob?.cancel()
         refreshJob = viewModelScope.launch {
-            _feedResult.value = FeedResult.Loading
-            when (val result = refreshTrendsUseCase()) {
+            if (_feedResult.value !is FeedResult.Success) {
+                _feedResult.value = FeedResult.Loading
+            }
+            when (val result = refreshTrendsUseCase(force)) {
                 is AppResult.Success -> {
-                    if (result.data == 0) {
-                        _sideEffects.tryEmit(
-                            NewsFeedSideEffect.ShowWarning(
-                                UiText.StringResource(R.string.locale_incompatible)
+                    when (result.data) {
+
+                        is RefreshFeedResult.Updated,
+                        RefreshFeedResult.CacheFresh -> {
+                            _feedResult.value = FeedResult.Success
+                        }
+
+                        is RefreshFeedResult.IncompatibleLocale -> {
+                            _sideEffects.tryEmit(
+                                NewsFeedSideEffect.ShowWarning(
+                                    UiText.StringResource(R.string.locale_incompatible)
+                                )
                             )
-                        )
+                            _feedResult.value = FeedResult.Success
+                        }
                     }
-                    _feedResult.value = FeedResult.Success
                 }
 
                 is AppResult.Failure -> {

@@ -6,12 +6,14 @@ import dev.alexmester.datastore.model.UserPreferences
 import dev.alexmester.impl.data.local.NewsFeedLocalDataSource
 import dev.alexmester.impl.data.mapper.toEntities
 import dev.alexmester.impl.data.remote.NewsFeedApiService
+import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.network.error.WorldNewsErrorMapper
 import dev.alexmester.network.extension.safeApiCall
 import dev.alexmester.platform.dispatchers.DispatcherProvider
+import dev.alexmester.utils.constants.LaskConstants.CACHE_TTL_MS
 import dev.alexmester.utils.locale.checkCompatibility
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -35,16 +37,29 @@ class NewsFeedRepositoryImpl(
     override fun observeUserPreferences(): Flow<UserPreferences> =
         preferencesDataSource.userPreferences
 
-    override suspend fun refreshFeed(): AppResult<Int> =
+    override suspend fun refreshFeed(force: Boolean): AppResult<RefreshFeedResult> =
         withContext(dispatchers.io) {
+            val prefs = preferencesDataSource.userPreferences.first()
+
+            val lastCachedAt = local.getLastCachedAt()
+
+            val isFresh = lastCachedAt != null &&
+                    (System.currentTimeMillis() - lastCachedAt) < CACHE_TTL_MS
+
+            if (!force && isFresh) {
+                return@withContext AppResult.Success(
+                    RefreshFeedResult.CacheFresh
+                )
+            }
+
             safeApiCall(errorMapper) {
-                val prefs = preferencesDataSource.userPreferences.first()
+
                 if (checkCompatibility(
                         language = prefs.defaultLanguage,
                         country = prefs.defaultCountry,
                     ) != null
                 ) {
-                    return@safeApiCall 0
+                    return@safeApiCall RefreshFeedResult.IncompatibleLocale
                 }
 
                 val response = remote.getTopNews(
@@ -57,7 +72,8 @@ class NewsFeedRepositoryImpl(
                 }
 
                 local.replaceFeedCache(articles = articles, feedCache = feedCache)
-                response.topNews.size
+
+                RefreshFeedResult.Updated(response.topNews.size)
             }
         }
 
