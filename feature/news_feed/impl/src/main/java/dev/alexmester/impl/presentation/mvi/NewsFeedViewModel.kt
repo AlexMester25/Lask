@@ -91,7 +91,7 @@ class NewsFeedViewModel(
 
     fun handleIntent(intent: NewsFeedIntent) {
         when (intent) {
-            is NewsFeedIntent.Refresh -> refresh()
+            is NewsFeedIntent.Refresh -> refresh(force = true)
             is NewsFeedIntent.ArticleClick -> _sideEffects.tryEmit(
                 NewsFeedSideEffect.NavigateToArticle(intent.articleId, intent.articleUrl)
             )

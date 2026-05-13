@@ -59,7 +59,7 @@ class ExploreViewModel(
 
     fun handleIntent(intent: ExploreIntent) {
         when (intent) {
-            is ExploreIntent.Refresh -> refresh()
+            is ExploreIntent.Refresh -> refresh(force = true)
             is ExploreIntent.LoadMore -> loadMore()
             is ExploreIntent.RetryLoadMore -> retryLoadMore()
             is ExploreIntent.ArticleClick ->
@@ -94,11 +94,11 @@ class ExploreViewModel(
         }
     }
 
-    private fun refresh() {
+    private fun refresh(force: Boolean = false) {
         _state.update { it.withRefreshing(true) }
 
         viewModelScope.launch {
-            refreshExplore()
+            refreshExplore(force)
                 .onSuccess { result ->
                     handleRefreshResult(result)
                 }
@@ -114,13 +114,8 @@ class ExploreViewModel(
     }
 
     private fun loadMore() {
-        val current = _state.value.contentOrNull ?: run {
-            return
-        }
-        if (current.isLoadingMore || current.isRefreshing || current.endReached) {
-            return
-        }
-
+        val current = _state.value.contentOrNull ?: return
+        if (current.isLoadingMore || current.isRefreshing || current.endReached) return
         _state.updateContent { it.copy(isLoadingMore = true, loadMoreError = false) }
 
         viewModelScope.launch {
@@ -157,7 +152,7 @@ class ExploreViewModel(
                 )
             }
 
-            is RefreshResult.Success -> _state.update { current ->
+            is RefreshResult.Updated -> _state.update { current ->
                 ExploreState.Content(
                     articles = current.contentOrNull?.articles.orEmpty(),
                     isRefreshing = false,
@@ -166,6 +161,8 @@ class ExploreViewModel(
                     refreshId = (current.contentOrNull?.refreshId ?: 0) + 1,
                 )
             }
+
+            else -> _state.update { it.withRefreshing(false) }
         }
     }
 
@@ -187,7 +184,7 @@ class ExploreViewModel(
                     )
                 )
             }
-            is RefreshResult.Success -> {
+            is RefreshResult.Updated -> {
                 _state.updateContent {
                     it.copy(
                         isLoadingMore = false,
@@ -195,6 +192,8 @@ class ExploreViewModel(
                     )
                 }
             }
+
+            else -> _state.update { it.withRefreshing(false) }
         }
     }
 

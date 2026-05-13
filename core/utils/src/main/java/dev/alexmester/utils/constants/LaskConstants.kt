@@ -11,5 +11,5 @@ object LaskConstants {
     const val MAX_INTERESTS = 20
     const val XP_PER_READ = 25f
     const val XP_PER_CLAP = 10f
-    const val CACHE_TTL_MS = 15 * 60 * 1000L
+    const val CACHE_TTL_MS = 10 * 60 * 1000L
 }

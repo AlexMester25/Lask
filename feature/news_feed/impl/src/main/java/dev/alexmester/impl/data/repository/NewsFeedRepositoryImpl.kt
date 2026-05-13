@@ -40,7 +40,15 @@ class NewsFeedRepositoryImpl(
     override suspend fun refreshFeed(force: Boolean): AppResult<RefreshFeedResult> =
         withContext(dispatchers.io) {
             val prefs = preferencesDataSource.userPreferences.first()
-
+            if (checkCompatibility(
+                    language = prefs.defaultLanguage,
+                    country = prefs.defaultCountry,
+                ) != null
+            ) {
+                return@withContext AppResult.Success(
+                    RefreshFeedResult.IncompatibleLocale
+                )
+            }
             val lastCachedAt = local.getLastCachedAt()
 
             val isFresh = lastCachedAt != null &&
@@ -53,14 +61,6 @@ class NewsFeedRepositoryImpl(
             }
 
             safeApiCall(errorMapper) {
-
-                if (checkCompatibility(
-                        language = prefs.defaultLanguage,
-                        country = prefs.defaultCountry,
-                    ) != null
-                ) {
-                    return@safeApiCall RefreshFeedResult.IncompatibleLocale
-                }
 
                 val response = remote.getTopNews(
                     sourceCountry = prefs.defaultCountry,
@@ -76,7 +76,6 @@ class NewsFeedRepositoryImpl(
                 RefreshFeedResult.Updated(response.topNews.size)
             }
         }
-
 
     override suspend fun getLastCachedAt(): Long? =
         withContext(dispatchers.io) {
