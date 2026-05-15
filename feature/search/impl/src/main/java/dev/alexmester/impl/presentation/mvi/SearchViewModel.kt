@@ -9,6 +9,8 @@ import dev.alexmester.impl.domain.usecase.GetReadArticleIdsSearchUseCase
 import dev.alexmester.impl.domain.usecase.SearchUseCase
 import dev.alexmester.models.result.onFailure
 import dev.alexmester.models.result.onSuccess
+import dev.alexmester.utils.constants.LaskConstants.DEBOUNCE_MS
+import dev.alexmester.utils.constants.LaskConstants.MIN_QUERY_LENGTH
 import dev.alexmester.utils.constants.LaskConstants.PAGE_SIZE
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -22,9 +24,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-private const val DEBOUNCE_MS = 500L
-private const val MIN_QUERY_LENGTH = 3
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
