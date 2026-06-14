@@ -11,6 +11,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.io.File
+import java.util.UUID
+import kotlin.io.path.createTempDirectory
 
 private const val FILE_NAME = "remove_interests_test_datastore"
 
@@ -22,13 +24,11 @@ class DataSourceRemoveInterestsTest {
     private lateinit var dataSource: UserPreferencesDataSource
 
     private fun TestScope.setupDataSource() {
+        val tempDir = createTempDirectory().toFile()
+        val fileName = "${FILE_NAME}_${UUID.randomUUID()}"
         dataStore = PreferenceDataStoreFactory.create(
             scope = backgroundScope,
-            produceFile = {
-                File.createTempFile(FILE_NAME, ".preferences_pb").apply {
-                    deleteOnExit()
-                }
-            }
+            produceFile = { File(tempDir, "$fileName.preferences_pb") }
         )
         dataSource = UserPreferencesDataSourceImpl(dataStore)
     }

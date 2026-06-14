@@ -11,6 +11,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.io.File
+import java.util.UUID
+import kotlin.io.path.createTempDirectory
 
 private const val FILE_NAME = "add_interests_test_datastore"
 
@@ -21,84 +23,84 @@ class DataSourceAddInterestsTest {
     private lateinit var dataSource: UserPreferencesDataSource
 
     private fun TestScope.setupDataSource() {
+        val tempDir = createTempDirectory().toFile()
+        val fileName = "${FILE_NAME}_${UUID.randomUUID()}"
         dataStore = PreferenceDataStoreFactory.create(
             scope = backgroundScope,
-            produceFile = {
-                File.createTempFile(FILE_NAME, ".preferences_pb").apply {
-                    deleteOnExit()
-                }
-            }
+            produceFile = { File(tempDir, "$fileName.preferences_pb") }
         )
         dataSource = UserPreferencesDataSourceImpl(dataStore)
     }
 
     @Test
     fun `addInterest adds new keyword`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.addInterest("Kotlin")
-            advanceUntilIdle()
+        dataSource.addInterest("Kotlin")
+        advanceUntilIdle()
 
-            val interests = dataSource.userPreferences.first().interests
+        val interests = dataSource.userPreferences.first().interests
 
-            assertEquals(setOf("kotlin"), interests)
-        }
+        assertEquals(setOf("kotlin"), interests)
+    }
 
     @Test
     fun `addInterest does not add duplicates`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.addInterest("kotlin")
-            dataSource.addInterest("Kotlin")
-            dataSource.addInterest("  Kotlin  ")
-            advanceUntilIdle()
+        dataSource.addInterest("kotlin")
+        dataSource.addInterest("Kotlin")
+        dataSource.addInterest("  Kotlin  ")
+        advanceUntilIdle()
 
-            val interests = dataSource.userPreferences.first().interests
+        val interests = dataSource.userPreferences.first().interests
 
-            assertEquals(setOf("kotlin"), interests)
-        }
+        assertEquals(setOf("kotlin"), interests)
+    }
 
     @Test
     fun `blank interest does not change datastore`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            val before = dataSource.userPreferences.first().interests
+        val before = dataSource.userPreferences.first().interests
 
-            dataSource.addInterest("   ")
-            dataSource.addInterest("")
-            dataSource.addInterest("   \t\n")
-            advanceUntilIdle()
+        dataSource.addInterest("   ")
+        dataSource.addInterest("")
+        dataSource.addInterest("   \t\n")
+        advanceUntilIdle()
 
-            val after = dataSource.userPreferences.first().interests
+        val after = dataSource.userPreferences.first().interests
 
-            assertEquals(before, after)
-        }
+        assertEquals(before, after)
+    }
 
     @Test
     fun `addInterest accumulates multiple interests`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.addInterest("Kotlin")
-            dataSource.addInterest("Android")
-            dataSource.addInterest("Jetpack")
-            advanceUntilIdle()
+        dataSource.addInterest("Kotlin")
+        advanceUntilIdle()
+        dataSource.addInterest("Android")
+        advanceUntilIdle()
+        dataSource.addInterest("Jetpack")
+        advanceUntilIdle()
 
-            val interests = dataSource.userPreferences.first().interests
+        val interests = dataSource.userPreferences.first().interests
 
-            assertEquals(setOf("kotlin", "android", "jetpack"), interests)
-        }
+        assertEquals(setOf("kotlin", "android", "jetpack"), interests)
+    }
 
     @Test
     fun `addInterest is case insensitive`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.addInterest("Kotlin")
-            dataSource.addInterest("kotlin")
-            dataSource.addInterest("KOTLIN")
-            advanceUntilIdle()
+        dataSource.addInterest("Kotlin")
+        dataSource.addInterest("kotlin")
+        dataSource.addInterest("KOTLIN")
+        advanceUntilIdle()
 
-            val interests = dataSource.userPreferences.first().interests
+        val interests = dataSource.userPreferences.first().interests
 
-            assertEquals(setOf("kotlin"), interests)
-        }
+        assertEquals(setOf("kotlin"), interests)
+    }
 }

@@ -34,6 +34,8 @@ include(":core:ui")
 include(":core:datastore")
 include(":core:models")
 include(":core:navigation")
+include(":core:utils")
+include(":core:platform")
 
 include(":feature:news_feed:api")
 include(":feature:news_feed:impl")
@@ -54,5 +56,4 @@ include(":feature:search:api")
 include(":feature:search:impl")
 
 include(":macrobenchmark")
-include(":core:utils")
-include(":core:platform")
+
