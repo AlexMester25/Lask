@@ -57,3 +57,5 @@ include(":feature:search:impl")
 
 include(":macrobenchmark")
 
+include(":feature:typed_article_list:api")
+include(":feature:typed_article_list:impl")

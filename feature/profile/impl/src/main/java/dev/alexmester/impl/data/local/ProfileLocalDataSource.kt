@@ -13,11 +13,6 @@ class ProfileLocalDataSource(
     private val userStateDao: ArticleUserStateDao,
     private val preferencesDataSource: UserPreferencesDataSource,
 ) {
-    fun observeReadArticles(): Flow<List<ArticleEntity>> =
-        userStateDao.observeReadArticles()
-
-    fun observeClappedArticles(): Flow<List<ArticleEntity>> =
-        userStateDao.observeClappedArticles()
 
     fun observeProfile(): Flow<Pair<UserPreferences, Int>> =
         preferencesDataSource.userPreferences
@@ -26,7 +21,6 @@ class ProfileLocalDataSource(
             ) { prefs, readCount ->
                 prefs to readCount
             }
-
 
     fun observeUserPreferences(): Flow<UserPreferences> =
         preferencesDataSource.userPreferences

@@ -6,8 +6,6 @@ import dev.alexmester.models.news.NewsArticle
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
-    fun observeReadArticles(): Flow<List<NewsArticle>>
-    fun observeClappedArticles(): Flow<List<NewsArticle>>
     fun observeProfile(): Flow<Pair<UserPreferences, Int>>
     fun observeUserPreferences(): Flow<UserPreferences>
     suspend fun applyEditChanges(imageUri: Uri?, name: String)

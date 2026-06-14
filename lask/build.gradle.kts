@@ -60,7 +60,8 @@ dependencies {
     implementation(project(":feature:bookmarks:impl"))
     implementation(project(":feature:profile:impl"))
     implementation(project(":feature:search:impl"))
-    
+    implementation(project(":feature:typed_article_list:impl"))
+
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.profileinstaller)
 

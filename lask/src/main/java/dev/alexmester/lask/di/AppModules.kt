@@ -8,6 +8,7 @@ import dev.alexmester.impl.di.explore
 import dev.alexmester.impl.di.newsFeed
 import dev.alexmester.impl.di.profile
 import dev.alexmester.impl.di.search
+import dev.alexmester.impl.di.typedArticleList
 import dev.alexmester.lask.splash_screen.splash
 import dev.alexmester.lask.theme_switch.themeSwitch
 import dev.alexmester.network.di.network
@@ -30,6 +31,7 @@ object AppModules {
         articleDetailModule,
         bookmarksModule,
         profile,
-        search
+        search,
+        typedArticleList,
     )
 }

@@ -13,12 +13,6 @@ class ProfileRepositoryImpl(
     private val local: ProfileLocalDataSource,
 ) : ProfileRepository {
 
-    override fun observeReadArticles(): Flow<List<NewsArticle>> =
-        local.observeReadArticles().map { entities -> entities.map { it.toDomain() } }
-
-    override fun observeClappedArticles(): Flow<List<NewsArticle>> =
-        local.observeClappedArticles().map { entities -> entities.map { it.toDomain() } }
-
     override fun observeProfile(): Flow<Pair<UserPreferences, Int>> =
         local.observeProfile()
 

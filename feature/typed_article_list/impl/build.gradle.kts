@@ -8,13 +8,12 @@ plugins {
 }
 
 android {
-    namespace = "dev.alexmester.profile.impl"
+    namespace = "dev.alexmester.impl"
 }
 
 dependencies {
-    api(project(":feature:profile:api"))
+    api(project(":feature:typed_article_list:api"))
     implementation(project(":feature:article_detail:api"))
-    implementation(project(":feature:typed_article_list:api"))
 
     implementation(project(":core:database"))
     implementation(project(":core:models"))

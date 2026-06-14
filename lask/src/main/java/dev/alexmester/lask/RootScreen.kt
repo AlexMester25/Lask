@@ -21,6 +21,7 @@ import dev.alexmester.api.navigation.ExploreApi
 import dev.alexmester.api.navigation.NewsFeedApi
 import dev.alexmester.api.navigation.ProfileApi
 import dev.alexmester.api.navigation.SearchApi
+import dev.alexmester.api.navigation.TypedArticleListApi
 import dev.alexmester.lask.app_bottom_navigation.AppBottomBar
 import dev.alexmester.lask.welcome_screen.WelcomeRoute
 import dev.alexmester.lask.welcome_screen.welcomeScreen
@@ -44,6 +45,7 @@ fun RootScreen(
     val articleDetailApi = koinInject<ArticleDetailApi>()
     val profileApi = koinInject<ProfileApi>()
     val searchApi = koinInject<SearchApi>()
+    val typedArticleListApi = koinInject<TypedArticleListApi>()
 
     val hazeState = rememberHazeState()
 
@@ -78,6 +80,7 @@ fun RootScreen(
                     register(articleDetailApi, navController)
                     register(profileApi, navController)
                     register(searchApi, navController)
+                    register(typedArticleListApi, navController)
                 }
             }
         }
