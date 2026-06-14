@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:utils"))
     implementation(project(":core:platform"))
+    implementation(project(":core:domain"))
 
     implementation(libs.swipesnack)
 }

@@ -1,10 +1,12 @@
 package dev.alexmester.lask.di
 
+import dev.alexmester.data.di.data
 import dev.alexmester.database.di.database
 import dev.alexmester.datastore.di.dataStore
 import dev.alexmester.impl.di.articleDetailModule
 import dev.alexmester.impl.di.bookmarksModule
 import dev.alexmester.impl.di.explore
+import dev.alexmester.impl.di.interests
 import dev.alexmester.impl.di.newsFeed
 import dev.alexmester.impl.di.profile
 import dev.alexmester.impl.di.search
@@ -25,6 +27,7 @@ object AppModules {
         database,
         dataStore,
         platform,
+        data,
         // Features
         newsFeed,
         explore,
@@ -33,5 +36,6 @@ object AppModules {
         profile,
         search,
         typedArticleList,
+        interests,
     )
 }

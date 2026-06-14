@@ -59,3 +59,7 @@ include(":macrobenchmark")
 
 include(":feature:typed_article_list:api")
 include(":feature:typed_article_list:impl")
+include(":feature:interests:api")
+include(":feature:interests:impl")
+include(":core:domain")
+include(":core:data")

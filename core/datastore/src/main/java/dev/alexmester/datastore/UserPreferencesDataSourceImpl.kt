@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import dev.alexmester.datastore.model.UserPreferences
+import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_AUTO_TRANSLATE_LANGUAGE
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_AUTO_TRANSLATE_MANUALLY_SET
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_AVATAR_URI

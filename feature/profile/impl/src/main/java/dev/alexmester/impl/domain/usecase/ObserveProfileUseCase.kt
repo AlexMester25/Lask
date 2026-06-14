@@ -1,6 +1,6 @@
 package dev.alexmester.impl.domain.usecase
 
-import dev.alexmester.datastore.model.UserPreferences
+import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.impl.domain.repository.ProfileRepository
 import kotlinx.coroutines.flow.Flow
 

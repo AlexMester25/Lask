@@ -13,12 +13,15 @@ android {
 
 dependencies {
     api(project(":feature:profile:api"))
+
     implementation(project(":feature:article_detail:api"))
     implementation(project(":feature:typed_article_list:api"))
+    implementation(project(":feature:interests:api"))
 
     implementation(project(":core:database"))
     implementation(project(":core:models"))
     implementation(project(":core:ui"))
     implementation(project(":core:datastore"))
     implementation(project(":core:utils"))
+    implementation(project(":core:domain"))
 }

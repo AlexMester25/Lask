@@ -1,6 +1,6 @@
 package dev.alexmester.impl
 
-import dev.alexmester.datastore.model.UserPreferences
+import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.models.news.NewsArticle

@@ -1,13 +1,10 @@
 package dev.alexmester.impl.data.repository
 
 import android.net.Uri
-import dev.alexmester.datastore.model.UserPreferences
+import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.impl.data.local.ProfileLocalDataSource
-import dev.alexmester.impl.data.mapper.toDomain
 import dev.alexmester.impl.domain.repository.ProfileRepository
-import dev.alexmester.models.news.NewsArticle
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class ProfileRepositoryImpl(
     private val local: ProfileLocalDataSource,
@@ -15,9 +12,6 @@ class ProfileRepositoryImpl(
 
     override fun observeProfile(): Flow<Pair<UserPreferences, Int>> =
         local.observeProfile()
-
-    override fun observeUserPreferences(): Flow<UserPreferences> =
-        local.observeUserPreferences()
 
     override suspend fun applyEditChanges(imageUri: Uri?, name: String) =
         local.applyEditChanges(imageUri = imageUri, name = name)
@@ -27,12 +21,6 @@ class ProfileRepositoryImpl(
 
     override suspend fun updateTheme(isDark: Boolean?) =
         local.updateTheme(isDark)
-
-    override suspend fun addInterest(keyWord: String) =
-        local.addInterest(keyWord)
-
-    override suspend fun removeInterest(keyWord: String) =
-        local.removeInterest(keyWord)
 
     override suspend fun updateLocaleManually(country: String, language: String) =
         local.updateLocaleManually(country,language)

@@ -3,8 +3,7 @@ package dev.alexmester.impl.presentation.system.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.LocalePickerType
-import dev.alexmester.datastore.UserPreferencesDataSource
-import dev.alexmester.impl.domain.usecase.ObserveUserPreferencesUseCase
+import dev.alexmester.domain.usecase.ObserveUserPreferencesUseCase
 import dev.alexmester.impl.domain.usecase.UpdateThemeUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import dev.alexmester.api.navigation.ArticleDetailApi
 import dev.alexmester.api.navigation.BookmarksApi
 import dev.alexmester.api.navigation.ExploreApi
+import dev.alexmester.api.navigation.InterestsApi
 import dev.alexmester.api.navigation.NewsFeedApi
 import dev.alexmester.api.navigation.ProfileApi
 import dev.alexmester.api.navigation.SearchApi
@@ -46,6 +47,7 @@ fun RootScreen(
     val profileApi = koinInject<ProfileApi>()
     val searchApi = koinInject<SearchApi>()
     val typedArticleListApi = koinInject<TypedArticleListApi>()
+    val interestsApi = koinInject<InterestsApi>()
 
     val hazeState = rememberHazeState()
 
@@ -81,6 +83,7 @@ fun RootScreen(
                     register(profileApi, navController)
                     register(searchApi, navController)
                     register(typedArticleListApi, navController)
+                    register(interestsApi, navController)
                 }
             }
         }

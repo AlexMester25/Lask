@@ -2,12 +2,12 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.alexmester.domain.usecase.ObserveUserPreferencesUseCase
 import dev.alexmester.impl.domain.model.FeedResult
 import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
-import dev.alexmester.impl.domain.usecase.ObserveUserPreferencesTrendsUseCase
 import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedIntent
@@ -37,7 +37,7 @@ class NewsFeedViewModel(
     private val observeTrendsUseCase: ObserveTrendsUseCase,
     private val refreshTrendsUseCase: RefreshTrendsUseCase,
     private val observeReadArticleIdsUseCase: ObserveReadArticleIdsTrendsUseCase,
-    private val observeUserPreferencesTrendsUseCase: ObserveUserPreferencesTrendsUseCase,
+    private val observeUserPreferencesUseCase: ObserveUserPreferencesUseCase,
     private val getCachedAtTrendsUseCase: GetCachedAtTrendsUseCase,
 ) : ViewModel() {
 
@@ -100,7 +100,7 @@ class NewsFeedViewModel(
 
     private fun observePreferencesChanges() {
         viewModelScope.launch {
-            observeUserPreferencesTrendsUseCase()
+            observeUserPreferencesUseCase()
                 .map { it.defaultCountry to it.defaultLanguage }
                 .distinctUntilChanged()
                 .drop(1)

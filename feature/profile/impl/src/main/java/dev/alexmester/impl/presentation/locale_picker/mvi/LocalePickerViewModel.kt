@@ -3,8 +3,7 @@ package dev.alexmester.impl.presentation.locale_picker.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.LocalePickerType
-import dev.alexmester.datastore.UserPreferencesDataSource
-import dev.alexmester.impl.domain.usecase.ObserveUserPreferencesUseCase
+import dev.alexmester.domain.usecase.ObserveUserPreferencesUseCase
 import dev.alexmester.impl.domain.usecase.UpdateAutoTranslateLanguageUseCase
 import dev.alexmester.impl.domain.usecase.UpdateLocaleManuallyUseCase
 import dev.alexmester.utils.locale.LocaleUtils

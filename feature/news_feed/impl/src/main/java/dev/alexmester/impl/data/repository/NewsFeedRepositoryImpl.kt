@@ -2,7 +2,7 @@ package dev.alexmester.impl.data.repository
 
 import dev.alexmester.database.entity.FeedCacheEntity.Companion.TRENDS_FEED
 import dev.alexmester.datastore.UserPreferencesDataSource
-import dev.alexmester.datastore.model.UserPreferences
+import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.impl.data.local.NewsFeedLocalDataSource
 import dev.alexmester.impl.data.mapper.toEntities
 import dev.alexmester.impl.data.remote.NewsFeedApiService
@@ -33,9 +33,6 @@ class NewsFeedRepositoryImpl(
 
     override fun observeReadArticleIds(): Flow<List<Long>> =
         local.observeReadArticleIds()
-
-    override fun observeUserPreferences(): Flow<UserPreferences> =
-        preferencesDataSource.userPreferences
 
     override suspend fun refreshFeed(force: Boolean): AppResult<RefreshFeedResult> =
         withContext(dispatchers.io) {

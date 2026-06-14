@@ -1,7 +1,7 @@
 package dev.alexmester.impl
 
 import app.cash.turbine.test
-import dev.alexmester.datastore.model.UserPreferences
+import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.models.news.NewsCluster
 import kotlinx.coroutines.test.runTest

@@ -2,9 +2,8 @@ package dev.alexmester.impl.data.local
 
 import android.net.Uri
 import dev.alexmester.database.dao.ArticleUserStateDao
-import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.datastore.UserPreferencesDataSource
-import dev.alexmester.datastore.model.UserPreferences
+import dev.alexmester.models.preference.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
@@ -22,9 +21,6 @@ class ProfileLocalDataSource(
                 prefs to readCount
             }
 
-    fun observeUserPreferences(): Flow<UserPreferences> =
-        preferencesDataSource.userPreferences
-
     suspend fun applyEditChanges(imageUri: Uri?, name: String) {
         preferencesDataSource.updateAvatarUri(imageUri)
         preferencesDataSource.updateProfileName(name)
@@ -37,14 +33,6 @@ class ProfileLocalDataSource(
 
     suspend fun updateTheme(isDark: Boolean?) {
         preferencesDataSource.updateTheme(isDark)
-    }
-
-    suspend fun addInterest(keyWord: String){
-        preferencesDataSource.addInterest(keyWord)
-    }
-
-    suspend fun removeInterest(keyWord: String){
-        preferencesDataSource.removeInterest(keyWord)
     }
 
     suspend fun updateLocaleManually(country: String, language: String){

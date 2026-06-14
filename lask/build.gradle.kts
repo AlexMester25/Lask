@@ -53,6 +53,7 @@ dependencies {
     implementation(project(":core:models"))
     implementation(project(":core:utils"))
     implementation(project(":core:platform"))
+    implementation(project(":core:data"))
 
     implementation(project(":feature:news_feed:impl"))
     implementation(project(":feature:explore:impl"))
@@ -61,6 +62,7 @@ dependencies {
     implementation(project(":feature:profile:impl"))
     implementation(project(":feature:search:impl"))
     implementation(project(":feature:typed_article_list:impl"))
+    implementation(project(":feature:interests:impl"))
 
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.profileinstaller)

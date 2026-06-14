@@ -5,22 +5,21 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import dev.alexmester.api.navigation.ArticleDetailApi
-import dev.alexmester.api.navigation.InterestsRoute
+import dev.alexmester.api.navigation.InterestsApi
 import dev.alexmester.api.navigation.LocalePickerRoute
 import dev.alexmester.api.navigation.LocalePickerType
 import dev.alexmester.api.navigation.ProfileApi
 import dev.alexmester.api.navigation.ProfileRoute
 import dev.alexmester.api.navigation.SystemRoute
 import dev.alexmester.api.navigation.TypedArticleListApi
-import dev.alexmester.impl.presentation.interests.InterestsScreen
 import dev.alexmester.impl.presentation.locale_picker.LocalePickerScreen
 import dev.alexmester.impl.presentation.profile.ProfileScreen
 import dev.alexmester.impl.presentation.system.SystemScreen
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 
 class ProfileImpl(
-    private val typedArticleListApi: TypedArticleListApi
+    private val typedArticleListApi: TypedArticleListApi,
+    private val interestsApi: InterestsApi
 ) : ProfileApi {
 
     override fun profileRoute() = ProfileRoute
@@ -43,13 +42,13 @@ class ProfileImpl(
                         navController.navigate(SystemRoute)
                     },
                     onNavigateToInterests = {
-                        navController.navigate(InterestsRoute)
+                        navController.navigate(
+                            interestsApi.interestsRoute()
+                        )
                     }
                 )
             }
         }
-
-
 
         navGraphBuilder.composable<LocalePickerRoute> { backStackEntry ->
             val route = backStackEntry.toRoute<LocalePickerRoute>()
@@ -71,10 +70,6 @@ class ProfileImpl(
             )
         }
 
-        navGraphBuilder.composable<InterestsRoute> {
-            InterestsScreen(
-                onBack = { navController.navigateUp() }
-            )
-        }
+
     }
 }

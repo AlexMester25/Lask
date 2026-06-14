@@ -2,7 +2,7 @@ package dev.alexmester.impl
 
 import android.net.Uri
 import dev.alexmester.datastore.UserPreferencesDataSource
-import dev.alexmester.datastore.model.UserPreferences
+import dev.alexmester.models.preference.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
