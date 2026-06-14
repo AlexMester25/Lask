@@ -52,6 +52,7 @@
 
     <!-- Common -->
     <string name="unknown_author">Автор неизвестен</string>
+    <string name="apply">Ок</string>
 
     <!-- Profile -->
     <string name="profile_article_read">Прочитано</string>
@@ -100,5 +101,12 @@
     <string name="locale_adapt_language">Язык → %1$s</string>
     <string name="locale_adapt_country">Страна → %1$s</string>
     <string name="locale_incompatible_empty_message">Для %1$s на языке «%2$s» новости ещё не сформированы или недоступны за сегодня.\n\nПотяните вниз, чтобы попробовать снова, или измените страну и язык в настройках.</string>
+
+    <!-- Levels-->
+    <string name="level_1">Beginner</string>
+    <string name="level_2">Intermediate</string>
+    <string name="level_3">Advanced</string>
+    <string name="level_4">Pro</string>
+    <string name="level_5">Bookworm</string>
 
 </resources>
