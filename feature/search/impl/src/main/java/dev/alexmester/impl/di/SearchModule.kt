@@ -3,7 +3,6 @@ package dev.alexmester.impl.di
 import dev.alexmester.impl.data.remote.SearchApiService
 import dev.alexmester.impl.data.repository.SearchRepositoryImpl
 import dev.alexmester.impl.domain.repository.SearchRepository
-import dev.alexmester.impl.domain.usecase.GetReadArticleIdsSearchUseCase
 import dev.alexmester.impl.domain.usecase.SearchUseCase
 import dev.alexmester.impl.presentation.mvi.SearchViewModel
 import dev.alexmester.network.di.Clients
@@ -19,16 +18,14 @@ val search = module {
         SearchRepositoryImpl(
             remote = get(),
             articleDao = get(),
-            userStateDao = get()
         )
     }
 
-    factory { GetReadArticleIdsSearchUseCase(repository = get()) }
     factory { SearchUseCase(repository = get()) }
 
     viewModel {
         SearchViewModel(
-            getReadArticleIdsSearchUseCase = get(),
+            observeReadArticleIdsUseCase = get(),
             searchUseCase = get()
         )
     }

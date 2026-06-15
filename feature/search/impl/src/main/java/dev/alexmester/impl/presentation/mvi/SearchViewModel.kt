@@ -2,10 +2,10 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.alexmester.domain.usecase.ObserveReadArticleIdsUseCase
 import dev.alexmester.error.NetworkErrorUiMapper
 import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.domain.model.SearchFilters
-import dev.alexmester.impl.domain.usecase.GetReadArticleIdsSearchUseCase
 import dev.alexmester.impl.domain.usecase.SearchUseCase
 import dev.alexmester.models.result.onFailure
 import dev.alexmester.models.result.onSuccess
@@ -24,10 +24,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
-    private val getReadArticleIdsSearchUseCase: GetReadArticleIdsSearchUseCase,
+    private val observeReadArticleIdsUseCase: ObserveReadArticleIdsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SearchState())
@@ -37,7 +38,7 @@ class SearchViewModel(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     val readArticleIds: StateFlow<Set<Long>> =
-        getReadArticleIdsSearchUseCase()
+        observeReadArticleIdsUseCase()
             .map { it.toSet() }
             .stateIn(
                 scope = viewModelScope,
@@ -81,7 +82,7 @@ class SearchViewModel(
             return
         }
         debounceJob = viewModelScope.launch {
-            delay(DEBOUNCE_MS)
+            delay(DEBOUNCE_MS.milliseconds)
             performSearch()
         }
     }
