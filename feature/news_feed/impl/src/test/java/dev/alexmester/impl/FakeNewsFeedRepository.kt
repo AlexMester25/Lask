@@ -35,12 +35,6 @@ class FakeNewsFeedRepository : NewsFeedRepository {
     override fun observeFeedClusters(): Flow<List<NewsCluster>> =
         _clusters.asStateFlow()
 
-    override fun observeReadArticleIds(): Flow<List<Long>> =
-        _readIds.asStateFlow()
-
-    override fun observeUserPreferences(): Flow<UserPreferences> =
-        _userPrefs.asStateFlow()
-
     override suspend fun refreshFeed(
         force: Boolean
     ): AppResult<RefreshFeedResult> {

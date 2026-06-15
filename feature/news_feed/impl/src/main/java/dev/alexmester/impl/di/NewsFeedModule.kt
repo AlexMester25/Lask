@@ -5,7 +5,6 @@ import dev.alexmester.impl.data.remote.NewsFeedApiService
 import dev.alexmester.impl.data.repository.NewsFeedRepositoryImpl
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
-import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.impl.presentation.mvi.NewsFeedViewModel
@@ -36,8 +35,7 @@ val newsFeed = module {
         )
     }
 
-    factory { ObserveTrendsUseCase(repository = get()) }
-    factory { ObserveReadArticleIdsTrendsUseCase(repository = get()) }
+    factory { ObserveTrendsUseCase(repository = get(), observeUserPreferencesUseCase = get()) }
     factory { GetCachedAtTrendsUseCase(repository = get()) }
     factory { RefreshTrendsUseCase(repository = get()) }
 

@@ -23,9 +23,6 @@ class NewsFeedLocalDataSource(
         feedCacheDao.observeFeedWithState(TRENDS_FEED)
             .map { rows -> rows.toClusters() }
 
-    fun observeReadArticleIds(): Flow<List<Long>> =
-        userStateDao.observeReadArticleIds()
-
     suspend fun getLastCachedAt(): Long? =
         feedCacheDao.getLastCachedAt(TRENDS_FEED)
 

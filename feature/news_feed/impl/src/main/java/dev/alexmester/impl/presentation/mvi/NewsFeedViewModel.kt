@@ -2,11 +2,11 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.alexmester.domain.usecase.ObserveReadArticleIdsUseCase
 import dev.alexmester.domain.usecase.ObserveUserPreferencesUseCase
 import dev.alexmester.impl.domain.model.FeedResult
 import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
-import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.models.result.AppResult
@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 class NewsFeedViewModel(
     private val observeTrendsUseCase: ObserveTrendsUseCase,
     private val refreshTrendsUseCase: RefreshTrendsUseCase,
-    private val observeReadArticleIdsUseCase: ObserveReadArticleIdsTrendsUseCase,
+    private val observeReadArticleIdsUseCase: ObserveReadArticleIdsUseCase,
     private val observeUserPreferencesUseCase: ObserveUserPreferencesUseCase,
     private val getCachedAtTrendsUseCase: GetCachedAtTrendsUseCase,
 ) : ViewModel() {
