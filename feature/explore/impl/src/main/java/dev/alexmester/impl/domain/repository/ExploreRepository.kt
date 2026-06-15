@@ -10,8 +10,6 @@ interface ExploreRepository {
 
     fun observeArticles(): Flow<List<NewsArticle>>
 
-    fun observeReadArticleIds(): Flow<List<Long>>
-
     suspend fun getExploreQuery(): ExploreQuery
 
     suspend fun refresh(

@@ -8,7 +8,6 @@ import dev.alexmester.impl.domain.usecase.GetLastCachedAtExploreUseCase
 import dev.alexmester.impl.domain.usecase.GetInterestsExploreUseCase
 import dev.alexmester.impl.domain.usecase.LoadMoreExploreUseCase
 import dev.alexmester.impl.domain.usecase.ObserveArticlesExploreUseCase
-import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsExploreUseCase
 import dev.alexmester.impl.domain.usecase.RefreshExploreUseCase
 import dev.alexmester.impl.presentstion.mvi.ExploreViewModel
 import dev.alexmester.network.di.Clients
@@ -24,7 +23,6 @@ val explore = module {
             db = get(),
             articleDao = get(),
             feedCacheDao = get(),
-            userStateDao = get(),
             preferencesDataSource = get()
         )
     }
@@ -41,7 +39,6 @@ val explore = module {
     factory { GetLastCachedAtExploreUseCase(repository = get()) }
     factory { LoadMoreExploreUseCase(repository = get(), getQuery = get()) }
     factory { ObserveArticlesExploreUseCase(repository = get()) }
-    factory { ObserveReadArticleIdsExploreUseCase(repository = get()) }
     factory { RefreshExploreUseCase(repository = get(), getQuery = get()) }
 
     viewModel {

@@ -27,9 +27,6 @@ class ExploreRepositoryImpl(
     override fun observeArticles(): Flow<List<NewsArticle>> =
         local.observeFeedArticles()
 
-    override fun observeReadArticleIds(): Flow<List<Long>> =
-        local.observeReadArticleIds()
-
     override suspend fun getExploreQuery(): ExploreQuery =
         local.getExploreQuery()
 

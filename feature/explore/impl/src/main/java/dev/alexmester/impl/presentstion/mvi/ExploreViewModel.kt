@@ -2,12 +2,12 @@ package dev.alexmester.impl.presentstion.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.alexmester.domain.usecase.ObserveReadArticleIdsUseCase
 import dev.alexmester.error.NetworkErrorUiMapper
 import dev.alexmester.impl.domain.model.RefreshResult
 import dev.alexmester.impl.domain.usecase.GetLastCachedAtExploreUseCase
 import dev.alexmester.impl.domain.usecase.LoadMoreExploreUseCase
 import dev.alexmester.impl.domain.usecase.ObserveArticlesExploreUseCase
-import dev.alexmester.impl.domain.usecase.ObserveReadArticleIdsExploreUseCase
 import dev.alexmester.impl.domain.usecase.RefreshExploreUseCase
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.result.onFailure
@@ -33,7 +33,7 @@ class ExploreViewModel(
     private val refreshExplore: RefreshExploreUseCase,
     private val loadMore: LoadMoreExploreUseCase,
     private val observeArticles: ObserveArticlesExploreUseCase,
-    private val observeReadIds: ObserveReadArticleIdsExploreUseCase,
+    private val observeReadIds: ObserveReadArticleIdsUseCase,
     private val getLastCachedAt: GetLastCachedAtExploreUseCase,
 ) : ViewModel() {
 

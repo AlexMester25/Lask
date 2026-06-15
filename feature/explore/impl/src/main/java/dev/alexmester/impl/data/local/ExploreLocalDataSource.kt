@@ -3,7 +3,6 @@ package dev.alexmester.impl.data.local
 import androidx.room.withTransaction
 import dev.alexmester.database.AppDatabase
 import dev.alexmester.database.dao.ArticleDao
-import dev.alexmester.database.dao.ArticleUserStateDao
 import dev.alexmester.database.dao.FeedCacheDao
 import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.database.entity.FeedCacheEntity
@@ -21,15 +20,12 @@ class ExploreLocalDataSource(
     private val db: AppDatabase,
     private val articleDao: ArticleDao,
     private val feedCacheDao: FeedCacheDao,
-    private val userStateDao: ArticleUserStateDao,
     private val preferencesDataSource: UserPreferencesDataSource,
 ) {
 
     fun observeFeedArticles(): Flow<List<NewsArticle>> =
         feedCacheDao.observeFeedWithState(EXPLORE_FEED)
             .map { rows -> rows.sortedBy { it.position }.map { it.toDomain() } }
-
-    fun observeReadArticleIds(): Flow<List<Long>> = userStateDao.observeReadArticleIds()
 
     suspend fun getExploreQuery(): ExploreQuery {
         val prefs = preferencesDataSource.userPreferences.first()
