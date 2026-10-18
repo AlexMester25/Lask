@@ -2,13 +2,7 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.impl.domain.usecase.AddClapUseCase
-import dev.alexmester.impl.domain.usecase.GetArticleUseCase
-import dev.alexmester.impl.domain.usecase.GetAutoTranslateLanguageUseCase
-import dev.alexmester.impl.domain.usecase.MarkAsReadUseCase
-import dev.alexmester.impl.domain.usecase.ObserveClapCountUseCase
-import dev.alexmester.impl.domain.usecase.ObserveIsBookmarkedUseCase
-import dev.alexmester.impl.domain.usecase.ToggleBookmarkUseCase
+import dev.alexmester.impl.domain.repository.ArticleDetailRepository
 import dev.alexmester.impl.domain.usecase.TranslateTextsUseCase
 import dev.alexmester.models.result.onFailure
 import dev.alexmester.models.result.onSuccess
@@ -26,14 +20,8 @@ import kotlinx.coroutines.launch
 class ArticleDetailViewModel(
     private val articleId: Long,
     private val articleUrl: String,
-    private val getArticleUseCase: GetArticleUseCase,
-    private val observeIsBookmarkedUseCase: ObserveIsBookmarkedUseCase,
-    private val observeClapCountUseCase: ObserveClapCountUseCase,
-    private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
-    private val addClapUseCase: AddClapUseCase,
-    private val markAsReadUseCase: MarkAsReadUseCase,
+    private val articleDetailRepository: ArticleDetailRepository,
     private val translateTextsUseCase: TranslateTextsUseCase,
-    private val getAutoTranslateLanguageUseCase: GetAutoTranslateLanguageUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ArticleDetailState>(ArticleDetailState.Loading)
@@ -80,7 +68,7 @@ class ArticleDetailViewModel(
 
     private fun loadArticle() {
         viewModelScope.launch {
-            val article = getArticleUseCase(articleId) ?: run {
+            val article = articleDetailRepository.getArticleById(articleId) ?: run {
                 _state.value = ArticleDetailState.Error(
                     UiText.StringResource(R.string.error_article_not_found)
                 )
@@ -88,11 +76,11 @@ class ArticleDetailViewModel(
             }
             _state.value = ArticleDetailState.Content(
                 article = article,
-                autoTranslateLanguage = getAutoTranslateLanguageUseCase(),
+                autoTranslateLanguage = articleDetailRepository.getAutoTranslateLanguage(),
             )
             combine(
-                observeIsBookmarkedUseCase(articleId),
-                observeClapCountUseCase(articleId)
+                articleDetailRepository.observeIsBookmarked(articleId),
+                articleDetailRepository.observeClapCount(articleId)
             ) { isBookmarked, clapCount ->
                 isBookmarked to clapCount
             }.collect { (isBookmarked, clapCount) ->
@@ -157,13 +145,13 @@ class ArticleDetailViewModel(
 
     private fun onClap() {
         viewModelScope.launch {
-            addClapUseCase(articleId)
+            articleDetailRepository.addClap(articleId)
         }
     }
 
     private fun onToggleBookmark() {
         viewModelScope.launch {
-            val nowBookmarked = toggleBookmarkUseCase(articleId)
+            val nowBookmarked = articleDetailRepository.toggleBookmark(articleId)
             emitSideEffect(ArticleDetailSideEffect.ShawBookmarkActionMessage(nowBookmarked))
         }
     }
@@ -173,7 +161,7 @@ class ArticleDetailViewModel(
         if (!isTimeThresholdReached || !isScrollThresholdReached) return
         isMarkedAsRead = true
         viewModelScope.launch {
-            markAsReadUseCase(articleId)
+            articleDetailRepository.markAsRead(articleId)
         }
     }
 
