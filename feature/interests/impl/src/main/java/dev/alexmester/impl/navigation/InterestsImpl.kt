@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import dev.alexmester.api.navigation.InterestsApi
 import dev.alexmester.api.navigation.InterestsRoute
-import dev.alexmester.impl.presentation.interests.InterestsScreen
+import dev.alexmester.impl.presentation.InterestsScreen
 
 class InterestsImpl: InterestsApi {
 

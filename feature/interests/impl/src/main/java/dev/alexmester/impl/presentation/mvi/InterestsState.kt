@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentation.interests.mvi
+package dev.alexmester.impl.presentation.mvi
 
 import androidx.compose.runtime.Composable
 

@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentation.interests.components
+package dev.alexmester.impl.presentation.components
 
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api

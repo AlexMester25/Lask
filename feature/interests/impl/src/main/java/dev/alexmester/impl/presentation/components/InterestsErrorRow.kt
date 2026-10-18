@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentation.interests.components
+package dev.alexmester.impl.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -22,8 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.alexmester.impl.presentation.interests.mvi.InterestsValidationError
-import dev.alexmester.impl.presentation.interests.mvi.toUiString
+import dev.alexmester.impl.presentation.mvi.InterestsValidationError
+import dev.alexmester.impl.presentation.mvi.toUiString
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 

@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentation.interests
+package dev.alexmester.impl.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,12 +22,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.alexmester.impl.presentation.interests.components.InterestsErrorRow
-import dev.alexmester.impl.presentation.interests.components.InterestsTopBar
-import dev.alexmester.impl.presentation.interests.mvi.InterestsIntent
-import dev.alexmester.impl.presentation.interests.mvi.InterestsSideEffect
-import dev.alexmester.impl.presentation.interests.mvi.InterestsState
-import dev.alexmester.impl.presentation.interests.mvi.InterestsViewModel
+import dev.alexmester.impl.presentation.components.InterestsErrorRow
+import dev.alexmester.impl.presentation.components.InterestsTopBar
+import dev.alexmester.impl.presentation.mvi.InterestsIntent
+import dev.alexmester.impl.presentation.mvi.InterestsSideEffect
+import dev.alexmester.impl.presentation.mvi.InterestsState
+import dev.alexmester.impl.presentation.mvi.InterestsViewModel
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.buttons.LaskChipButton
 import dev.alexmester.ui.components.buttons.LaskChipButtonVariants

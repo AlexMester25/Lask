@@ -1,10 +1,9 @@
-package dev.alexmester.impl.presentation.interests.mvi
+package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.domain.repository.UserPreferencesRepository
-import dev.alexmester.impl.domain.usecase.AddInterestUseCase
-import dev.alexmester.impl.domain.usecase.RemoveInterestUseCase
+import dev.alexmester.impl.domain.repository.InterestsRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +16,7 @@ import kotlinx.coroutines.launch
 
 class InterestsViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val addInterestUseCase: AddInterestUseCase,
-    private val removeInterestUseCase: RemoveInterestUseCase,
+    private val interestsRepository: InterestsRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(InterestsState())
@@ -41,7 +39,7 @@ class InterestsViewModel(
             is InterestsIntent.Add -> addInterest()
 
             is InterestsIntent.Remove -> viewModelScope.launch {
-                removeInterestUseCase(intent.keyword)
+                interestsRepository.removeInterest(intent.keyword)
             }
 
             is InterestsIntent.Back ->
@@ -51,7 +49,7 @@ class InterestsViewModel(
 
     private fun addInterest() {
         viewModelScope.launch {
-            addInterestUseCase(_state.value.inputText)
+            interestsRepository.addInterest(_state.value.inputText)
             _state.update { it.copy(inputText = "") }
         }
     }
