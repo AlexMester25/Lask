@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.LocalePickerType
 import dev.alexmester.domain.repository.UserPreferencesRepository
-import dev.alexmester.impl.domain.usecase.UpdateAutoTranslateLanguageUseCase
-import dev.alexmester.impl.domain.usecase.UpdateLocaleManuallyUseCase
+import dev.alexmester.impl.domain.repository.ProfileRepository
 import dev.alexmester.utils.locale.LocaleUtils
 import dev.alexmester.utils.locale.checkCompatibility
 import kotlinx.coroutines.channels.Channel
@@ -20,8 +19,7 @@ import kotlinx.coroutines.launch
 class LocalePickerViewModel(
     private val type: LocalePickerType,
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val updateLocaleManuallyUseCase: UpdateLocaleManuallyUseCase,
-    private val updateAutoTranslateLanguageUseCase: UpdateAutoTranslateLanguageUseCase,
+    private val profileRepository: ProfileRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LocalePickerState(type = type))
@@ -79,7 +77,7 @@ class LocalePickerViewModel(
                             )
                         }
                     } else {
-                        updateLocaleManuallyUseCase(
+                        profileRepository.updateLocaleManually(
                             country = warning.suggestedCountry,
                             language = pending,
                         )
@@ -102,7 +100,7 @@ class LocalePickerViewModel(
                             )
                         }
                     } else {
-                        updateLocaleManuallyUseCase(
+                        profileRepository.updateLocaleManually(
                             country = pending,
                             language = warning.suggestedLanguage,
                         )
@@ -180,16 +178,16 @@ class LocalePickerViewModel(
     private suspend fun saveLocale(code: String) {
         val prefs = userPreferencesRepository.observeUserPreferences().first()
         when (type) {
-            LocalePickerType.COUNTRY -> updateLocaleManuallyUseCase(
+            LocalePickerType.COUNTRY -> profileRepository.updateLocaleManually(
                 country = code,
                 language = prefs.defaultLanguage,
             )
-            LocalePickerType.LANGUAGE -> updateLocaleManuallyUseCase(
+            LocalePickerType.LANGUAGE -> profileRepository.updateLocaleManually(
                 country = prefs.defaultCountry,
                 language = code,
             )
             LocalePickerType.AUTO_TRANSLATE_LANGUAGE ->
-                updateAutoTranslateLanguageUseCase(code)
+                profileRepository.updateAutoTranslateLanguage(code)
         }
     }
 
