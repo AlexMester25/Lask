@@ -2,8 +2,7 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.impl.domain.usecase.ObserveBookmarksUseCase
-import dev.alexmester.impl.domain.usecase.RemoveBookmarksUseCase
+import dev.alexmester.impl.domain.repository.BookmarksRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BookmarksViewModel(
-    private val observeBookmarksUseCase: ObserveBookmarksUseCase,
-    private val removeBookmarksUseCase: RemoveBookmarksUseCase,
+    private val bookmarksRepository: BookmarksRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<BookmarksState>(BookmarksState.Loading)
@@ -41,7 +39,7 @@ class BookmarksViewModel(
     }
 
     private fun observeBookmarks() {
-        observeBookmarksUseCase()
+        bookmarksRepository.observeBookmarks()
             .onEach { articles ->
                 _state.update { current ->
                     BookmarksReducer.onArticlesUpdated(current, articles)
@@ -61,7 +59,7 @@ class BookmarksViewModel(
 
         viewModelScope.launch {
             _state.update { BookmarksReducer.onCloseEditMode(it) }
-            removeBookmarksUseCase(idsToRemove)
+            bookmarksRepository.removeBookmarks(idsToRemove)
         }
     }
 
