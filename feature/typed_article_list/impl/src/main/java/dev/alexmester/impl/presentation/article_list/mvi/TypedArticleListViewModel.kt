@@ -3,8 +3,7 @@ package dev.alexmester.impl.presentation.article_list.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.ArticleListType
-import dev.alexmester.impl.domain.usecase.ObserveClappedArticlesUseCase
-import dev.alexmester.impl.domain.usecase.ObserveReadArticlesUseCase
+import dev.alexmester.domain.repository.ArticleRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +16,7 @@ import kotlinx.coroutines.launch
 
 class TypedArticleListViewModel(
     private val type: ArticleListType,
-    private val observeReadArticlesUseCase: ObserveReadArticlesUseCase,
-    private val observeClappedArticlesUseCase: ObserveClappedArticlesUseCase,
+    private val articleRepository: ArticleRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TypedArticleListState())
@@ -48,8 +46,8 @@ class TypedArticleListViewModel(
 
     private fun observeArticles() {
         val flow = when (type) {
-            ArticleListType.READ -> observeReadArticlesUseCase()
-            ArticleListType.CLAPPED -> observeClappedArticlesUseCase()
+            ArticleListType.READ -> articleRepository.observeReadArticles()
+            ArticleListType.CLAPPED -> articleRepository.observeClappedArticles()
         }
 
         flow.onEach { articles ->

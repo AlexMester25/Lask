@@ -1,4 +1,4 @@
-package dev.alexmester.impl.data.mapper
+package dev.alexmester.data.mapper
 
 import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.models.news.NewsArticle
