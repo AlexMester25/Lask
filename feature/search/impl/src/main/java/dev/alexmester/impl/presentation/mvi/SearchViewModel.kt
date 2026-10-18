@@ -6,7 +6,7 @@ import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.error.NetworkErrorUiMapper
 import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.domain.model.SearchFilters
-import dev.alexmester.impl.domain.usecase.SearchUseCase
+import dev.alexmester.impl.domain.repository.SearchRepository
 import dev.alexmester.models.result.onFailure
 import dev.alexmester.models.result.onSuccess
 import dev.alexmester.utils.constants.LaskConstants.DEBOUNCE_MS
@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class SearchViewModel(
-    private val searchUseCase: SearchUseCase,
+    private val searchRepository: SearchRepository,
     private val articleRepository: ArticleRepository,
 ) : ViewModel() {
 
@@ -111,7 +111,7 @@ class SearchViewModel(
         val current = _state.value
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            searchUseCase(current.query, current.filters)
+            searchRepository.search(current.query, current.filters)
                 .onSuccess { result ->
                     _state.update {
                         it.copy(results = result, isLoading = false, hasSearched = true)
@@ -135,7 +135,7 @@ class SearchViewModel(
 
         loadMoreJob = viewModelScope.launch {
             _state.update { it.copy(isLoadingMore = true, loadMoreError = false) }
-            searchUseCase(
+            searchRepository.search(
                 query = current.query,
                 filters = current.filters,
                 offset = current.results.size,

@@ -7,9 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.ArticleListType
 import dev.alexmester.impl.domain.repository.ProfileRepository
-import dev.alexmester.impl.domain.usecase.ApplyEditChangesUseCase
-import dev.alexmester.impl.domain.usecase.ObserveProfileUseCase
-import dev.alexmester.impl.domain.usecase.UpdateStreakUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

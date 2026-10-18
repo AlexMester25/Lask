@@ -3,7 +3,6 @@ package dev.alexmester.impl.di
 import dev.alexmester.impl.data.remote.SearchApiService
 import dev.alexmester.impl.data.repository.SearchRepositoryImpl
 import dev.alexmester.impl.domain.repository.SearchRepository
-import dev.alexmester.impl.domain.usecase.SearchUseCase
 import dev.alexmester.impl.presentation.mvi.SearchViewModel
 import dev.alexmester.network.di.Clients
 import org.koin.core.module.dsl.viewModel
@@ -21,12 +20,10 @@ val search = module {
         )
     }
 
-    factory { SearchUseCase(repository = get()) }
-
     viewModel {
         SearchViewModel(
-            articleRepository = get(),
-            searchUseCase = get()
+            searchRepository = get(),
+            articleRepository = get()
         )
     }
 }
