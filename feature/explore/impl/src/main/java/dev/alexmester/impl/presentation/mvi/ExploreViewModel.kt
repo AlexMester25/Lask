@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentstion.mvi
+package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

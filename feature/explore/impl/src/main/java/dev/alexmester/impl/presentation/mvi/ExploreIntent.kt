@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentstion.mvi
+package dev.alexmester.impl.presentation.mvi
 
 sealed interface ExploreIntent {
     data object Refresh : ExploreIntent

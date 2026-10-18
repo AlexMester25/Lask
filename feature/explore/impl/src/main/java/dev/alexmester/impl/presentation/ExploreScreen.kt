@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentstion
+package dev.alexmester.impl.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,12 +24,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.snackbar.snackswipe.SnackSwipeBox
-import dev.alexmester.impl.presentstion.components.ExploreList
-import dev.alexmester.impl.presentstion.components.ExploreTopBar
-import dev.alexmester.impl.presentstion.mvi.ExploreIntent
-import dev.alexmester.impl.presentstion.mvi.ExploreSideEffect
-import dev.alexmester.impl.presentstion.mvi.ExploreState
-import dev.alexmester.impl.presentstion.mvi.ExploreViewModel
+import dev.alexmester.impl.presentation.components.ExploreList
+import dev.alexmester.impl.presentation.components.ExploreTopBar
+import dev.alexmester.impl.presentation.mvi.ExploreIntent
+import dev.alexmester.impl.presentation.mvi.ExploreSideEffect
+import dev.alexmester.impl.presentation.mvi.ExploreState
+import dev.alexmester.impl.presentation.mvi.ExploreViewModel
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.notification_screen.LaskNotificationScreen
 import dev.alexmester.ui.components.notification_screen.NotificationType

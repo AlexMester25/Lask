@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentstion.components
+package dev.alexmester.impl.presentation.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import dev.alexmester.impl.presentstion.mvi.ExploreIntent
-import dev.alexmester.impl.presentstion.mvi.ExploreState
+import dev.alexmester.impl.presentation.mvi.ExploreIntent
+import dev.alexmester.impl.presentation.mvi.ExploreState
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.list_card.ArticleCardVariant
 import dev.alexmester.ui.components.list_card.LaskArticleCard

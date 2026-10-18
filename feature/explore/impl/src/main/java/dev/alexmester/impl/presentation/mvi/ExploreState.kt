@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentstion.mvi
+package dev.alexmester.impl.presentation.mvi
 
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.news.NewsArticle

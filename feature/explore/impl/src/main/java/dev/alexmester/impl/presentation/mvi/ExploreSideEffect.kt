@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentstion.mvi
+package dev.alexmester.impl.presentation.mvi
 
 import dev.alexmester.ui.uitext.UiText
 

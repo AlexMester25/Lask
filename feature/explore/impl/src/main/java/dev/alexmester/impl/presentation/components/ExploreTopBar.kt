@@ -1,4 +1,4 @@
-package dev.alexmester.impl.presentstion.components
+package dev.alexmester.impl.presentation.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
