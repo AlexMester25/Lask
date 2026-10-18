@@ -1,7 +1,6 @@
 package dev.alexmester.impl.di
 
 import dev.alexmester.api.navigation.LocalePickerType
-import dev.alexmester.domain.usecase.ObserveUserPreferencesUseCase
 import dev.alexmester.impl.data.local.ProfileLocalDataSource
 import dev.alexmester.impl.data.repository.ProfileRepositoryImpl
 import dev.alexmester.impl.domain.repository.ProfileRepository
@@ -47,7 +46,7 @@ val profile = module {
 
     viewModel {
         SystemViewModel(
-            observeUserPreferencesUseCase = get(),
+            userPreferencesRepository = get(),
             updateThemeUseCase = get(),
         )
     }
@@ -55,7 +54,7 @@ val profile = module {
     viewModel { (type: LocalePickerType) ->
         LocalePickerViewModel(
             type = type,
-            observeUserPreferencesUseCase = get(),
+            userPreferencesRepository = get(),
             updateLocaleManuallyUseCase = get(),
             updateAutoTranslateLanguageUseCase = get(),
         )

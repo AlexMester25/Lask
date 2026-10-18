@@ -3,7 +3,7 @@ package dev.alexmester.impl.presentation.locale_picker.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.LocalePickerType
-import dev.alexmester.domain.usecase.ObserveUserPreferencesUseCase
+import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.impl.domain.usecase.UpdateAutoTranslateLanguageUseCase
 import dev.alexmester.impl.domain.usecase.UpdateLocaleManuallyUseCase
 import dev.alexmester.utils.locale.LocaleUtils
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 class LocalePickerViewModel(
     private val type: LocalePickerType,
-    private val observeUserPreferencesUseCase: ObserveUserPreferencesUseCase,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val updateLocaleManuallyUseCase: UpdateLocaleManuallyUseCase,
     private val updateAutoTranslateLanguageUseCase: UpdateAutoTranslateLanguageUseCase,
 ) : ViewModel() {
@@ -125,7 +125,7 @@ class LocalePickerViewModel(
 
     private fun loadItems() {
         viewModelScope.launch {
-            val prefs = observeUserPreferencesUseCase().first()
+            val prefs = userPreferencesRepository.observeUserPreferences().first()
             when (type) {
                 LocalePickerType.COUNTRY -> {
                     val currentCode = prefs.defaultCountry
@@ -178,7 +178,7 @@ class LocalePickerViewModel(
     }
 
     private suspend fun saveLocale(code: String) {
-        val prefs = observeUserPreferencesUseCase().first()
+        val prefs = userPreferencesRepository.observeUserPreferences().first()
         when (type) {
             LocalePickerType.COUNTRY -> updateLocaleManuallyUseCase(
                 country = code,

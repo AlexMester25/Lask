@@ -21,7 +21,7 @@ val interests = module {
 
     viewModel {
         InterestsViewModel(
-            observeUserPreferencesUseCase = get(),
+            userPreferencesRepository = get(),
             addInterestUseCase = get(),
             removeInterestUseCase = get(),
         )

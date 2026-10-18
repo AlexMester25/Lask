@@ -25,7 +25,7 @@ val search = module {
 
     viewModel {
         SearchViewModel(
-            observeReadArticleIdsUseCase = get(),
+            articleRepository = get(),
             searchUseCase = get()
         )
     }

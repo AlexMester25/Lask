@@ -35,17 +35,17 @@ val newsFeed = module {
         )
     }
 
-    factory { ObserveTrendsUseCase(repository = get(), observeUserPreferencesUseCase = get()) }
+    factory { ObserveTrendsUseCase(repository = get(), userPreferencesRepository = get()) }
     factory { GetCachedAtTrendsUseCase(repository = get()) }
     factory { RefreshTrendsUseCase(repository = get()) }
 
     viewModel {
         NewsFeedViewModel(
+            userPreferencesRepository = get(),
             observeTrendsUseCase = get(),
             refreshTrendsUseCase = get(),
-            observeReadArticleIdsUseCase = get(),
-            getCachedAtTrendsUseCase = get(),
-            observeUserPreferencesUseCase = get()
+            articleRepository = get(),
+            getCachedAtTrendsUseCase = get()
         )
     }
 }

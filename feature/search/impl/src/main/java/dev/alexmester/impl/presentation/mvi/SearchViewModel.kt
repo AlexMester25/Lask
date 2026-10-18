@@ -2,7 +2,7 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.domain.usecase.ObserveReadArticleIdsUseCase
+import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.error.NetworkErrorUiMapper
 import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.domain.model.SearchFilters
@@ -28,7 +28,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
-    private val observeReadArticleIdsUseCase: ObserveReadArticleIdsUseCase,
+    private val articleRepository: ArticleRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SearchState())
@@ -38,7 +38,7 @@ class SearchViewModel(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     val readArticleIds: StateFlow<Set<Long>> =
-        observeReadArticleIdsUseCase()
+        articleRepository.observeReadArticleIds()
             .map { it.toSet() }
             .stateIn(
                 scope = viewModelScope,

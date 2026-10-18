@@ -2,8 +2,8 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.domain.usecase.ObserveReadArticleIdsUseCase
-import dev.alexmester.domain.usecase.ObserveUserPreferencesUseCase
+import dev.alexmester.domain.repository.ArticleRepository
+import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.impl.domain.model.FeedResult
 import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
@@ -34,10 +34,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NewsFeedViewModel(
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val observeTrendsUseCase: ObserveTrendsUseCase,
     private val refreshTrendsUseCase: RefreshTrendsUseCase,
-    private val observeReadArticleIdsUseCase: ObserveReadArticleIdsUseCase,
-    private val observeUserPreferencesUseCase: ObserveUserPreferencesUseCase,
+    private val articleRepository: ArticleRepository,
     private val getCachedAtTrendsUseCase: GetCachedAtTrendsUseCase,
 ) : ViewModel() {
 
@@ -76,7 +76,7 @@ class NewsFeedViewModel(
         )
 
     val readArticleIds: StateFlow<Set<Long>> =
-        observeReadArticleIdsUseCase()
+        articleRepository.observeReadArticleIds()
             .map { it.toSet() }
             .stateIn(
                 scope = viewModelScope,
@@ -100,7 +100,7 @@ class NewsFeedViewModel(
 
     private fun observePreferencesChanges() {
         viewModelScope.launch {
-            observeUserPreferencesUseCase()
+            userPreferencesRepository.observeUserPreferences()
                 .map { it.defaultCountry to it.defaultLanguage }
                 .distinctUntilChanged()
                 .drop(1)

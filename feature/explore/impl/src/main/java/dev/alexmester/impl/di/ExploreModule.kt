@@ -46,7 +46,7 @@ val explore = module {
             refreshExplore = get(),
             loadMore = get(),
             observeArticles = get(),
-            observeReadIds = get(),
+            articleRepository = get(),
             getLastCachedAt = get(),
         )
     }

@@ -2,7 +2,7 @@ package dev.alexmester.impl.presentstion.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.domain.usecase.ObserveReadArticleIdsUseCase
+import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.error.NetworkErrorUiMapper
 import dev.alexmester.impl.domain.model.RefreshResult
 import dev.alexmester.impl.domain.usecase.GetLastCachedAtExploreUseCase
@@ -33,7 +33,7 @@ class ExploreViewModel(
     private val refreshExplore: RefreshExploreUseCase,
     private val loadMore: LoadMoreExploreUseCase,
     private val observeArticles: ObserveArticlesExploreUseCase,
-    private val observeReadIds: ObserveReadArticleIdsUseCase,
+    private val articleRepository: ArticleRepository,
     private val getLastCachedAt: GetLastCachedAtExploreUseCase,
 ) : ViewModel() {
 
@@ -44,7 +44,7 @@ class ExploreViewModel(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     val readArticleIds: StateFlow<Set<Long>> =
-        observeReadIds()
+        articleRepository.observeReadArticleIds()
             .map { it.toSet() }
             .stateIn(
                 viewModelScope,

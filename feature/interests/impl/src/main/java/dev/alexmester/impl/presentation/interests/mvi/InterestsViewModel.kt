@@ -2,7 +2,7 @@ package dev.alexmester.impl.presentation.interests.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.domain.usecase.ObserveUserPreferencesUseCase
+import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.impl.domain.usecase.AddInterestUseCase
 import dev.alexmester.impl.domain.usecase.RemoveInterestUseCase
 import kotlinx.coroutines.channels.Channel
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class InterestsViewModel(
-    private val observeUserPreferencesUseCase: ObserveUserPreferencesUseCase,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val addInterestUseCase: AddInterestUseCase,
     private val removeInterestUseCase: RemoveInterestUseCase,
 ) : ViewModel() {
@@ -28,7 +28,7 @@ class InterestsViewModel(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
-        observeUserPreferencesUseCase().onEach { prefs ->
+        userPreferencesRepository.observeUserPreferences().onEach { prefs ->
             _state.update { it.copy(interests = prefs.interests) }
         }.launchIn(viewModelScope)
     }
