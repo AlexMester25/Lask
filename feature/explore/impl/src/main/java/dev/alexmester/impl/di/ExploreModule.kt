@@ -17,7 +17,7 @@ val explore = module {
 
     single {
         ExploreLocalDataSource(
-            db = get(),
+            transactionRunner = get(),
             articleDao = get(),
             feedCacheDao = get(),
             preferencesDataSource = get()
