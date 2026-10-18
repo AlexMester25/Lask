@@ -4,9 +4,7 @@ import dev.alexmester.impl.data.local.NewsFeedLocalDataSource
 import dev.alexmester.impl.data.remote.NewsFeedApiService
 import dev.alexmester.impl.data.repository.NewsFeedRepositoryImpl
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
-import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
-import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.impl.presentation.mvi.NewsFeedViewModel
 import dev.alexmester.network.di.Clients
 import org.koin.core.module.dsl.viewModel
@@ -22,7 +20,6 @@ val newsFeed = module {
             transactionRunner = get(),
             articleDao = get(),
             feedCacheDao = get(),
-            userStateDao = get(),
         )
     }
 
@@ -35,17 +32,19 @@ val newsFeed = module {
         )
     }
 
-    factory { ObserveTrendsUseCase(repository = get(), userPreferencesRepository = get()) }
-    factory { GetCachedAtTrendsUseCase(repository = get()) }
-    factory { RefreshTrendsUseCase(repository = get()) }
+    factory {
+        ObserveTrendsUseCase(
+            newsFeedRepository = get(),
+            userPreferencesRepository = get()
+        )
+    }
 
     viewModel {
         NewsFeedViewModel(
             userPreferencesRepository = get(),
-            observeTrendsUseCase = get(),
-            refreshTrendsUseCase = get(),
             articleRepository = get(),
-            getCachedAtTrendsUseCase = get()
+            newsFeedRepository = get(),
+            observeTrendsUseCase = get(),
         )
     }
 }

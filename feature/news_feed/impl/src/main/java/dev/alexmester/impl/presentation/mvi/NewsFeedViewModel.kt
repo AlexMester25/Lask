@@ -6,9 +6,8 @@ import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.impl.domain.model.FeedResult
 import dev.alexmester.impl.domain.model.RefreshFeedResult
-import dev.alexmester.impl.domain.usecase.GetCachedAtTrendsUseCase
+import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
-import dev.alexmester.impl.domain.usecase.RefreshTrendsUseCase
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedIntent
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedReducer
@@ -35,10 +34,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class NewsFeedViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val observeTrendsUseCase: ObserveTrendsUseCase,
-    private val refreshTrendsUseCase: RefreshTrendsUseCase,
     private val articleRepository: ArticleRepository,
-    private val getCachedAtTrendsUseCase: GetCachedAtTrendsUseCase,
+    private val newsFeedRepository: NewsFeedRepository,
+    private val observeTrendsUseCase: ObserveTrendsUseCase,
 ) : ViewModel() {
 
     private val _sideEffects = MutableSharedFlow<NewsFeedSideEffect>(extraBufferCapacity = 1)
@@ -58,7 +56,7 @@ class NewsFeedViewModel(
     val state: StateFlow<NewsFeedState> = combine(
         trendsDataFlow,
         _feedResult,
-        flow { emit(getCachedAtTrendsUseCase()) },
+        flow { emit(newsFeedRepository.getLastCachedAt()) },
     ) { combineData, feedResult, lastCachedAt ->
         NewsFeedReducer.reduce(
             clusters = combineData.clusters,
@@ -116,7 +114,7 @@ class NewsFeedViewModel(
             if (_feedResult.value !is FeedResult.Success) {
                 _feedResult.value = FeedResult.Loading
             }
-            when (val result = refreshTrendsUseCase(force)) {
+            when (val result = newsFeedRepository.refreshFeed(force)) {
                 is AppResult.Success -> {
                     when (result.data) {
 

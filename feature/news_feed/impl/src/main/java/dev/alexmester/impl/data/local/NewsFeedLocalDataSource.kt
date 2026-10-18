@@ -1,7 +1,6 @@
 package dev.alexmester.impl.data.local
 
 import dev.alexmester.database.dao.ArticleDao
-import dev.alexmester.database.dao.ArticleUserStateDao
 import dev.alexmester.database.dao.FeedCacheDao
 import dev.alexmester.database.dao.TransactionRunner
 import dev.alexmester.database.entity.ArticleEntity
@@ -16,7 +15,6 @@ class NewsFeedLocalDataSource(
     private val transactionRunner: TransactionRunner,
     private val articleDao: ArticleDao,
     private val feedCacheDao: FeedCacheDao,
-    private val userStateDao: ArticleUserStateDao,
 ) {
 
     fun observeFeedClusters(): Flow<List<NewsCluster>> =
