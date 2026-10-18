@@ -5,9 +5,8 @@ import androidx.lifecycle.viewModelScope
 import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.error.NetworkErrorUiMapper
 import dev.alexmester.impl.domain.model.RefreshResult
-import dev.alexmester.impl.domain.usecase.GetLastCachedAtExploreUseCase
+import dev.alexmester.impl.domain.repository.ExploreRepository
 import dev.alexmester.impl.domain.usecase.LoadMoreExploreUseCase
-import dev.alexmester.impl.domain.usecase.ObserveArticlesExploreUseCase
 import dev.alexmester.impl.domain.usecase.RefreshExploreUseCase
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.result.onFailure
@@ -30,11 +29,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ExploreViewModel(
+    private val articleRepository: ArticleRepository,
+    private val exploreRepository: ExploreRepository,
     private val refreshExplore: RefreshExploreUseCase,
     private val loadMore: LoadMoreExploreUseCase,
-    private val observeArticles: ObserveArticlesExploreUseCase,
-    private val articleRepository: ArticleRepository,
-    private val getLastCachedAt: GetLastCachedAtExploreUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ExploreState>(ExploreState.Loading)
@@ -73,7 +71,7 @@ class ExploreViewModel(
     }
 
     private fun observeExploreCache() {
-        observeArticles().onEach { articles ->
+        exploreRepository.observeArticles().onEach { articles ->
             if (articles.isEmpty()) return@onEach
             _state.update { current ->
                 if (current is ExploreState.Content) current.copy(articles = articles)
@@ -86,7 +84,7 @@ class ExploreViewModel(
         viewModelScope.launch {
             _state.value = ExploreState.Loading
 
-            val cached = observeArticles().first()
+            val cached = exploreRepository.observeArticles().first()
             if (cached.isNotEmpty()) {
                 _state.value = ExploreState.Content(articles = cached)
             }

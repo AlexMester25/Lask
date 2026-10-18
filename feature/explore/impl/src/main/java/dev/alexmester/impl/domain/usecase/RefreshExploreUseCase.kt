@@ -6,11 +6,10 @@ import dev.alexmester.models.result.AppResult
 
 class RefreshExploreUseCase(
     private val repository: ExploreRepository,
-    private val getQuery: GetInterestsExploreUseCase,
 ) {
 
     suspend operator fun invoke(force: Boolean): AppResult<RefreshResult>{
-        val (query, language) = getQuery()
+        val (query, language) = repository.getExploreQuery()
         if (query.isEmpty()) return AppResult.Success(RefreshResult.NoInterests)
 
         return repository.refresh(force = force, query = query, language = language)

@@ -4,10 +4,7 @@ import dev.alexmester.impl.data.local.ExploreLocalDataSource
 import dev.alexmester.impl.data.remote.ExploreApiService
 import dev.alexmester.impl.data.repository.ExploreRepositoryImpl
 import dev.alexmester.impl.domain.repository.ExploreRepository
-import dev.alexmester.impl.domain.usecase.GetLastCachedAtExploreUseCase
-import dev.alexmester.impl.domain.usecase.GetInterestsExploreUseCase
 import dev.alexmester.impl.domain.usecase.LoadMoreExploreUseCase
-import dev.alexmester.impl.domain.usecase.ObserveArticlesExploreUseCase
 import dev.alexmester.impl.domain.usecase.RefreshExploreUseCase
 import dev.alexmester.impl.presentstion.mvi.ExploreViewModel
 import dev.alexmester.network.di.Clients
@@ -35,19 +32,15 @@ val explore = module {
         )
     }
 
-    factory { GetInterestsExploreUseCase(repository = get()) }
-    factory { GetLastCachedAtExploreUseCase(repository = get()) }
-    factory { LoadMoreExploreUseCase(repository = get(), getQuery = get()) }
-    factory { ObserveArticlesExploreUseCase(repository = get()) }
-    factory { RefreshExploreUseCase(repository = get(), getQuery = get()) }
+    factory { LoadMoreExploreUseCase(repository = get()) }
+    factory { RefreshExploreUseCase(repository = get()) }
 
     viewModel {
         ExploreViewModel(
+            articleRepository = get(),
+            exploreRepository = get(),
             refreshExplore = get(),
             loadMore = get(),
-            observeArticles = get(),
-            articleRepository = get(),
-            getLastCachedAt = get(),
         )
     }
 }
