@@ -1,10 +1,10 @@
-package dev.alexmester.impl.data.remote.dto
+package dev.alexmester.data.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NewsArticleDto(
+internal data class NewsArticleDto(
     val id: Long,
     val title: String,
     val text: String? = null,
@@ -21,13 +21,20 @@ data class NewsArticleDto(
 )
 
 @Serializable
-data class TopNewsResponseDto(
+internal data class NewsClusterDto(
+    val news: List<NewsArticleDto> = emptyList(),
+)
+
+@Serializable
+internal data class TopNewsResponseDto(
     @SerialName("top_news") val topNews: List<NewsClusterDto> = emptyList(),
     val language: String? = null,
     val country: String? = null,
 )
 
 @Serializable
-data class NewsClusterDto(
+internal data class SearchNewsResponseDto(
     val news: List<NewsArticleDto> = emptyList(),
+    val offset: Int = 0,
+    val number: Int = 0,
 )

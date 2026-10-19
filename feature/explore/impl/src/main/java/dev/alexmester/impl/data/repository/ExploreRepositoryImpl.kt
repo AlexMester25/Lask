@@ -1,96 +1,102 @@
 package dev.alexmester.impl.data.repository
 
-import dev.alexmester.database.entity.FeedCacheEntity.Companion.EXPLORE_FEED
-import dev.alexmester.impl.data.local.ExploreLocalDataSource
-import dev.alexmester.impl.data.mapper.toEntities
-import dev.alexmester.impl.data.remote.ExploreApiService
+import dev.alexmester.domain.cache.FeedCache
+import dev.alexmester.domain.cache.FeedType
+import dev.alexmester.domain.repository.UserPreferencesRepository
+import dev.alexmester.domain.source.NewsRemoteDataSource
 import dev.alexmester.impl.domain.model.ExploreQuery
 import dev.alexmester.impl.domain.model.RefreshResult
 import dev.alexmester.impl.domain.repository.ExploreRepository
 import dev.alexmester.models.news.NewsArticle
+import dev.alexmester.models.news.NewsCluster
+import dev.alexmester.models.news.SearchParams
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.network.error.WorldNewsErrorMapper
-import dev.alexmester.network.extension.safeApiCall
+import dev.alexmester.models.result.runAppResult
 import dev.alexmester.platform.dispatchers.DispatcherProvider
+import dev.alexmester.utils.constants.LaskConstants
 import dev.alexmester.utils.constants.LaskConstants.CACHE_TTL_MS
+import dev.alexmester.utils.constants.LaskConstants.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class ExploreRepositoryImpl(
-    private val remote: ExploreApiService,
-    private val local: ExploreLocalDataSource,
+    private val remote: NewsRemoteDataSource,
+    private val feedCache: FeedCache,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val dispatchers: DispatcherProvider
 ) : ExploreRepository {
 
-    private val errorMapper = WorldNewsErrorMapper()
-
     override fun observeArticles(): Flow<List<NewsArticle>> =
-        local.observeFeedArticles()
+        feedCache.observeClusters(FeedType.EXPLORE).map { clusters ->
+            clusters.flatMap { it.articles }
+        }
 
-    override suspend fun getExploreQuery(): ExploreQuery =
-        local.getExploreQuery()
+    override suspend fun getExploreQuery(): ExploreQuery {
+        val prefs = userPreferencesRepository.observeUserPreferences().first()
+        return ExploreQuery(
+            interestsQuery = prefs.interests.joinToString(separator = LaskConstants.SEPARATOR_OR),
+            language = prefs.defaultLanguage,
+        )
+    }
 
     override suspend fun refresh(
         force: Boolean,
         query: String,
-        language: String,
-    ): AppResult<RefreshResult> = withContext(dispatchers.io) {
-        val lastCachedAt = local.getLastCachedAt()
-
-        val isFresh = lastCachedAt != null &&
-                (System.currentTimeMillis() - lastCachedAt) < CACHE_TTL_MS
-
-        if (!force && isFresh) {
-            return@withContext AppResult.Success(
-                RefreshResult.CacheFresh
-            )
-        }
-
-        safeApiCall(errorMapper) {
-            val response = remote.searchNews(
-                text = query,
-                language = language,
-                offset = 0,
-            )
-
-            if (response.news.isEmpty()) return@safeApiCall RefreshResult.EmptySearchResult
-
-            val (articles, cache) = withContext(dispatchers.default) {
-                response.news.toEntities(feedType = EXPLORE_FEED, positionStart = 0)
+        language: String
+    ): AppResult<RefreshResult> =
+        withContext(dispatchers.io) {
+            if (!force && feedCache.isFresh(FeedType.EXPLORE, CACHE_TTL_MS)) {
+                return@withContext AppResult.Success(RefreshResult.CacheFresh)
             }
-
-            local.refreshFeed(articles = articles, feedCache = cache)
-
-            RefreshResult.Updated(response.news.size)
+            when (val result = fetchPage(query, language, offset = 0)) {
+                is AppResult.Failure -> result
+                is AppResult.Success -> {
+                    if (result.data.isEmpty()) {
+                        return@withContext AppResult.Success(RefreshResult.EmptySearchResult)
+                    }
+                    runAppResult<RefreshResult> {
+                        feedCache.replace(
+                            FeedType.EXPLORE,
+                            listOf(NewsCluster(id = 0, articles = result.data)),
+                        )
+                        RefreshResult.Updated(result.data.size)
+                    }
+                }
+            }
         }
-    }
 
     override suspend fun loadMore(
         query: String,
         language: String,
-        offset: Int,
-    ): AppResult<RefreshResult> = withContext(dispatchers.io) {
-        safeApiCall(errorMapper) {
-            val response = remote.searchNews(
+        offset: Int
+    ): AppResult<RefreshResult> =
+        withContext(dispatchers.io) {
+            when (val result = fetchPage(query, language, offset)) {
+                is AppResult.Failure -> result
+                is AppResult.Success -> {
+                    if (result.data.isEmpty()) {
+                        return@withContext AppResult.Success(RefreshResult.EmptySearchResult)
+                    }
+                    runAppResult<RefreshResult> {
+                        feedCache.append(FeedType.EXPLORE, result.data, positionStart = offset)
+                        RefreshResult.Updated(result.data.size)
+                    }
+                }
+            }
+        }
+
+    override suspend fun getLastCachedAt(): Long? = feedCache.lastCachedAt(FeedType.EXPLORE)
+
+    private suspend fun fetchPage(query: String, language: String, offset: Int) =
+        remote.search(
+            SearchParams(
                 text = query,
+                textMatchIndexes = listOf("title"),
                 language = language,
                 offset = offset,
+                number = PAGE_SIZE,
             )
-
-            if (response.news.isEmpty()) return@safeApiCall RefreshResult.EmptySearchResult
-
-            val (articles, cache) = withContext(dispatchers.default) {
-                response.news.toEntities(feedType = EXPLORE_FEED, positionStart = offset)
-            }
-
-            local.loadMoreFeed(articles = articles, feedCache = cache)
-
-            RefreshResult.Updated(response.news.size)
-        }
-    }
-
-    override suspend fun getLastCachedAt(): Long? =
-        withContext(dispatchers.io) {
-            local.getLastCachedAt()
-        }
+        )
 }

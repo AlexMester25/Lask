@@ -1,37 +1,22 @@
 package dev.alexmester.impl.data.mapper
 
-import dev.alexmester.database.entity.ArticleEntity
-import dev.alexmester.impl.data.remote.dto.SearchArticleDto
-import dev.alexmester.models.news.NewsArticle
+import dev.alexmester.impl.domain.model.SearchFilters
+import dev.alexmester.models.news.SearchParams
 
-fun SearchArticleDto.toDomain(): NewsArticle = NewsArticle(
-    id = id,
-    title = title,
-    text = text,
-    summary = summary,
-    url = url,
-    image = image,
-    video = video,
-    publishDate = publishDate,
-    authors = authors,
-    category = category,
+internal fun SearchFilters.toSearchParams(
+    query: String,
+    offset: Int,
+    number: Int,
+) = SearchParams(
+    text = query,
     language = language,
-    sourceCountry = sourceCountry,
-    sentiment = sentiment,
-)
-
-fun SearchArticleDto.toEntity(): ArticleEntity = ArticleEntity(
-    id = id,
-    title = title,
-    text = text,
-    summary = summary,
-    url = url,
-    image = image,
-    video = video,
-    publishDate = publishDate,
-    authors = authors,
-    category = category,
-    language = language,
-    sourceCountry = sourceCountry,
-    sentiment = sentiment,
+    sourceCountries = country?.let(::listOf),
+    categories = category?.let(::listOf),
+    earliestPublishDate = earliestDate,
+    latestPublishDate = latestDate,
+    sort = SearchParams.SortOrder.PUBLISH_TIME,
+    sortDirection = if (sortAscending) SearchParams.SortDirection.ASC
+    else SearchParams.SortDirection.DESC,
+    offset = offset,
+    number = number,
 )
