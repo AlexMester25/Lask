@@ -2,8 +2,6 @@ plugins {
     id("myapp.android.library")
     id("myapp.android.compose")
     id("myapp.koin")
-    id("myapp.kotlin.serialization")
-    id("myapp.room")
     id("myapp.coil")
 }
 
@@ -14,7 +12,6 @@ android {
 dependencies {
     api(project(":feature:profile:api"))
 
-    implementation(project(":feature:article_detail:api"))
     implementation(project(":feature:typed_article_list:api"))
     implementation(project(":feature:interests:api"))
 

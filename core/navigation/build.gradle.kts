@@ -1,7 +1,6 @@
 plugins {
     id("myapp.android.library")
     id("myapp.android.compose")
-    id("myapp.kotlin.serialization")
 }
 
 android {

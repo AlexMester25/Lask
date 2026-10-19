@@ -1,7 +1,6 @@
 plugins {
     id("myapp.android.library")
     id("myapp.koin")
-    id("myapp.kotlin.serialization")
     id("myapp.datastore")
 }
 

@@ -3,7 +3,6 @@ plugins {
     id("myapp.android.compose")
     id("myapp.koin")
     id("myapp.kotlin.serialization")
-    id("myapp.room")
     id("myapp.coil")
     id("myapp.media3")
 }
@@ -21,6 +20,4 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:utils"))
     implementation(project(":core:platform"))
-
-    implementation(libs.swipesnack)
 }
