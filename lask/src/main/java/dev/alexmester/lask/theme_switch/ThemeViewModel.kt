@@ -2,18 +2,18 @@ package dev.alexmester.lask.theme_switch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.datastore.UserPreferencesDataSource
+import dev.alexmester.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class ThemeViewModel(
-    private val preferencesDataSource: UserPreferencesDataSource,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
     val state: StateFlow<ThemeState> =
-        preferencesDataSource.userPreferences
+        userPreferencesRepository.observeUserPreferences()
             .map { prefs ->
                 ThemeState(
                     isDarkTheme = prefs.isDarkTheme

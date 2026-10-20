@@ -4,11 +4,8 @@ import dev.alexmester.database.dao.ArticleDao
 import dev.alexmester.database.dao.ArticleUserStateDao
 import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.database.entity.ArticleUserStateEntity
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 class ArticleDetailLocalDataSource(
     private val articleDao: ArticleDao,

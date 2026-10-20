@@ -5,6 +5,6 @@ import org.koin.dsl.module
 
 val themeSwitch = module {
     viewModel {
-        ThemeViewModel(preferencesDataSource = get(),)
+        ThemeViewModel(userPreferencesRepository = get(),)
     }
 }

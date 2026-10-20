@@ -2,7 +2,6 @@ plugins {
     id("myapp.android.application")
     id("myapp.android.compose")
     id("myapp.koin")
-    id("myapp.ktor")
     id("myapp.kotlin.serialization")
     id("myapp.coil")
 //    alias(libs.plugins.baselineprofile)
@@ -54,6 +53,7 @@ dependencies {
     implementation(project(":core:utils"))
     implementation(project(":core:platform"))
     implementation(project(":core:data"))
+    implementation(project(":core:domain"))
 
     implementation(project(":feature:news_feed:impl"))
     implementation(project(":feature:explore:impl"))
