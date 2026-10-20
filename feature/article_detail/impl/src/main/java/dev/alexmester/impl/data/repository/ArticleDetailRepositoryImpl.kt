@@ -1,10 +1,8 @@
 package dev.alexmester.impl.data.repository
 
 import dev.alexmester.datastore.UserPreferencesDataSource
-import dev.alexmester.impl.data.local.ArticleDetailLocalDataSource
-import dev.alexmester.impl.data.mappers.toDomain
+import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
-import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.network.error.TranslatePlusErrorMapper
 import dev.alexmester.network.extension.safeApiCall
@@ -16,12 +14,11 @@ import dev.alexmester.utils.constants.LaskConstants.TEXT_ECLIPSE
 import dev.alexmester.utils.constants.LaskConstants.XP_PER_CLAP
 import dev.alexmester.utils.constants.LaskConstants.XP_PER_READ
 import dev.alexmester.utils.locale.LocaleCodeToTranslateApiMapper
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 class ArticleDetailRepositoryImpl(
-    private val local: ArticleDetailLocalDataSource,
+    private val articleRepository: ArticleRepository,
     private val translateApiService: TranslateApiService,
     private val preferencesDataSource: UserPreferencesDataSource,
     private val dispatchers: DispatcherProvider,
@@ -29,33 +26,15 @@ class ArticleDetailRepositoryImpl(
 
     private val errorMapper = TranslatePlusErrorMapper()
 
-    override suspend fun getArticleById(id: Long): NewsArticle? =
-        withContext(dispatchers.io) {
-            local.getArticleById(id)?.toDomain()
-        }
+    override suspend fun addClap(articleId: Long) {
+        articleRepository.addClap(articleId)
+        preferencesDataSource.addXp(XP_PER_CLAP)
+    }
 
-    override fun observeIsBookmarked(id: Long): Flow<Boolean> =
-        local.observeIsBookmarked(id)
-
-    override suspend fun toggleBookmark(articleId: Long): Boolean =
-        withContext(dispatchers.io) {
-            local.toggleBookmark(articleId)
-        }
-
-    override fun observeClapCount(id: Long): Flow<Int> =
-        local.observeClapCount(id)
-
-    override suspend fun addClap(articleId: Long) =
-        withContext(dispatchers.io) {
-            local.addClap(articleId)
-            preferencesDataSource.addXp(XP_PER_CLAP)
-        }
-
-    override suspend fun markAsRead(articleId: Long) =
-        withContext(dispatchers.io) {
-            local.markAsRead(articleId)
-            preferencesDataSource.addXp(XP_PER_READ)
-        }
+    override suspend fun markAsRead(articleId: Long) {
+        articleRepository.markAsRead(articleId)
+        preferencesDataSource.addXp(XP_PER_READ)
+    }
 
     override suspend fun translateText(
         text: String,

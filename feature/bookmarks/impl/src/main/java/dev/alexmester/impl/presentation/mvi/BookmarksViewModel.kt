@@ -2,7 +2,7 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.impl.domain.repository.BookmarksRepository
+import dev.alexmester.domain.repository.ArticleRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BookmarksViewModel(
-    private val bookmarksRepository: BookmarksRepository,
+    private val articleRepository: ArticleRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<BookmarksState>(BookmarksState.Loading)
@@ -39,7 +39,7 @@ class BookmarksViewModel(
     }
 
     private fun observeBookmarks() {
-        bookmarksRepository.observeBookmarks()
+        articleRepository.observeBookmarkedArticles()
             .onEach { articles ->
                 _state.update { current ->
                     BookmarksReducer.onArticlesUpdated(current, articles)
@@ -59,7 +59,7 @@ class BookmarksViewModel(
 
         viewModelScope.launch {
             _state.update { BookmarksReducer.onCloseEditMode(it) }
-            bookmarksRepository.removeBookmarks(idsToRemove)
+            articleRepository.removeBookmarks(idsToRemove)
         }
     }
 

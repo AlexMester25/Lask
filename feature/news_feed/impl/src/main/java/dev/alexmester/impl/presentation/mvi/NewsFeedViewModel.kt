@@ -75,7 +75,6 @@ class NewsFeedViewModel(
 
     val readArticleIds: StateFlow<Set<Long>> =
         articleRepository.observeReadArticleIds()
-            .map { it.toSet() }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),

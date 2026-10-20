@@ -14,10 +14,10 @@ android {
 dependencies {
     api(project(":feature:article_detail:api"))
     implementation(project(":core:network"))
-    implementation(project(":core:database"))
     implementation(project(":core:datastore"))
     implementation(project(":core:models"))
     implementation(project(":core:ui"))
     implementation(project(":core:utils"))
     implementation(project(":core:platform"))
+    implementation(project(":core:domain"))
 }

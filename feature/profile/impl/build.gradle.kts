@@ -15,7 +15,6 @@ dependencies {
     implementation(project(":feature:typed_article_list:api"))
     implementation(project(":feature:interests:api"))
 
-    implementation(project(":core:database"))
     implementation(project(":core:models"))
     implementation(project(":core:ui"))
     implementation(project(":core:datastore"))

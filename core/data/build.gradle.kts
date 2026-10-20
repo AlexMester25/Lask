@@ -17,4 +17,5 @@ dependencies {
     implementation(project(":core:utils"))
     implementation(project(":core:datastore"))
     implementation(project(":core:database"))
+    implementation(project(":core:platform"))
 }

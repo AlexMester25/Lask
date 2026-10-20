@@ -1,6 +1,5 @@
 package dev.alexmester.impl.di
 
-import dev.alexmester.impl.data.local.ArticleDetailLocalDataSource
 import dev.alexmester.impl.data.repository.ArticleDetailRepositoryImpl
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
 import dev.alexmester.impl.domain.usecase.TranslateTextsUseCase
@@ -10,16 +9,10 @@ import org.koin.dsl.module
 
 val articleDetailModule = module {
 
-    single {
-        ArticleDetailLocalDataSource(
-            articleDao = get(),
-            userStateDao = get(),
-        )
-    }
 
     single<ArticleDetailRepository> {
         ArticleDetailRepositoryImpl(
-            local = get(),
+            articleRepository = get(),
             translateApiService = get(),
             preferencesDataSource = get(),
             dispatchers = get()
@@ -32,6 +25,7 @@ val articleDetailModule = module {
         ArticleDetailViewModel(
             articleId = articleId,
             articleUrl = articleUrl,
+            articleRepository = get(),
             articleDetailRepository = get(),
             translateTextsUseCase = get(),
         )

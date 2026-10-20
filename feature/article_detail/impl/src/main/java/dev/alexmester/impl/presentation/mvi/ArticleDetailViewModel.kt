@@ -2,6 +2,7 @@ package dev.alexmester.impl.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
 import dev.alexmester.impl.domain.usecase.TranslateTextsUseCase
 import dev.alexmester.models.result.onFailure
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 class ArticleDetailViewModel(
     private val articleId: Long,
     private val articleUrl: String,
+    private val articleRepository: ArticleRepository,
     private val articleDetailRepository: ArticleDetailRepository,
     private val translateTextsUseCase: TranslateTextsUseCase,
 ) : ViewModel() {
@@ -68,7 +70,7 @@ class ArticleDetailViewModel(
 
     private fun loadArticle() {
         viewModelScope.launch {
-            val article = articleDetailRepository.getArticleById(articleId) ?: run {
+            val article = articleRepository.getArticleById(articleId) ?: run {
                 _state.value = ArticleDetailState.Error(
                     UiText.StringResource(R.string.error_article_not_found)
                 )
@@ -79,8 +81,8 @@ class ArticleDetailViewModel(
                 autoTranslateLanguage = articleDetailRepository.getAutoTranslateLanguage(),
             )
             combine(
-                articleDetailRepository.observeIsBookmarked(articleId),
-                articleDetailRepository.observeClapCount(articleId)
+                articleRepository.observeIsBookmarked(articleId),
+                articleRepository.observeClapCount(articleId)
             ) { isBookmarked, clapCount ->
                 isBookmarked to clapCount
             }.collect { (isBookmarked, clapCount) ->
@@ -151,7 +153,7 @@ class ArticleDetailViewModel(
 
     private fun onToggleBookmark() {
         viewModelScope.launch {
-            val nowBookmarked = articleDetailRepository.toggleBookmark(articleId)
+            val nowBookmarked = articleRepository.toggleBookmark(articleId)
             emitSideEffect(ArticleDetailSideEffect.ShawBookmarkActionMessage(nowBookmarked))
         }
     }

@@ -17,11 +17,19 @@ interface ArticleUserStateDao {
     // ── Bookmark ──────────────────────────────────────────────────────────────
 
     @Query("""
-        UPDATE article_user_state
-        SET isBookmarked = :isBookmarked, bookmarkedAt = :bookmarkedAt
-        WHERE articleId = :articleId
-    """)
-    suspend fun updateBookmark(articleId: Long, isBookmarked: Boolean, bookmarkedAt: Long?)
+    UPDATE article_user_state
+    SET isBookmarked = NOT isBookmarked,
+        bookmarkedAt = CASE WHEN isBookmarked = 0 THEN :now ELSE NULL END
+    WHERE articleId = :articleId
+""")
+    suspend fun toggleBookmark(articleId: Long, now: Long)
+
+    @Query("""
+    UPDATE article_user_state
+    SET isBookmarked = 0, bookmarkedAt = NULL
+    WHERE articleId IN (:ids)
+""")
+    suspend fun clearBookmarks(ids: Set<Long>)
 
     @Query("SELECT isBookmarked FROM article_user_state WHERE articleId = :articleId")
     fun observeIsBookmarked(articleId: Long): Flow<Boolean?>

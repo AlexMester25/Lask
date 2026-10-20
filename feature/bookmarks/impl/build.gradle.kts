@@ -12,8 +12,7 @@ dependencies {
     api(project(":feature:bookmarks:api"))
     implementation(project(":feature:article_detail:api"))
 
-    implementation(project(":core:database"))
+    implementation(project(":core:domain"))
     implementation(project(":core:models"))
     implementation(project(":core:ui"))
-    implementation(project(":core:platform"))
 }

@@ -33,8 +33,9 @@ val data = module {
     single<ArticleRepository> {
         ArticleRepositoryImpl(
             userStateDao = get(),
-            articleDao = get()
+            articleDao = get(),
+            transactionRunner = get(),
+            dispatchers = get(),
         )
     }
-
 }

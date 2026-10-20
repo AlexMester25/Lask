@@ -1,23 +1,21 @@
 package dev.alexmester.impl.data.local
 
 import android.net.Uri
-import dev.alexmester.database.dao.ArticleUserStateDao
 import dev.alexmester.datastore.UserPreferencesDataSource
+import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.models.preference.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
 
 class ProfileLocalDataSource(
-    private val userStateDao: ArticleUserStateDao,
+    private val articleRepository: ArticleRepository,
     private val preferencesDataSource: UserPreferencesDataSource,
 ) {
 
     fun observeProfile(): Flow<Pair<UserPreferences, Int>> =
         preferencesDataSource.userPreferences
-            .combine(
-                userStateDao.observeReadCount()
-            ) { prefs, readCount ->
+            .combine(articleRepository.observeReadCount()) { prefs, readCount ->
                 prefs to readCount
             }
 

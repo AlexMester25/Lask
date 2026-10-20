@@ -14,7 +14,7 @@ val profile = module {
 
     single {
         ProfileLocalDataSource(
-            userStateDao = get(),
+            articleRepository = get(),
             preferencesDataSource = get(),
         )
     }
