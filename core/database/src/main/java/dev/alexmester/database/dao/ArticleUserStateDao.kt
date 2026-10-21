@@ -16,19 +16,23 @@ interface ArticleUserStateDao {
 
     // ── Bookmark ──────────────────────────────────────────────────────────────
 
-    @Query("""
+    @Query(
+        """
     UPDATE article_user_state
     SET isBookmarked = NOT isBookmarked,
         bookmarkedAt = CASE WHEN isBookmarked = 0 THEN :now ELSE NULL END
     WHERE articleId = :articleId
-""")
+"""
+    )
     suspend fun toggleBookmark(articleId: Long, now: Long)
 
-    @Query("""
+    @Query(
+        """
     UPDATE article_user_state
     SET isBookmarked = 0, bookmarkedAt = NULL
     WHERE articleId IN (:ids)
-""")
+"""
+    )
     suspend fun clearBookmarks(ids: Set<Long>)
 
     @Query("SELECT isBookmarked FROM article_user_state WHERE articleId = :articleId")
@@ -37,22 +41,26 @@ interface ArticleUserStateDao {
     @Query("SELECT isBookmarked FROM article_user_state WHERE articleId = :articleId")
     suspend fun isBookmarked(articleId: Long): Boolean?
 
-    @Query("""
+    @Query(
+        """
         SELECT a.* FROM articles a
         INNER JOIN article_user_state s ON a.id = s.articleId
         WHERE s.isBookmarked = 1
         ORDER BY s.bookmarkedAt DESC
-    """)
+    """
+    )
     fun observeBookmarkedArticles(): Flow<List<ArticleEntity>>
 
     // ── Read ──────────────────────────────────────────────────────────────────
 
-    @Query("""
-        UPDATE article_user_state
-        SET isRead = 1, readAt = :readAt
-        WHERE articleId = :articleId
-    """)
-    suspend fun markAsRead(articleId: Long, readAt: Long)
+    @Query(
+        """
+    UPDATE article_user_state
+    SET isRead = 1, readAt = :readAt
+    WHERE articleId = :articleId AND isRead = 0
+"""
+    )
+    suspend fun markAsRead(articleId: Long, readAt: Long): Int
 
     @Query("SELECT articleId FROM article_user_state WHERE isRead = 1")
     fun observeReadArticleIds(): Flow<List<Long>>
@@ -60,31 +68,37 @@ interface ArticleUserStateDao {
     @Query("SELECT COUNT(*) FROM article_user_state WHERE isRead = 1")
     fun observeReadCount(): Flow<Int>
 
-    @Query("""
+    @Query(
+        """
         SELECT a.* FROM articles a
         INNER JOIN article_user_state s ON a.id = s.articleId
         WHERE s.isRead = 1
         ORDER BY s.readAt DESC
-    """)
+    """
+    )
     fun observeReadArticles(): Flow<List<ArticleEntity>>
 
     // ── Clap ──────────────────────────────────────────────────────────────────
 
-    @Query("""
+    @Query(
+        """
         UPDATE article_user_state
         SET clapCount = clapCount + 1
         WHERE articleId = :articleId
-    """)
+    """
+    )
     suspend fun incrementClap(articleId: Long)
 
     @Query("SELECT clapCount FROM article_user_state WHERE articleId = :articleId")
     fun observeClapCount(articleId: Long): Flow<Int?>
 
-    @Query("""
+    @Query(
+        """
         SELECT a.* FROM articles a
         INNER JOIN article_user_state s ON a.id = s.articleId
         WHERE s.clapCount > 0
         ORDER BY s.clapCount DESC
-    """)
+    """
+    )
     fun observeClappedArticles(): Flow<List<ArticleEntity>>
 }

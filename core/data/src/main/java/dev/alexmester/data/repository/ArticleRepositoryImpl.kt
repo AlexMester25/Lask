@@ -9,7 +9,6 @@ import dev.alexmester.database.entity.ArticleUserStateEntity
 import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.platform.dispatchers.DispatcherProvider
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -31,7 +30,7 @@ class ArticleRepositoryImpl (
         userStateDao.observeClappedArticles().map { entities -> entities.map { it.toDomain() } }
 
     override suspend fun saveArticles(articles: List<NewsArticle>) =
-        withContext(Dispatchers.IO) {
+        withContext(dispatchers.io) {
             articleDao.insertArticles(articles.map { it.toEntity() })
         }
 
@@ -68,9 +67,9 @@ class ArticleRepositoryImpl (
         userStateDao.incrementClap(articleId)
     }
 
-    override suspend fun markAsRead(articleId: Long) = withContext(dispatchers.io) {
+    override suspend fun markAsRead(articleId: Long): Boolean = withContext(dispatchers.io) {
         ensureUserState(articleId)
-        userStateDao.markAsRead(articleId, System.currentTimeMillis())
+        userStateDao.markAsRead(articleId, System.currentTimeMillis()) > 0
     }
 
     override fun observeReadCount(): Flow<Int> = userStateDao.observeReadCount()

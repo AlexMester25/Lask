@@ -19,6 +19,6 @@ interface ArticleRepository {
     fun observeClapCount(articleId: Long): Flow<Int>
     suspend fun addClap(articleId: Long)
 
-    suspend fun markAsRead(articleId: Long)
+    suspend fun markAsRead(articleId: Long): Boolean
     fun observeReadCount(): Flow<Int>
 }

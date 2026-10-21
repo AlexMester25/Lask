@@ -1,6 +1,5 @@
 package dev.alexmester.impl.data.repository
 
-import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
 import dev.alexmester.models.result.AppResult
@@ -11,30 +10,17 @@ import dev.alexmester.platform.dispatchers.DispatcherProvider
 import dev.alexmester.utils.constants.LaskConstants.DELIMITER_POINT
 import dev.alexmester.utils.constants.LaskConstants.MAX_TRANSLATE_CHARS
 import dev.alexmester.utils.constants.LaskConstants.TEXT_ECLIPSE
-import dev.alexmester.utils.constants.LaskConstants.XP_PER_CLAP
-import dev.alexmester.utils.constants.LaskConstants.XP_PER_READ
 import dev.alexmester.utils.locale.LocaleCodeToTranslateApiMapper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 class ArticleDetailRepositoryImpl(
-    private val articleRepository: ArticleRepository,
     private val translateApiService: TranslateApiService,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val dispatchers: DispatcherProvider,
 ) : ArticleDetailRepository {
 
     private val errorMapper = TranslatePlusErrorMapper()
-
-    override suspend fun addClap(articleId: Long) {
-        articleRepository.addClap(articleId)
-        userPreferencesRepository.addXp(XP_PER_CLAP)
-    }
-
-    override suspend fun markAsRead(articleId: Long) {
-        articleRepository.markAsRead(articleId)
-        userPreferencesRepository.addXp(XP_PER_READ)
-    }
 
     override suspend fun translateText(
         text: String,

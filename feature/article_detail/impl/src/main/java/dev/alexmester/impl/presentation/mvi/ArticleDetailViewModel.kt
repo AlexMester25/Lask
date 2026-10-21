@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
+import dev.alexmester.impl.domain.usecase.ClapArticleUseCase
+import dev.alexmester.impl.domain.usecase.MarkArticleAsReadUseCase
 import dev.alexmester.impl.domain.usecase.TranslateTextsUseCase
 import dev.alexmester.models.result.onFailure
 import dev.alexmester.models.result.onSuccess
@@ -24,6 +26,8 @@ class ArticleDetailViewModel(
     private val articleRepository: ArticleRepository,
     private val articleDetailRepository: ArticleDetailRepository,
     private val translateTextsUseCase: TranslateTextsUseCase,
+    private val markArticleAsReadUseCase: MarkArticleAsReadUseCase,
+    private val clapArticleUseCase: ClapArticleUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ArticleDetailState>(ArticleDetailState.Loading)
@@ -34,7 +38,6 @@ class ArticleDetailViewModel(
 
     private var isTimeThresholdReached = false
     private var isScrollThresholdReached = false
-    private var isMarkedAsRead = false
 
     init {
         loadArticle()
@@ -146,9 +149,7 @@ class ArticleDetailViewModel(
     }
 
     private fun onClap() {
-        viewModelScope.launch {
-            articleDetailRepository.addClap(articleId)
-        }
+        viewModelScope.launch { clapArticleUseCase(articleId) }
     }
 
     private fun onToggleBookmark() {
@@ -159,12 +160,8 @@ class ArticleDetailViewModel(
     }
 
     private fun tryMarkAsRead() {
-        if (isMarkedAsRead) return
         if (!isTimeThresholdReached || !isScrollThresholdReached) return
-        isMarkedAsRead = true
-        viewModelScope.launch {
-            articleDetailRepository.markAsRead(articleId)
-        }
+        viewModelScope.launch { markArticleAsReadUseCase(articleId) }
     }
 
     private fun emitSideEffect(effect: ArticleDetailSideEffect) {
