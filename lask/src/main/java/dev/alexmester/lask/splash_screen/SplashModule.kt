@@ -10,7 +10,7 @@ import org.koin.dsl.module
 val splash = module {
     viewModel {
         SplashViewModel(
-            preferencesDataSource = get(),
+            userPreferencesRepository = get(),
             deviceLocaleProvider = get(),
         )
     }
@@ -19,7 +19,7 @@ val splash = module {
         LocaleChangeObserver(
             context = androidContext(),
             deviceLocaleProvider = get(),
-            preferencesDataSource = get(),
+            userPreferencesRepository = get(),
             scope = get<CoroutineScope>(),
         )
     }

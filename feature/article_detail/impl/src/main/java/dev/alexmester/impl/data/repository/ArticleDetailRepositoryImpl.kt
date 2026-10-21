@@ -1,7 +1,7 @@
 package dev.alexmester.impl.data.repository
 
-import dev.alexmester.datastore.UserPreferencesDataSource
 import dev.alexmester.domain.repository.ArticleRepository
+import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.network.error.TranslatePlusErrorMapper
@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 class ArticleDetailRepositoryImpl(
     private val articleRepository: ArticleRepository,
     private val translateApiService: TranslateApiService,
-    private val preferencesDataSource: UserPreferencesDataSource,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val dispatchers: DispatcherProvider,
 ) : ArticleDetailRepository {
 
@@ -28,12 +28,12 @@ class ArticleDetailRepositoryImpl(
 
     override suspend fun addClap(articleId: Long) {
         articleRepository.addClap(articleId)
-        preferencesDataSource.addXp(XP_PER_CLAP)
+        userPreferencesRepository.addXp(XP_PER_CLAP)
     }
 
     override suspend fun markAsRead(articleId: Long) {
         articleRepository.markAsRead(articleId)
-        preferencesDataSource.addXp(XP_PER_READ)
+        userPreferencesRepository.addXp(XP_PER_READ)
     }
 
     override suspend fun translateText(
@@ -62,6 +62,6 @@ class ArticleDetailRepositoryImpl(
 
     override suspend fun getAutoTranslateLanguage(): String =
         withContext(dispatchers.io) {
-            preferencesDataSource.userPreferences.first().autoTranslateLanguage
+            userPreferencesRepository.observeUserPreferences().first().autoTranslateLanguage
         }
 }

@@ -1,16 +1,17 @@
 package dev.alexmester.impl.presentation.profile.mvi
 
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.ArticleListType
-import dev.alexmester.impl.domain.repository.ProfileRepository
+import dev.alexmester.domain.repository.ArticleRepository
+import dev.alexmester.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -18,7 +19,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    private val profileRepository: ProfileRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val articleRepository: ArticleRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -59,24 +61,26 @@ class ProfileViewModel(
     }
 
     private fun observeProfile() {
-        profileRepository.observeProfile()
-            .onEach{ pair ->
-                Log.d("observeProfile", pair.first.toString())
+        combine(
+            userPreferencesRepository.observeUserPreferences(),
+            articleRepository.observeReadCount(),
+        ) { prefs, readCount -> prefs to readCount }
+            .onEach { (prefs, readCount) ->
                 _state.update { current ->
                     current.copy(
-                        profileName = pair.first.profileName,
-                        avatarUri = pair.first.avatarUri?.toUri(),
-                        streakCount = pair.first.streakCount,
-                        currentLevel = pair.first.currentLevel,
-                        currentXp = pair.first.currentXp,
-                        articleReadCount = pair.second,
+                        profileName = prefs.profileName,
+                        avatarUri = prefs.avatarUri?.toUri(),
+                        streakCount = prefs.streakCount,
+                        currentLevel = prefs.currentLevel,
+                        currentXp = prefs.currentXp,
+                        articleReadCount = readCount,
                     )
                 }
             }.launchIn(viewModelScope)
     }
 
     private fun updateStreak() {
-        viewModelScope.launch { profileRepository.updateStreak() }
+        viewModelScope.launch { userPreferencesRepository.updateStreak() }
     }
 
     private fun initEditMode(){
@@ -90,9 +94,9 @@ class ProfileViewModel(
 
     private fun applyEditChanges() {
         viewModelScope.launch {
-            profileRepository.applyEditChanges(
-                imageUri = _state.value.editAvatarUriDraft ?: _state.value.avatarUri,
-                name = _state.value.editNameDraft
+            userPreferencesRepository.updateProfile(
+                name = _state.value.editNameDraft,
+                avatarUri = (_state.value.editAvatarUriDraft ?: _state.value.avatarUri)?.toString(),
             )
             cancelEditMode()
         }

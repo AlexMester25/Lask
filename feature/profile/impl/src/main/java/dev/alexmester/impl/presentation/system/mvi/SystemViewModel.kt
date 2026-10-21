@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.api.navigation.LocalePickerType
 import dev.alexmester.domain.repository.UserPreferencesRepository
-import dev.alexmester.impl.domain.repository.ProfileRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +16,6 @@ import kotlinx.coroutines.launch
 
 class SystemViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val profileRepository: ProfileRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SystemState())
@@ -70,7 +68,7 @@ class SystemViewModel(
                 AppTheme.LIGHT  -> false
                 AppTheme.DARK   -> true
             }
-            profileRepository.updateTheme(isDark)
+            userPreferencesRepository.updateTheme(isDark)
         }
     }
 

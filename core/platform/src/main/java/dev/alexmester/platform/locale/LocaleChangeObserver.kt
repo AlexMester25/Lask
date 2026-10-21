@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import dev.alexmester.datastore.UserPreferencesDataSource
+import dev.alexmester.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -12,16 +12,16 @@ import kotlinx.coroutines.launch
 class LocaleChangeObserver(
     private val context: Context,
     private val deviceLocaleProvider: DeviceLocaleProvider,
-    private val preferencesDataSource: UserPreferencesDataSource,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val scope: CoroutineScope,
 ) {
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_LOCALE_CHANGED) {
                 scope.launch {
-                    val prefs = preferencesDataSource.userPreferences.first()
+                    val prefs = userPreferencesRepository.observeUserPreferences().first()
                     if (!prefs.isLocaleManuallySet) {
-                        preferencesDataSource.initLocaleFromDevice(
+                        userPreferencesRepository.initLocaleFromDevice(
                             country = deviceLocaleProvider.getCountry(),
                             language = deviceLocaleProvider.getLanguage(),
                         )
@@ -41,7 +41,7 @@ class LocaleChangeObserver(
 
     fun checkAndUpdate() {
         scope.launch {
-            val prefs = preferencesDataSource.userPreferences.first()
+            val prefs = userPreferencesRepository.observeUserPreferences().first()
             if (prefs.isLocaleManuallySet) return@launch
 
             val currentCountry = deviceLocaleProvider.getCountry()
@@ -50,7 +50,7 @@ class LocaleChangeObserver(
             if (prefs.defaultCountry != currentCountry ||
                 prefs.defaultLanguage != currentLanguage
             ) {
-                preferencesDataSource.initLocaleFromDevice(
+                userPreferencesRepository.initLocaleFromDevice(
                     country = currentCountry,
                     language = currentLanguage,
                 )

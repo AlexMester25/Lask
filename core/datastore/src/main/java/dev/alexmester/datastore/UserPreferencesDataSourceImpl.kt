@@ -1,10 +1,8 @@
 package dev.alexmester.datastore
 
-import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_AUTO_TRANSLATE_LANGUAGE
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_AUTO_TRANSLATE_MANUALLY_SET
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_AVATAR_URI
@@ -21,6 +19,7 @@ import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_ONBOARDING_DONE
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_PROFILE_NAME
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_STREAK_COUNT
 import dev.alexmester.models.locale.SupportedLocales
+import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.utils.constants.LaskConstants.ANONIM
 import dev.alexmester.utils.constants.LaskConstants.MAX_INTERESTS
 import dev.alexmester.utils.date.DateUtils.isYesterday
@@ -99,10 +98,10 @@ class UserPreferencesDataSourceImpl(
         dataStore.edit { it[KEY_PROFILE_NAME] = name.trim().ifEmpty { ANONIM } }
     }
 
-    override suspend fun updateAvatarUri(uri: Uri?) {
+    override suspend fun updateAvatarUri(uri: String?) {
         dataStore.edit { prefs ->
             if (uri == null) prefs.remove(KEY_AVATAR_URI)
-            else prefs[KEY_AVATAR_URI] = uri.toString()
+            else prefs[KEY_AVATAR_URI] = uri
         }
     }
 

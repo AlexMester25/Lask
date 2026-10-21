@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         localeChangeObserver = LocaleChangeObserver(
             context = applicationContext,
             deviceLocaleProvider = get(),
-            preferencesDataSource = get(),
+            userPreferencesRepository = get(),
             scope = get(),
         )
         val splashViewModel: SplashViewModel by viewModel()

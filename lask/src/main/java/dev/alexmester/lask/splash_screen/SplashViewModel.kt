@@ -2,14 +2,14 @@ package dev.alexmester.lask.splash_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.alexmester.datastore.UserPreferencesDataSource
+import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.platform.locale.DeviceLocaleProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class SplashViewModel(
-    private val preferencesDataSource: UserPreferencesDataSource,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val deviceLocaleProvider: DeviceLocaleProvider,
 ) : ViewModel() {
 
@@ -24,11 +24,11 @@ class SplashViewModel(
 
     private fun observePreferences() {
         viewModelScope.launch {
-            preferencesDataSource.userPreferences.collect { prefs ->
+            userPreferencesRepository.observeUserPreferences().collect { prefs ->
                 if (isInitialized) return@collect
                 if (!prefs.isLocaleManuallySet) {
                     _state.value = SplashState.Initializing
-                    preferencesDataSource.initLocaleFromDevice(
+                    userPreferencesRepository.initLocaleFromDevice(
                         country = deviceLocaleProvider.getCountry(),
                         language = deviceLocaleProvider.getLanguage(),
                     )
@@ -43,7 +43,7 @@ class SplashViewModel(
 
     fun completeOnboarding() {
         viewModelScope.launch {
-            preferencesDataSource.completeOnboarding()
+            userPreferencesRepository.completeOnboarding()
         }
     }
 }

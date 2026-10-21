@@ -27,7 +27,7 @@ val data = module {
     }
 
     single<UserPreferencesRepository> {
-        UserPreferencesRepositoryImpl(preferencesDataSource = get())
+        UserPreferencesRepositoryImpl(UserPreferencesDataSource = get())
     }
 
     single<ArticleRepository> {

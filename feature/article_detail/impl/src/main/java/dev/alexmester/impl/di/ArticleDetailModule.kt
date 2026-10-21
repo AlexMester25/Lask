@@ -14,7 +14,7 @@ val articleDetailModule = module {
         ArticleDetailRepositoryImpl(
             articleRepository = get(),
             translateApiService = get(),
-            preferencesDataSource = get(),
+            userPreferencesRepository  = get(),
             dispatchers = get()
         )
     }

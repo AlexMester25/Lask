@@ -1,6 +1,5 @@
 package dev.alexmester.datastore
 
-import android.net.Uri
 import dev.alexmester.models.preference.UserPreferences
 import kotlinx.coroutines.flow.Flow
 
@@ -20,7 +19,7 @@ interface UserPreferencesDataSource {
 
     suspend fun updateProfileName(name: String)
 
-    suspend fun updateAvatarUri(uri: Uri?)
+    suspend fun updateAvatarUri(uri: String?)
 
     suspend fun updateStreak(today: String)
 
