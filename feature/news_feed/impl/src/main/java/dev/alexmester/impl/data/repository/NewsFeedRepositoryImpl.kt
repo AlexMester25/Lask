@@ -11,7 +11,7 @@ import dev.alexmester.models.result.AppResult
 import dev.alexmester.models.result.runAppResult
 import dev.alexmester.platform.dispatchers.DispatcherProvider
 import dev.alexmester.utils.constants.LaskConstants.CACHE_TTL_MS
-import dev.alexmester.utils.locale.checkCompatibility
+import dev.alexmester.domain.locale.checkCompatibility
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

@@ -41,7 +41,7 @@ import dev.alexmester.ui.R
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
 import dev.alexmester.utils.locale.LocaleUtils
-import dev.alexmester.utils.locale.CompatibilityWarning
+import dev.alexmester.domain.locale.CompatibilityWarning
 
 @Composable
 internal fun CompatibilityWarningBanner(

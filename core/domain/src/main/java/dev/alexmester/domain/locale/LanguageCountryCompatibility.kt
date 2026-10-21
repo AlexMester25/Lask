@@ -1,6 +1,6 @@
-package dev.alexmester.utils.locale
+package dev.alexmester.domain.locale
 
-val LANGUAGE_TO_COUNTRIES: Map<String, List<String>> = mapOf(
+private val LANGUAGE_TO_COUNTRIES: Map<String, List<String>> = mapOf(
     "en" to listOf("us", "gb", "au", "ca", "nz", "ie", "za", "in", "sg", "ph"),
     "de" to listOf("de", "at", "ch"),
     "fr" to listOf("fr", "be", "ch", "ca"),
@@ -32,7 +32,7 @@ val LANGUAGE_TO_COUNTRIES: Map<String, List<String>> = mapOf(
 )
 
 /** Обратный маппинг: страна → список языков. */
-val COUNTRY_TO_LANGUAGES: Map<String, List<String>> by lazy {
+private val COUNTRY_TO_LANGUAGES: Map<String, List<String>> by lazy {
     buildMap<String, MutableList<String>> {
         LANGUAGE_TO_COUNTRIES.forEach { (lang, countries) ->
             countries.forEach { country ->
