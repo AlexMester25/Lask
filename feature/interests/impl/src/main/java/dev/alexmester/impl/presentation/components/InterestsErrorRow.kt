@@ -22,7 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.alexmester.impl.presentation.mvi.InterestsValidationError
+import dev.alexmester.domain.interests.InterestError
 import dev.alexmester.impl.presentation.mvi.toUiString
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskTypography
@@ -30,7 +30,7 @@ import dev.alexmester.ui.desing_system.LaskTypography
 @Composable
 fun InterestsErrorRow(
     modifier: Modifier = Modifier,
-    validationError: InterestsValidationError?
+    validationError: InterestError??
 ) {
     AnimatedVisibility(
         modifier = modifier,

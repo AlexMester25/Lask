@@ -18,10 +18,10 @@ import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_LOCALE_MANUALLY_SE
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_ONBOARDING_DONE
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_PROFILE_NAME
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_STREAK_COUNT
+import dev.alexmester.domain.interests.InterestRules
 import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.utils.constants.LaskConstants.ANONIM
-import dev.alexmester.utils.constants.LaskConstants.MAX_INTERESTS
 import dev.alexmester.utils.date.DateUtils.isYesterday
 import dev.alexmester.utils.statistic.StatisticUtils.MAX_LEVEL
 import dev.alexmester.utils.statistic.StatisticUtils.xpForLevel
@@ -123,25 +123,19 @@ class UserPreferencesDataSourceImpl(
     }
 
     override suspend fun addInterest(keyword: String) {
-        val normalized = keyword.trim().lowercase()
-        if (normalized.isBlank()) return
-        if (normalized.length !in 2..30) return
-        if (!normalized.any { it.isLetter() }) return
-
         dataStore.edit { prefs ->
             val current = prefs[KEY_INTERESTS] ?: emptySet()
-            if (normalized !in current && current.size < MAX_INTERESTS) {
-                prefs[KEY_INTERESTS] = current + normalized
-            }
+            if (current.size >= InterestRules.MAX_COUNT) return@edit
+            if (InterestRules.validate(keyword, current) != null) return@edit
+            prefs[KEY_INTERESTS] = current + InterestRules.normalize(keyword)
         }
     }
 
     override suspend fun removeInterest(keyword: String) {
+        val normalized = InterestRules.normalize(keyword)
         dataStore.edit { prefs ->
             val current = prefs[KEY_INTERESTS] ?: emptySet()
-            if (keyword in current) {
-                prefs[KEY_INTERESTS] = current - keyword
-            }
+            if (normalized in current) prefs[KEY_INTERESTS] = current - normalized
         }
     }
 

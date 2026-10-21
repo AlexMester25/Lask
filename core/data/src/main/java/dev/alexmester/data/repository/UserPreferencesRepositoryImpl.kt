@@ -6,7 +6,7 @@ import dev.alexmester.models.preference.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
-class UserPreferencesRepositoryImpl(
+internal class UserPreferencesRepositoryImpl(
     private val UserPreferencesDataSource: UserPreferencesDataSource
 ) : UserPreferencesRepository {
 

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class ArticleRepositoryImpl (
+internal class ArticleRepositoryImpl (
     private val userStateDao: ArticleUserStateDao,
     private val articleDao: ArticleDao,
     private val transactionRunner: TransactionRunner,

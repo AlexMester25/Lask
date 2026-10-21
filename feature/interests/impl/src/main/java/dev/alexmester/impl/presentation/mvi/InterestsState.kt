@@ -3,49 +3,27 @@ package dev.alexmester.impl.presentation.mvi
 import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.res.stringResource
+import dev.alexmester.domain.interests.InterestError
+import dev.alexmester.domain.interests.InterestRules
 import dev.alexmester.ui.R
 
 data class InterestsState(
     val interests: Set<String> = emptySet(),
     val inputText: String = "",
 ) {
-    val trimmed: String get() = inputText.trim().lowercase()
-
-    val validationError: InterestsValidationError?
-        get() {
-            if (trimmed.isBlank()) return null
-            return when {
-                trimmed.length < 2 -> InterestsValidationError.TooShort
-                trimmed.length > 30 -> InterestsValidationError.TooLong
-                !trimmed.any { it.isLetter() } -> InterestsValidationError.NoLetters
-                !VALID_KEYWORD_REGEX.matches(trimmed) -> InterestsValidationError.InvalidCharacters
-                trimmed in interests -> InterestsValidationError.AlreadyExists
-                else -> null
-            }
-        }
+    val validationError: InterestError?
+        get() = if (inputText.isBlank()) null else InterestRules.validate(inputText, interests)
 
     val canAdd: Boolean
-        get() = trimmed.isNotBlank() && validationError == null
-
-    companion object {
-        private val VALID_KEYWORD_REGEX = Regex("^[\\p{L}\\p{N} \\-]+$")
-    }
-}
-
-enum class InterestsValidationError {
-    TooShort,
-    TooLong,
-    NoLetters,
-    InvalidCharacters,
-    AlreadyExists,
+        get() = InterestRules.validate(inputText, interests) == null
 }
 
 @Composable
-fun InterestsValidationError.toUiString(): String = when (this) {
-    InterestsValidationError.TooShort -> stringResource(R.string.interests_error_too_short)
-    InterestsValidationError.TooLong -> stringResource(R.string.interests_error_too_long)
-    InterestsValidationError.NoLetters -> stringResource(R.string.interests_error_no_letters)
-    InterestsValidationError.InvalidCharacters -> stringResource(R.string.interests_error_invalid_chars)
-    InterestsValidationError.AlreadyExists -> stringResource(R.string.interests_error_already_exists)
+fun InterestError.toUiString(): String = when (this) {
+    InterestError.TooShort -> stringResource(R.string.interests_error_too_short)
+    InterestError.TooLong -> stringResource(R.string.interests_error_too_long)
+    InterestError.NoLetters -> stringResource(R.string.interests_error_no_letters)
+    InterestError.InvalidCharacters -> stringResource(R.string.interests_error_invalid_chars)
+    InterestError.AlreadyExists -> stringResource(R.string.interests_error_already_exists)
 }
 
