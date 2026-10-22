@@ -1,8 +1,8 @@
 package dev.alexmester.data.di
 
 import dev.alexmester.data.cache.FeedCacheImpl
-import dev.alexmester.data.remote.NewsRemoteDataSourceImpl
-import dev.alexmester.data.remote.WorldNewsApiService
+import dev.alexmester.data.remote.source.NewsRemoteDataSourceImpl
+import dev.alexmester.data.remote.api.WorldNewsApiService
 import dev.alexmester.data.repository.ArticleRepositoryImpl
 import dev.alexmester.data.repository.UserPreferencesRepositoryImpl
 import dev.alexmester.domain.cache.FeedCache

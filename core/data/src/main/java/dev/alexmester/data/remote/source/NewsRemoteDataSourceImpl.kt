@@ -1,6 +1,7 @@
-package dev.alexmester.data.remote
+package dev.alexmester.data.remote.source
 
 import dev.alexmester.data.mapper.toDomain
+import dev.alexmester.data.remote.api.WorldNewsApiService
 import dev.alexmester.domain.source.NewsRemoteDataSource
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.news.NewsCluster

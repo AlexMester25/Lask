@@ -1,4 +1,4 @@
-package dev.alexmester.data.remote
+package dev.alexmester.data.remote.api
 
 import dev.alexmester.data.remote.dto.SearchNewsResponseDto
 import dev.alexmester.data.remote.dto.TopNewsResponseDto
