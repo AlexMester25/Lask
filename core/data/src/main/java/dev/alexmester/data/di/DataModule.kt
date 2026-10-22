@@ -14,7 +14,9 @@ import dev.alexmester.domain.source.NewsRemoteDataSource
 import dev.alexmester.domain.source.TranslateRemoteDataSource
 import dev.alexmester.network.di.Clients
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.*
 
 val data = module {
 
@@ -29,32 +31,9 @@ val data = module {
             client = get(named(Clients.TRANSLATE)),
         )
     }
-    single<NewsRemoteDataSource> { NewsRemoteDataSourceImpl(api = get()) }
-    single<TranslateRemoteDataSource> { TranslateRemoteDataSourceImpl(api = get()) }
-
-    single<FeedCache> {
-        FeedCacheImpl(
-            transactionRunner = get(),
-            articleDao = get(),
-            feedCacheDao = get(),
-            clock = get()
-        )
-    }
-
-    single<UserPreferencesRepository> {
-        UserPreferencesRepositoryImpl(
-            userPreferencesDataSource = get(),
-            clock = get()
-        )
-    }
-
-    single<ArticleRepository> {
-        ArticleRepositoryImpl(
-            userStateDao = get(),
-            articleDao = get(),
-            transactionRunner = get(),
-            dispatchers = get(),
-            clock = get(),
-        )
-    }
+    single<NewsRemoteDataSourceImpl>() bind NewsRemoteDataSource::class
+    single<TranslateRemoteDataSourceImpl>() bind TranslateRemoteDataSource::class
+    single<FeedCacheImpl>() bind FeedCache::class
+    single<UserPreferencesRepositoryImpl>() bind UserPreferencesRepository::class
+    single<ArticleRepositoryImpl>() bind ArticleRepository::class
 }
