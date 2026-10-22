@@ -1,8 +1,8 @@
 [versions]
 # Gradle / Kotlin
 agp = "9.0.0"
-kotlin = "2.0.21"
-jetbrainsKotlinJvm = "2.2.10"
+kotlin = "2.3.20"
+jetbrainsKotlinJvm = "2.3.20"
 ksp = "2.3.5"
 
 # Android Core
@@ -24,7 +24,8 @@ ktor = "3.3.3"
 loggingInterceptor = "4.12.0"
 
 # DI
-koin = "4.1.1"
+koin = "4.2.2"
+koinPlugin = "1.2.1"
 
 # Database
 room = "2.8.4"
@@ -153,4 +154,5 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koinPlugin" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxBenchmark" }
