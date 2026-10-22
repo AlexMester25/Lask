@@ -1,4 +1,4 @@
-package dev.alexmester.network.translate.dto
+package dev.alexmester.data.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

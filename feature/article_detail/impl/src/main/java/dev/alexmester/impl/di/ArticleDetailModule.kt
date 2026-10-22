@@ -15,11 +15,7 @@ val articleDetailModule = module {
     factory { ClapArticleUseCase(articleRepository = get(), userPreferencesRepository = get()) }
 
     single<ArticleDetailRepository> {
-        ArticleDetailRepositoryImpl(
-            translateApiService = get(),
-            userPreferencesRepository  = get(),
-            dispatchers = get()
-        )
+        ArticleDetailRepositoryImpl(translateRemoteDataSource = get(),)
     }
 
     factory { TranslateTextsUseCase(repository = get()) }
@@ -29,7 +25,7 @@ val articleDetailModule = module {
             articleId = articleId,
             articleUrl = articleUrl,
             articleRepository = get(),
-            articleDetailRepository = get(),
+            userPreferencesRepository = get(),
             translateTextsUseCase = get(),
             markArticleAsReadUseCase = get(),
             clapArticleUseCase = get(),

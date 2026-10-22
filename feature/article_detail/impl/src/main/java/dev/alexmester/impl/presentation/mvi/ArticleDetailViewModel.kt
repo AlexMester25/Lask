@@ -3,7 +3,7 @@ package dev.alexmester.impl.presentation.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.domain.repository.ArticleRepository
-import dev.alexmester.impl.domain.repository.ArticleDetailRepository
+import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.impl.domain.usecase.ClapArticleUseCase
 import dev.alexmester.impl.domain.usecase.MarkArticleAsReadUseCase
 import dev.alexmester.impl.domain.usecase.TranslateTextsUseCase
@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ class ArticleDetailViewModel(
     private val articleId: Long,
     private val articleUrl: String,
     private val articleRepository: ArticleRepository,
-    private val articleDetailRepository: ArticleDetailRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val translateTextsUseCase: TranslateTextsUseCase,
     private val markArticleAsReadUseCase: MarkArticleAsReadUseCase,
     private val clapArticleUseCase: ClapArticleUseCase,
@@ -81,7 +82,7 @@ class ArticleDetailViewModel(
             }
             _state.value = ArticleDetailState.Content(
                 article = article,
-                autoTranslateLanguage = articleDetailRepository.getAutoTranslateLanguage(),
+                autoTranslateLanguage = userPreferencesRepository.observeUserPreferences().first().autoTranslateLanguage,
             )
             combine(
                 articleRepository.observeIsBookmarked(articleId),

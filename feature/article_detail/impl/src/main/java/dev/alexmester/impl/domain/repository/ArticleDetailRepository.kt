@@ -8,5 +8,4 @@ interface ArticleDetailRepository {
         targetLanguage: String,
         sourceLanguage: String,
     ): AppResult<String>
-    suspend fun getAutoTranslateLanguage(): String
 }

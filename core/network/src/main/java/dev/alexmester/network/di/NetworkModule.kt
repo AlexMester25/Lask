@@ -6,7 +6,6 @@ import dev.alexmester.network.di.BaseClient.BASE_URL_WORLD_NEWS
 import dev.alexmester.network.di.BaseClient.createBaseClient
 import dev.alexmester.network.plugin.ApiKeyTranslatePlugin
 import dev.alexmester.network.plugin.ApiKeyWorldNewsPlugin
-import dev.alexmester.network.translate.TranslateApiService
 import io.ktor.client.plugins.DefaultRequest
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -39,11 +38,5 @@ val network = module {
                 apiKey = BuildConfig.TRANSLATE_PLUS_API_KEY
             }
         }
-    }
-
-    single {
-        TranslateApiService(
-            client = get(named(Clients.TRANSLATE)),
-        )
     }
 }

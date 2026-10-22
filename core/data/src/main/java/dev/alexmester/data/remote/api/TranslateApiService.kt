@@ -1,8 +1,8 @@
-package dev.alexmester.network.translate
+package dev.alexmester.data.remote.api
 
 import dev.alexmester.network.endpoints.ApiRoutes
-import dev.alexmester.network.translate.dto.TranslateDataDto
-import dev.alexmester.network.translate.dto.TranslateRequestDto
+import dev.alexmester.data.remote.dto.TranslateDataDto
+import dev.alexmester.data.remote.dto.TranslateRequestDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
