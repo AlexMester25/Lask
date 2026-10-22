@@ -6,6 +6,7 @@ import org.gradle.kotlin.dsl.dependencies
 class KoinConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            pluginManager.apply("io.insert-koin.compiler.plugin")
             val libs = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
             dependencies {
                 add("implementation", libs.findLibrary("koin.core").get())
