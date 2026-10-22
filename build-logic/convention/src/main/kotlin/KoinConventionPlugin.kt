@@ -10,9 +10,11 @@ class KoinConventionPlugin : Plugin<Project> {
             val libs = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
             dependencies {
                 add("implementation", libs.findLibrary("koin.core").get())
+                add("implementation", libs.findLibrary("koin.core.viewmodel").get())
                 add("implementation", libs.findLibrary("koin.android").get())
                 add("implementation", libs.findLibrary("koin.androidx.compose").get())
                 add("implementation", libs.findLibrary("koin.androidx.compose.viewmodel").get())
+                add("implementation", libs.findLibrary("koin.annotations").get())
             }
         }
     }

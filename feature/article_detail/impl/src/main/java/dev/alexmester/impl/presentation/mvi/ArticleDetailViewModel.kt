@@ -20,10 +20,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.InjectedParam
 
 class ArticleDetailViewModel(
-    private val articleId: Long,
-    private val articleUrl: String,
+    @InjectedParam val articleId: Long,
+    @InjectedParam val articleUrl: String,
     private val articleRepository: ArticleRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val translateTextsUseCase: TranslateTextsUseCase,

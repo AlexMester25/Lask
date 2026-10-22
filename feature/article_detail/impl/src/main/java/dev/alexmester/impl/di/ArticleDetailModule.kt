@@ -6,29 +6,15 @@ import dev.alexmester.impl.domain.usecase.ClapArticleUseCase
 import dev.alexmester.impl.domain.usecase.MarkArticleAsReadUseCase
 import dev.alexmester.impl.domain.usecase.TranslateTextsUseCase
 import dev.alexmester.impl.presentation.mvi.ArticleDetailViewModel
-import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.*
 
-val articleDetailModule = module {
+val articleDetail = module {
 
-    factory { MarkArticleAsReadUseCase(articleRepository = get(), userPreferencesRepository = get()) }
-    factory { ClapArticleUseCase(articleRepository = get(), userPreferencesRepository = get()) }
-
-    single<ArticleDetailRepository> {
-        ArticleDetailRepositoryImpl(translateRemoteDataSource = get(),)
-    }
-
-    factory { TranslateTextsUseCase(repository = get()) }
-
-    viewModel { (articleId: Long, articleUrl: String) ->
-        ArticleDetailViewModel(
-            articleId = articleId,
-            articleUrl = articleUrl,
-            articleRepository = get(),
-            userPreferencesRepository = get(),
-            translateTextsUseCase = get(),
-            markArticleAsReadUseCase = get(),
-            clapArticleUseCase = get(),
-        )
-    }
+    factory<MarkArticleAsReadUseCase>()
+    factory<ClapArticleUseCase>()
+    factory<TranslateTextsUseCase>()
+    single<ArticleDetailRepositoryImpl>() bind ArticleDetailRepository::class
+    viewModel<ArticleDetailViewModel>()
 }
