@@ -12,18 +12,20 @@ import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.news.NewsCluster
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.Clock
 
 internal class FeedCacheImpl(
     private val transactionRunner: TransactionRunner,
     private val articleDao: ArticleDao,
     private val feedCacheDao: FeedCacheDao,
+    private val clock: Clock,
 ) : FeedCache {
 
     override fun observeClusters(feedType: FeedType): Flow<List<NewsCluster>> =
         feedCacheDao.observeFeedWithState(feedType.key).map { it.toClusters() }
 
     override suspend fun replace(feedType: FeedType, clusters: List<NewsCluster>) {
-        val (articles, cache) = clusters.toEntities(feedType.key)
+        val (articles, cache) = clusters.toEntities(feedType.key, clock.millis())
         transactionRunner {
             feedCacheDao.clearFeed(feedType.key)
             articleDao.insertArticles(articles)
@@ -33,7 +35,7 @@ internal class FeedCacheImpl(
     }
 
     override suspend fun append(feedType: FeedType, articles: List<NewsArticle>, positionStart: Int) {
-        val (entities, cache) = articles.toEntities(feedType.key, positionStart)
+        val (entities, cache) = articles.toEntities(feedType.key, positionStart, clock.millis())
         transactionRunner {
             articleDao.insertArticles(entities)
             feedCacheDao.insertFeedCache(cache)
@@ -43,7 +45,7 @@ internal class FeedCacheImpl(
 
     override suspend fun isFresh(feedType: FeedType, ttlMs: Long): Boolean {
         val cachedAt = feedCacheDao.getLastCachedAt(feedType.key) ?: return false
-        return System.currentTimeMillis() - cachedAt < ttlMs
+        return clock.millis() - cachedAt < ttlMs
     }
 
     override suspend fun lastCachedAt(feedType: FeedType): Long? =

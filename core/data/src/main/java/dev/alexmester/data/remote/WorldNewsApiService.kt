@@ -8,17 +8,21 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-internal class WorldNewsApiService(private val client: HttpClient) {
+internal class WorldNewsApiService(
+    private val client: HttpClient,
+    private val clock: Clock,
+) {
 
     suspend fun getTopNews(
         country: String,
         language: String,
         maxNewsPerCluster: Int,
     ): TopNewsResponseDto {
-        val today = LocalDate.now(ZoneOffset.UTC)
+        val today = LocalDate.now(clock.withZone(ZoneOffset.UTC))
         val todayResponse = fetchTopNews(country, language, today.toString(), maxNewsPerCluster)
         if (todayResponse.topNews.isNotEmpty()) return todayResponse
         return fetchTopNews(country, language, today.minusDays(1).toString(), maxNewsPerCluster)

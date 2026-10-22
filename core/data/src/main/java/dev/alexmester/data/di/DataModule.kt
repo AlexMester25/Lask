@@ -15,19 +15,28 @@ import org.koin.dsl.module
 
 val data = module {
 
-    single { WorldNewsApiService(client = get(named(Clients.WORLD_NEWS))) }
+    single {
+        WorldNewsApiService(
+            client = get(named(Clients.WORLD_NEWS)),
+            clock = get()
+        )
+    }
     single<NewsRemoteDataSource> { NewsRemoteDataSourceImpl(api = get()) }
 
     single<FeedCache> {
         FeedCacheImpl(
             transactionRunner = get(),
             articleDao = get(),
-            feedCacheDao = get()
+            feedCacheDao = get(),
+            clock = get()
         )
     }
 
     single<UserPreferencesRepository> {
-        UserPreferencesRepositoryImpl(UserPreferencesDataSource = get())
+        UserPreferencesRepositoryImpl(
+            userPreferencesDataSource = get(),
+            clock = get()
+        )
     }
 
     single<ArticleRepository> {
@@ -36,6 +45,7 @@ val data = module {
             articleDao = get(),
             transactionRunner = get(),
             dispatchers = get(),
+            clock = get(),
         )
     }
 }

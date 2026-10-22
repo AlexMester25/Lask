@@ -1,8 +1,8 @@
 package dev.alexmester.impl.domain.usecase
 
+import dev.alexmester.domain.progress.XpRewards
 import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.domain.repository.UserPreferencesRepository
-import dev.alexmester.utils.constants.LaskConstants.XP_PER_CLAP
 
 class ClapArticleUseCase(
     private val articleRepository: ArticleRepository,
@@ -10,6 +10,6 @@ class ClapArticleUseCase(
 ) {
     suspend operator fun invoke(articleId: Long) {
         articleRepository.addClap(articleId)
-        userPreferencesRepository.addXp(XP_PER_CLAP)
+        userPreferencesRepository.addXp(XpRewards.PER_CLAP)
     }
 }

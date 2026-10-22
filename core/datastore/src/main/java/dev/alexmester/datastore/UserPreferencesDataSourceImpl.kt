@@ -19,12 +19,11 @@ import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_ONBOARDING_DONE
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_PROFILE_NAME
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_STREAK_COUNT
 import dev.alexmester.domain.interests.InterestRules
+import dev.alexmester.domain.progress.Progress
+import dev.alexmester.domain.progress.Streak
 import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.utils.constants.LaskConstants.ANONIM
-import dev.alexmester.utils.date.DateUtils.isYesterday
-import dev.alexmester.utils.statistic.StatisticUtils.MAX_LEVEL
-import dev.alexmester.utils.statistic.StatisticUtils.xpForLevel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -107,17 +106,12 @@ class UserPreferencesDataSourceImpl(
 
     override suspend fun updateStreak(today: String) {
         dataStore.edit { prefs ->
-            val last = prefs[KEY_LAST_STREAK_DATE]
-            val current = prefs[KEY_STREAK_COUNT] ?: 0
+            val next = Streak(
+                count = prefs[KEY_STREAK_COUNT] ?: 0,
+                lastDate = prefs[KEY_LAST_STREAK_DATE],
+            ).record(today)
 
-            val newStreak = when {
-                last == null -> 1
-                last == today -> current
-                isYesterday(last, today) -> current + 1
-                else -> 1
-            }
-
-            prefs[KEY_STREAK_COUNT] = newStreak
+            prefs[KEY_STREAK_COUNT] = next.count
             prefs[KEY_LAST_STREAK_DATE] = today
         }
     }
@@ -141,26 +135,13 @@ class UserPreferencesDataSourceImpl(
 
     override suspend fun addXp(xpDelta: Float) {
         dataStore.edit { prefs ->
-            var xp = (prefs[KEY_CURRENT_XP] ?: 0f) + xpDelta
-            var level = prefs[KEY_CURRENT_LEVEL] ?: 1
+            val next = Progress(
+                level = prefs[KEY_CURRENT_LEVEL] ?: Progress.MIN_LEVEL,
+                xp = prefs[KEY_CURRENT_XP] ?: 0f,
+            ).addXp(xpDelta)
 
-            while (level < MAX_LEVEL) {
-                val needed = xpForLevel(level)
-                if (needed <= 0f) break
-
-                if (xp >= needed) {
-                    xp -= needed
-                    level++
-                } else break
-            }
-
-            if (level >= MAX_LEVEL) {
-                level = MAX_LEVEL
-                xp = 0f
-            }
-
-            prefs[KEY_CURRENT_XP] = xp
-            prefs[KEY_CURRENT_LEVEL] = level
+            prefs[KEY_CURRENT_XP] = next.xp
+            prefs[KEY_CURRENT_LEVEL] = next.level
         }
     }
 }

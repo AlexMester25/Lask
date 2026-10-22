@@ -4,21 +4,10 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import java.time.format.FormatStyle
 import java.util.Locale
 
 object DateUtils {
-
-    fun isYesterday(lastDate: String, today: String): Boolean {
-        return try {
-            val last = java.time.LocalDate.parse(lastDate)
-            val todayDate = java.time.LocalDate.parse(today)
-            last.plusDays(1) == todayDate
-        } catch (e: DateTimeParseException) {
-            false
-        }
-    }
 
     fun formatCachedAtDate(timestamp: Long): String {
         val localDate = Instant.ofEpochMilli(timestamp)

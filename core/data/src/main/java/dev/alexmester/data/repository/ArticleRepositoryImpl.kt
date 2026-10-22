@@ -12,12 +12,14 @@ import dev.alexmester.platform.dispatchers.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.time.Clock
 
 internal class ArticleRepositoryImpl (
     private val userStateDao: ArticleUserStateDao,
     private val articleDao: ArticleDao,
     private val transactionRunner: TransactionRunner,
     private val dispatchers: DispatcherProvider,
+    private val clock: Clock,
 ): ArticleRepository {
 
     override fun observeReadArticleIds(): Flow<Set<Long>> =
@@ -48,7 +50,7 @@ internal class ArticleRepositoryImpl (
             var isBookmarked = false
             transactionRunner {
                 ensureUserState(articleId)
-                userStateDao.toggleBookmark(articleId, System.currentTimeMillis())
+                userStateDao.toggleBookmark(articleId, clock.millis())
                 isBookmarked = userStateDao.isBookmarked(articleId) ?: false
             }
             isBookmarked
@@ -69,7 +71,7 @@ internal class ArticleRepositoryImpl (
 
     override suspend fun markAsRead(articleId: Long): Boolean = withContext(dispatchers.io) {
         ensureUserState(articleId)
-        userStateDao.markAsRead(articleId, System.currentTimeMillis()) > 0
+        userStateDao.markAsRead(articleId, clock.millis()) > 0
     }
 
     override fun observeReadCount(): Flow<Int> = userStateDao.observeReadCount()

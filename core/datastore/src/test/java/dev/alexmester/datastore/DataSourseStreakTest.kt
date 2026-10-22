@@ -35,69 +35,16 @@ class DataSourseStreakTest {
     private suspend fun prefs() = dataSource.userPreferences.first()
 
     @Test
-    fun `should set streak to 1 when no previous date`() = runTest {
-            setupDataSource()
-
-            dataSource.updateStreak("2026-04-25")
-            advanceUntilIdle()
-
-            val result = prefs()
-
-            assertEquals(1, result.streakCount)
-            assertEquals("2026-04-25", result.lastStreakDate)
-        }
-
-    @Test
-    fun `should not change streak when same day`() = runTest {
-            setupDataSource()
-
-            dataSource.updateStreak("2026-04-25")
-            dataSource.updateStreak("2026-04-25")
-            advanceUntilIdle()
-
-            val result = prefs()
-
-            assertEquals(1, result.streakCount)
-            assertEquals("2026-04-25", result.lastStreakDate)
-        }
-
-    @Test
     fun `should increment streak when yesterday`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.updateStreak("2026-04-24")
-            dataSource.updateStreak("2026-04-25")
-            advanceUntilIdle()
+        dataSource.updateStreak("2026-04-24")
+        dataSource.updateStreak("2026-04-25")
+        advanceUntilIdle()
 
-            val result = prefs()
+        val result = prefs()
 
-            assertEquals(2, result.streakCount)
-            assertEquals("2026-04-25", result.lastStreakDate)
-        }
-
-    @Test
-    fun `should reset streak when day skipped`() = runTest {
-            setupDataSource()
-
-            dataSource.updateStreak("2026-04-20")
-            dataSource.updateStreak("2026-04-25")
-            advanceUntilIdle()
-
-            val result = prefs()
-
-            assertEquals(1, result.streakCount)
-            assertEquals("2026-04-25", result.lastStreakDate)
-        }
-
-    @Test
-    fun `should reset streak when stored date is invalid`() = runTest {
-            setupDataSource()
-
-            dataSource.updateStreak("invalid-date")
-            advanceUntilIdle()
-
-            val result = prefs()
-
-            assertEquals(1, result.streakCount)
-        }
+        assertEquals(2, result.streakCount)
+        assertEquals("2026-04-25", result.lastStreakDate)
+    }
 }

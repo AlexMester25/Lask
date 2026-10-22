@@ -71,14 +71,14 @@ internal fun List<FeedArticleWithState>.toClusters(): List<NewsCluster> =
 
 internal fun List<NewsCluster>.toEntities(
     feedType: String,
+    cachedAt: Long,
 ): Pair<List<ArticleEntity>, List<FeedCacheEntity>> {
-    val now = System.currentTimeMillis()
     val articles = ArrayList<ArticleEntity>()
     val cache = ArrayList<FeedCacheEntity>()
     forEach { cluster ->
         cluster.articles.forEachIndexed { position, article ->
             articles += article.toEntity()
-            cache += FeedCacheEntity(feedType, article.id, cluster.id, position, now)
+            cache += FeedCacheEntity(feedType, article.id, cluster.id, position, cachedAt)
         }
     }
     return articles to cache
@@ -87,10 +87,10 @@ internal fun List<NewsCluster>.toEntities(
 internal fun List<NewsArticle>.toEntities(
     feedType: String,
     positionStart: Int,
+    cachedAt: Long,
 ): Pair<List<ArticleEntity>, List<FeedCacheEntity>> {
-    val now = System.currentTimeMillis()
     val cache = mapIndexed { index, article ->
-        FeedCacheEntity(feedType, article.id, 0, positionStart + index, now)
+        FeedCacheEntity(feedType, article.id, 0, positionStart + index, cachedAt)
     }
     return map { it.toEntity() } to cache
 }
