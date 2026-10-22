@@ -29,9 +29,7 @@ fun AppContent(
     }
     LaskTheme(darkTheme = darkTheme) {
         when (val state = splashState) {
-            SplashState.Loading,
-            SplashState.Initializing -> Unit
-
+            is SplashState.Loading -> Unit
             is SplashState.Ready -> {
                 val navController = rememberNavController()
                 val startDestination = remember {

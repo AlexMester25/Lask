@@ -14,11 +14,10 @@ import dev.alexmester.impl.di.typedArticleList
 import dev.alexmester.lask.splash_screen.splash
 import dev.alexmester.lask.theme_switch.themeSwitch
 import dev.alexmester.network.di.network
-import dev.alexmester.platform.dispatchers.platform
+import dev.alexmester.platform.di.platform
 
 object AppModules {
     val all = listOf(
-        appScope,
         splash,
         themeSwitch,
         featuresNavigation,

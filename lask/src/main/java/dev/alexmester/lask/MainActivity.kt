@@ -7,16 +7,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import dev.alexmester.lask.splash_screen.SplashState
 import dev.alexmester.lask.splash_screen.SplashViewModel
-import dev.alexmester.platform.locale.LocaleChangeObserver
+import dev.alexmester.platform.locale.DeviceLocaleSynchronizer
 import dev.alexmester.ui.desing_system.LaskPalette
-import org.koin.android.ext.android.get
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var localeChangeObserver: LocaleChangeObserver
+    private val splashViewModel: SplashViewModel by viewModel()
+    private val localeSynchronizer: DeviceLocaleSynchronizer by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -27,20 +30,9 @@ class MainActivity : ComponentActivity() {
                 darkScrim = LaskPalette.BackgroundPrimaryLight.toArgb()
             )
         )
-
-        localeChangeObserver = LocaleChangeObserver(
-            context = applicationContext,
-            deviceLocaleProvider = get(),
-            userPreferencesRepository = get(),
-            scope = get(),
-        )
-        val splashViewModel: SplashViewModel by viewModel()
-
         splashScreen.setKeepOnScreenCondition {
-            splashViewModel.state.value is SplashState.Loading ||
-            splashViewModel.state.value is SplashState.Initializing
+            splashViewModel.state.value is SplashState.Loading
         }
-
         setContent {
             AppContent(splashViewModel = splashViewModel)
         }
@@ -48,13 +40,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        localeChangeObserver.register()
-        localeChangeObserver.checkAndUpdate()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        localeChangeObserver.unregister()
+        lifecycleScope.launch { localeSynchronizer.syncIfNeeded() }
     }
 }
 
