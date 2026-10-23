@@ -16,15 +16,17 @@ import dev.alexmester.impl.navigation.NewsFeedImpl
 import dev.alexmester.impl.navigation.ProfileImpl
 import dev.alexmester.impl.navigation.SearchImpl
 import dev.alexmester.impl.navigation.TypedArticleListImpl
+import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.*
 
 val featuresNavigation = module {
-    single<SearchApi> { SearchImpl(articleDetailApi = get()) }
-    single<NewsFeedApi> { NewsFeedImpl(articleDetailApi = get()) }
-    single<ExploreApi> { ExploreImpl(articleDetailApi = get(), searchApi = get()) }
-    single<ArticleDetailApi> { ArticleDetailImpl() }
-    single<BookmarksApi> { BookmarksImpl(articleDetailApi = get()) }
-    single<ProfileApi> { ProfileImpl(typedArticleListApi = get(), interestsApi = get()) }
-    single<TypedArticleListApi> { TypedArticleListImpl(articleDetailApi = get()) }
-    single<InterestsApi> { InterestsImpl() }
+    single<SearchImpl>() bind SearchApi::class
+    single<NewsFeedImpl>() bind NewsFeedApi::class
+    single<ExploreImpl>() bind ExploreApi::class
+    single<ArticleDetailImpl>() bind ArticleDetailApi::class
+    single<BookmarksImpl>() bind BookmarksApi::class
+    single<ProfileImpl>() bind ProfileApi::class
+    single<TypedArticleListImpl>() bind TypedArticleListApi::class
+    single<InterestsImpl>() bind InterestsApi::class
 }
