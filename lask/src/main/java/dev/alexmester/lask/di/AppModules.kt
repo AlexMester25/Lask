@@ -4,7 +4,7 @@ import dev.alexmester.data.di.data
 import dev.alexmester.database.di.database
 import dev.alexmester.datastore.di.dataStore
 import dev.alexmester.impl.di.articleDetail
-import dev.alexmester.impl.di.bookmarksModule
+import dev.alexmester.impl.di.bookmarks
 import dev.alexmester.impl.di.explore
 import dev.alexmester.impl.di.interests
 import dev.alexmester.impl.di.newsFeed
@@ -31,7 +31,7 @@ object AppModules {
         newsFeed,
         explore,
         articleDetail,
-        bookmarksModule,
+        bookmarks,
         profile,
         search,
         typedArticleList,

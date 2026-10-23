@@ -21,8 +21,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-
-
 class ArticleDetailViewModel(
     private val articleId: Long,
     private val articleUrl: String,

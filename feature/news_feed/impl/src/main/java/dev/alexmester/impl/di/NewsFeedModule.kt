@@ -4,33 +4,14 @@ import dev.alexmester.impl.data.repository.NewsFeedRepositoryImpl
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.impl.presentation.mvi.NewsFeedViewModel
-import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.factory
+import org.koin.plugin.module.dsl.single
+import org.koin.plugin.module.dsl.viewModel
 
 val newsFeed = module {
-
-    single<NewsFeedRepository> {
-        NewsFeedRepositoryImpl(
-            remote = get(),
-            feedCache = get(),
-            userPreferencesRepository = get(),
-            dispatchers = get(),
-        )
-    }
-
-    factory {
-        ObserveTrendsUseCase(
-            newsFeedRepository = get(),
-            userPreferencesRepository = get()
-        )
-    }
-
-    viewModel {
-        NewsFeedViewModel(
-            userPreferencesRepository = get(),
-            articleRepository = get(),
-            newsFeedRepository = get(),
-            observeTrendsUseCase = get(),
-        )
-    }
+    single<NewsFeedRepositoryImpl>() bind NewsFeedRepository::class
+    factory<ObserveTrendsUseCase>()
+    viewModel<NewsFeedViewModel>()
 }

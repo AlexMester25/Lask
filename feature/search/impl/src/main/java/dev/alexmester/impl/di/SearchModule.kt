@@ -3,22 +3,11 @@ package dev.alexmester.impl.di
 import dev.alexmester.impl.data.repository.SearchRepositoryImpl
 import dev.alexmester.impl.domain.repository.SearchRepository
 import dev.alexmester.impl.presentation.mvi.SearchViewModel
-import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.*
 
 val search = module {
-
-    single<SearchRepository> {
-        SearchRepositoryImpl(
-            remote = get(),
-            articleRepository = get(),
-        )
-    }
-
-    viewModel {
-        SearchViewModel(
-            searchRepository = get(),
-            articleRepository = get()
-        )
-    }
+    single<SearchRepositoryImpl>() bind SearchRepository::class
+    viewModel<SearchViewModel>()
 }

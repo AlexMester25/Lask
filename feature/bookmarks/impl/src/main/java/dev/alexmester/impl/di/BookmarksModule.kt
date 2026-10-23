@@ -1,12 +1,9 @@
 package dev.alexmester.impl.di
 
 import dev.alexmester.impl.presentation.mvi.BookmarksViewModel
-import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.viewModel
 
-val bookmarksModule = module {
-
-    viewModel {
-        BookmarksViewModel(articleRepository  = get())
-    }
+val bookmarks = module {
+    viewModel<BookmarksViewModel>()
 }

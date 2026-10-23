@@ -6,7 +6,6 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val typedArticleList = module {
-
     viewModel { (type: ArticleListType) ->
         TypedArticleListViewModel(
             type = type,

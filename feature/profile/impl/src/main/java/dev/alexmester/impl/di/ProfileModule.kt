@@ -6,16 +6,11 @@ import dev.alexmester.impl.presentation.profile.mvi.ProfileViewModel
 import dev.alexmester.impl.presentation.system.mvi.SystemViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.viewModel
 
 val profile = module {
-
-    viewModel {
-        ProfileViewModel(
-            userPreferencesRepository = get(),
-            articleRepository = get()
-        )
-    }
-    viewModel { SystemViewModel(userPreferencesRepository = get()) }
+    viewModel<ProfileViewModel>()
+    viewModel<SystemViewModel>()
     viewModel { (type: LocalePickerType) ->
         LocalePickerViewModel(type = type, userPreferencesRepository = get())
     }
