@@ -2,45 +2,30 @@ package dev.alexmester.lask
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
-import dev.alexmester.lask.splash_screen.SplashState
-import dev.alexmester.lask.splash_screen.SplashViewModel
-import dev.alexmester.platform.locale.DeviceLocaleSynchronizer
-import dev.alexmester.ui.desing_system.LaskPalette
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import dev.alexmester.lask.main.MainUiState
+import dev.alexmester.lask.main.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val splashViewModel: SplashViewModel by viewModel()
-    private val localeSynchronizer: DeviceLocaleSynchronizer by inject()
+    private val viewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(
-                lightScrim = LaskPalette.BackgroundPrimaryDark.toArgb(),
-                darkScrim = LaskPalette.BackgroundPrimaryLight.toArgb()
-            )
-        )
+        enableEdgeToEdge()
         splashScreen.setKeepOnScreenCondition {
-            splashViewModel.state.value is SplashState.Loading
+            viewModel.uiState.value is MainUiState.Loading
         }
-        setContent {
-            AppContent(splashViewModel = splashViewModel)
-        }
+        setContent { AppContent(viewModel = viewModel) }
     }
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch { localeSynchronizer.syncIfNeeded() }
+        viewModel.onAppResumed()
     }
 }
 

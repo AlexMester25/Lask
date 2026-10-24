@@ -3,6 +3,7 @@ package dev.alexmester.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_AUTO_TRANSLATE_LANGUAGE
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_AUTO_TRANSLATE_MANUALLY_SET
 import dev.alexmester.datastore.model.UserPreferencesKeys.KEY_AVATAR_URI
@@ -25,31 +26,35 @@ import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.utils.constants.LaskConstants.ANONIM
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import java.io.IOException
 
 class UserPreferencesDataSourceImpl(
     private val dataStore: DataStore<Preferences>,
-): UserPreferencesDataSource {
+) : UserPreferencesDataSource {
 
-    override val userPreferences: Flow<UserPreferences> = dataStore.data.map { prefs ->
-        UserPreferences(
-            defaultCountry = prefs[KEY_DEFAULT_COUNTRY] ?: SupportedLocales.FALLBACK_COUNTRY,
-            defaultLanguage = prefs[KEY_DEFAULT_LANGUAGE] ?: SupportedLocales.FALLBACK_LANGUAGE,
-            isDarkTheme = if (prefs[KEY_IS_THEME_SET] == true) prefs[KEY_IS_DARK_THEME] else null,
-            isOnboardingCompleted = prefs[KEY_ONBOARDING_DONE] ?: false,
-            isLocaleManuallySet = prefs[KEY_LOCALE_MANUALLY_SET] ?: false,
-            profileName = prefs[KEY_PROFILE_NAME] ?: ANONIM,
-            avatarUri = prefs[KEY_AVATAR_URI],
-            streakCount = prefs[KEY_STREAK_COUNT] ?: 0,
-            lastStreakDate = prefs[KEY_LAST_STREAK_DATE],
-            currentXp = prefs[KEY_CURRENT_XP] ?: 0f,
-            currentLevel = prefs[KEY_CURRENT_LEVEL] ?: 1,
-            interests = prefs[KEY_INTERESTS] ?: emptySet(),
-            autoTranslateLanguage = prefs[KEY_AUTO_TRANSLATE_LANGUAGE]
-                ?: SupportedLocales.FALLBACK_LANGUAGE,
-            isAutoTranslateManuallySet = prefs[KEY_AUTO_TRANSLATE_MANUALLY_SET] ?: false,
-        )
-    }
+    override val userPreferences: Flow<UserPreferences> = dataStore.data
+        .catch { e -> if (e is IOException) emit(emptyPreferences()) else throw e }
+        .map { prefs ->
+            UserPreferences(
+                defaultCountry = prefs[KEY_DEFAULT_COUNTRY] ?: SupportedLocales.FALLBACK_COUNTRY,
+                defaultLanguage = prefs[KEY_DEFAULT_LANGUAGE] ?: SupportedLocales.FALLBACK_LANGUAGE,
+                isDarkTheme = if (prefs[KEY_IS_THEME_SET] == true) prefs[KEY_IS_DARK_THEME] else null,
+                isOnboardingCompleted = prefs[KEY_ONBOARDING_DONE] ?: false,
+                isLocaleManuallySet = prefs[KEY_LOCALE_MANUALLY_SET] ?: false,
+                profileName = prefs[KEY_PROFILE_NAME] ?: ANONIM,
+                avatarUri = prefs[KEY_AVATAR_URI],
+                streakCount = prefs[KEY_STREAK_COUNT] ?: 0,
+                lastStreakDate = prefs[KEY_LAST_STREAK_DATE],
+                currentXp = prefs[KEY_CURRENT_XP] ?: 0f,
+                currentLevel = prefs[KEY_CURRENT_LEVEL] ?: 1,
+                interests = prefs[KEY_INTERESTS] ?: emptySet(),
+                autoTranslateLanguage = prefs[KEY_AUTO_TRANSLATE_LANGUAGE]
+                    ?: SupportedLocales.FALLBACK_LANGUAGE,
+                isAutoTranslateManuallySet = prefs[KEY_AUTO_TRANSLATE_MANUALLY_SET] ?: false,
+            )
+        }
 
     override suspend fun completeOnboarding() {
         dataStore.edit { it[KEY_ONBOARDING_DONE] = true }

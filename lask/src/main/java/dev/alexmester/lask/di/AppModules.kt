@@ -11,15 +11,13 @@ import dev.alexmester.impl.di.newsFeed
 import dev.alexmester.impl.di.profile
 import dev.alexmester.impl.di.search
 import dev.alexmester.impl.di.typedArticleList
-import dev.alexmester.lask.splash_screen.splash
-import dev.alexmester.lask.theme_switch.themeSwitch
+import dev.alexmester.lask.main.mainModule
 import dev.alexmester.network.di.network
 import dev.alexmester.platform.di.platform
 
 object AppModules {
     val all = listOf(
-        splash,
-        themeSwitch,
+        mainModule,
         featuresNavigation,
         // Core
         network,

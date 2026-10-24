@@ -20,12 +20,11 @@ import dev.alexmester.api.navigation.BookmarksApi
 import dev.alexmester.api.navigation.ExploreApi
 import dev.alexmester.api.navigation.InterestsApi
 import dev.alexmester.api.navigation.NewsFeedApi
+import dev.alexmester.api.navigation.NewsFeedRoute
 import dev.alexmester.api.navigation.ProfileApi
 import dev.alexmester.api.navigation.SearchApi
 import dev.alexmester.api.navigation.TypedArticleListApi
 import dev.alexmester.lask.app_bottom_navigation.AppBottomBar
-import dev.alexmester.lask.welcome_screen.WelcomeRoute
-import dev.alexmester.lask.welcome_screen.welcomeScreen
 import dev.alexmester.navigation.register
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
@@ -37,8 +36,6 @@ import org.koin.compose.koinInject
 @Composable
 fun RootScreen(
     navController: NavHostController,
-    startDestination: Any = WelcomeRoute,
-    onOnboardingComplete: () -> Unit = {},
 ) {
     val newsFeedApi = koinInject<NewsFeedApi>()
     val bookmarkApi = koinInject<BookmarksApi>()
@@ -66,7 +63,7 @@ fun RootScreen(
             ) { padding ->
                 NavHost(
                     navController = navController,
-                    startDestination = startDestination,
+                    startDestination = NewsFeedRoute,
                     modifier = Modifier
                         .hazeSource(hazeState)
                         .background(MaterialTheme.LaskColors.backgroundPrimary),
@@ -75,7 +72,6 @@ fun RootScreen(
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { fadeOut(tween(300)) },
                 ) {
-                    welcomeScreen(navController, onOnboardingComplete)
                     register(newsFeedApi, navController)
                     register(exploreApi, navController)
                     register(bookmarkApi, navController)
