@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -20,46 +21,37 @@ fun AppBottomBar(
     hazeState: HazeState,
 ) {
     val tabs = remember { AppTabs.getTabs() }
-
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val bottomBarDestination = currentBackStackEntry?.destination
+    val destination = currentBackStackEntry?.destination
 
-     if (bottomBarDestination.shouldShowBottomBar(tabs)){
-         LaskBottomBar(
-             hazeState = hazeState,
-             items = tabs.map { tab ->
+    if (!destination.shouldShowBottomBar(tabs)) return
 
-                 val isSelected = bottomBarDestination
-                     ?.hierarchy
-                     ?.any { it.route?.contains(tab.route::class.qualifiedName!!) == true } == true
+    LaskBottomBar(
+        hazeState = hazeState,
+        items = tabs.map { tab ->
+            val isSelected = destination.isInHierarchyOf(tab)
+            LaskMainBottomBarItem(
+                icon = ImageVector.vectorResource(tab.iconRes),
+                title = stringResource(tab.titleRes),
+                isSelected = isSelected,
+                onClick = {
+                    if (isSelected) return@LaskMainBottomBarItem
+                    navController.navigate(tab.route) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+    )
 
-                 LaskMainBottomBarItem(
-                     icon = ImageVector.vectorResource(tab.iconRes),
-                     title = stringResource(tab.titleRes),
-                     isSelected = isSelected,
-                     onClick = {
-                         if (isSelected) return@LaskMainBottomBarItem
-                         navController.navigate(tab.route) {
-                             popUpTo(navController.graph.startDestinationId) {
-                                 saveState = true
-                             }
-                             launchSingleTop = true
-                             restoreState = true
-                         }
-                     }
-                 )
-             }
-         )
-     }
 }
 
-fun NavDestination?.shouldShowBottomBar(tabs: List<AppBottomTab>): Boolean {
-    if (this == null) return false
+private fun NavDestination?.isInHierarchyOf(tab: AppBottomTab): Boolean =
+    this?.hierarchy?.any { it.hasRoute(tab.route::class) } == true
 
-    val bottomBarRoutes = tabs.mapNotNull { it.route::class.qualifiedName }
-
-    return hierarchy.any { destination ->
-        val currentRoute = destination.route ?: return@any false
-        bottomBarRoutes.any(currentRoute::contains)
-    }
-}
+private fun NavDestination?.shouldShowBottomBar(tabs: List<AppBottomTab>): Boolean =
+    tabs.any { isInHierarchyOf(it) }
