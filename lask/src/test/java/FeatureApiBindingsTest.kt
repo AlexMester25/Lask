@@ -6,14 +6,14 @@ import dev.alexmester.api.navigation.NewsFeedApi
 import dev.alexmester.api.navigation.ProfileApi
 import dev.alexmester.api.navigation.SearchApi
 import dev.alexmester.api.navigation.TypedArticleListApi
-import dev.alexmester.impl.di.articleDetail
-import dev.alexmester.impl.di.bookmarks
-import dev.alexmester.impl.di.explore
-import dev.alexmester.impl.di.interests
-import dev.alexmester.impl.di.newsFeed
-import dev.alexmester.impl.di.profile
-import dev.alexmester.impl.di.search
-import dev.alexmester.impl.di.typedArticleList
+import dev.alexmester.impl.di.articleDetailModule
+import dev.alexmester.impl.di.bookmarksModule
+import dev.alexmester.impl.di.exploreModule
+import dev.alexmester.impl.di.interestsModule
+import dev.alexmester.impl.di.newsFeedModule
+import dev.alexmester.impl.di.profileModule
+import dev.alexmester.impl.di.searchModule
+import dev.alexmester.impl.di.typedArticleListModule
 import dev.alexmester.navigation.FeatureApi
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -25,8 +25,8 @@ class FeatureApiBindingsTest {
     fun `given feature modules when resolving feature apis then every api has its own implementation`() {
         val app = koinApplication {
             modules(
-                articleDetail, bookmarks, explore, interests,
-                newsFeed, profile, search, typedArticleList,
+                articleDetailModule, bookmarksModule, exploreModule, interestsModule,
+                newsFeedModule, profileModule, searchModule, typedArticleListModule,
             )
         }
         try {

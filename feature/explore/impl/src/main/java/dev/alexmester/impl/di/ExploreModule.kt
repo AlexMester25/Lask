@@ -13,7 +13,7 @@ import org.koin.plugin.module.dsl.factory
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
 
-val explore = module {
+val exploreModule = module {
     single<ExploreImpl>() bind ExploreApi::class
     single<ExploreRepositoryImpl>() bind ExploreRepository::class
     factory<LoadMoreExploreUseCase>()

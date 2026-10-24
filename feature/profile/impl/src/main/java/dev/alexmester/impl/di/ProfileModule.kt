@@ -12,7 +12,7 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
 
-val profile = module {
+val profileModule = module {
     single<ProfileImpl>() bind ProfileApi::class
     viewModel<ProfileViewModel>()
     viewModel<SystemViewModel>()

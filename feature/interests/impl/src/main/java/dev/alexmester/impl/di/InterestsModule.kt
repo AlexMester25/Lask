@@ -8,7 +8,7 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
 
-val interests = module {
+val interestsModule = module {
     single<InterestsImpl>() bind InterestsApi::class
     viewModel<InterestsViewModel>()
 }

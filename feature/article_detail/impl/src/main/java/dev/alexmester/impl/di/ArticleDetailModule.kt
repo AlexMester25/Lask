@@ -13,7 +13,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.*
 
-val articleDetail = module {
+val articleDetailModule = module {
     single<ArticleDetailImpl>() bind ArticleDetailApi::class
     factory<MarkArticleAsReadUseCase>()
     factory<ClapArticleUseCase>()

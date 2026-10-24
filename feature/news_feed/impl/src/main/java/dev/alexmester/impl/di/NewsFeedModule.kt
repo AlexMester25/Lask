@@ -12,7 +12,7 @@ import org.koin.plugin.module.dsl.factory
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
 
-val newsFeed = module {
+val newsFeedModule = module {
     single<NewsFeedImpl>() bind NewsFeedApi::class
     single<NewsFeedRepositoryImpl>() bind NewsFeedRepository::class
     factory<ObserveTrendsUseCase>()

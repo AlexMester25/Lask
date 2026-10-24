@@ -9,7 +9,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.*
 
-val search = module {
+val searchModule = module {
     single<SearchImpl>() bind SearchApi::class
     single<SearchRepositoryImpl>() bind SearchRepository::class
     viewModel<SearchViewModel>()
