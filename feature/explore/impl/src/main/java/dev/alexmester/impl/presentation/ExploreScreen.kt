@@ -161,7 +161,6 @@ private fun ExploreScreenContent(
                         ExploreList(
                             state = state,
                             readArticleIds = readArticleIds,
-                            bottomPadding = paddingValues.calculateBottomPadding(),
                             onIntent = onIntent,
                         )
                     }

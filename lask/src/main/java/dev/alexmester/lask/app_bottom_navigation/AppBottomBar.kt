@@ -3,6 +3,7 @@ package dev.alexmester.lask.app_bottom_navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -19,6 +20,7 @@ import dev.chrisbanes.haze.HazeState
 fun AppBottomBar(
     navController: NavHostController,
     hazeState: HazeState,
+    modifier: Modifier = Modifier,
 ) {
     val tabs = remember { AppTabs.getTabs() }
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -27,6 +29,7 @@ fun AppBottomBar(
     if (!destination.shouldShowBottomBar(tabs)) return
 
     LaskBottomBar(
+        modifier = modifier,
         hazeState = hazeState,
         items = tabs.map { tab ->
             val isSelected = destination.isInHierarchyOf(tab)

@@ -1,9 +1,11 @@
 package dev.alexmester.impl.presentation.components
 
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,6 +21,8 @@ import dev.alexmester.ui.components.list_card.LaskArticleCard
 import dev.alexmester.ui.components.pagination.LaskPaginationError
 import dev.alexmester.ui.components.pagination.LaskPaginationLoading
 
+private val ListEndPadding = 16.dp
+
 @Composable
 fun SearchList(
     modifier: Modifier = Modifier,
@@ -27,6 +31,7 @@ fun SearchList(
     onIntent: (SearchIntent) -> Unit,
 ) {
     val listState = rememberLazyListState()
+    val navigationBarInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     val shouldLoadMore = remember {
         derivedStateOf {
@@ -47,6 +52,7 @@ fun SearchList(
 
     LazyColumn(
         state = listState,
+        contentPadding = PaddingValues(bottom = navigationBarInset + ListEndPadding),
         modifier = modifier.fillMaxSize(),
     ) {
         items(state.results, key = { "${it.id}-${it.publishDate}" }) { article ->
@@ -62,19 +68,11 @@ fun SearchList(
 
         item {
             when {
-                state.isLoadingMore -> {
-                    LaskPaginationLoading()
-                    Spacer(modifier = Modifier.height(64.dp))
-                }
-                state.loadMoreError -> {
-                    LaskPaginationError(
-                        onRetry = { onIntent(SearchIntent.RetryLoadMore) }
-                    )
-                    Spacer(modifier = Modifier.height(64.dp))
-                }
-                else -> {
-                    Spacer(modifier = Modifier.height(64.dp))
-                }
+                state.isLoadingMore -> LaskPaginationLoading()
+                state.loadMoreError -> LaskPaginationError(
+                    onRetry = { onIntent(SearchIntent.RetryLoadMore) }
+                )
+                else -> Unit
             }
         }
     }

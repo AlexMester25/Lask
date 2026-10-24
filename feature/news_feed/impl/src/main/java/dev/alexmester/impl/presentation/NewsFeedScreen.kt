@@ -161,7 +161,6 @@ internal fun NewsFeedScreenContent(
                                 modifier = Modifier,
                                 state = currentState,
                                 readArticleIds = readArticleIds,
-                                bottomPadding = paddingValues.calculateBottomPadding(),
                                 onClickArticle = { artilceId, arlicteUrl ->
                                     onIntent(
                                         NewsFeedIntent.ArticleClick(

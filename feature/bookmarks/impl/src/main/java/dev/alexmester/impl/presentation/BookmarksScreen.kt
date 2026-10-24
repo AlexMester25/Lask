@@ -95,7 +95,6 @@ internal fun BookmarksScreenContent(
                         articles = currentState.articles,
                         isEditMode = currentState.isEditMode,
                         pendingRemovalIds = currentState.pendingRemovalIds,
-                        bottomPadding = paddingValues.calculateBottomPadding(),
                         onArticleClick = { id, url ->
                             if (!currentState.isEditMode) {
                                 onIntent(BookmarksIntent.ArticleClick(id, url))

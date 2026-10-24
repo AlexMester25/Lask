@@ -12,6 +12,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ import dev.alexmester.impl.presentation.mvi.ArticleDetailViewModel
 import dev.alexmester.impl.presentation.mvi.contentOrNull
 import dev.alexmester.impl.presentation.mvi.isContent
 import dev.alexmester.ui.R
+import dev.alexmester.ui.components.bottom_bar.LocalBottomBarHeight
 import dev.alexmester.ui.components.notification_screen.LaskNotificationScreen
 import dev.alexmester.ui.components.notification_screen.NotificationType
 import dev.alexmester.ui.components.snackbar.showBookmarkSnackbar
@@ -74,16 +76,20 @@ fun ArticleDetailScreen(
                         snackSwipeController.showBookmarkSnackbar(
                             isBookmarked = effect.isBookmarked,
                             backgroundColor = backgroundColorSnackDefault,
-                            addedText = UiText.StringResource(R.string.bookmark_add).asString(context),
-                            removedText = UiText.StringResource(R.string.bookmark_removed).asString(context),
+                            addedText = UiText.StringResource(R.string.bookmark_add)
+                                .asString(context),
+                            removedText = UiText.StringResource(R.string.bookmark_removed)
+                                .asString(context),
                         )
                     }
+
                     is ArticleDetailSideEffect.ShowError -> {
                         snackSwipeController.showErrorSnackbar(
                             backgroundColor = backgroundColorSnackError,
                             text = NetworkErrorUiMapper.toUiText(effect.errorType).asString(context)
                         )
                     }
+
                     is ArticleDetailSideEffect.ShareUrl -> {
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
@@ -147,16 +153,19 @@ internal fun ArticleDetailScreenContent(
                 }
 
                 is ArticleDetailState.Content -> {
-                    ArticleDetailContent(
-                        article = state.article,
-                        bottomPadding = paddingValues.calculateBottomPadding(),
-                        translatedTitle = state.translatedTitle,
-                        translatedText = state.translatedText,
-                        translationState = state.translationState,
-                        onScrollThresholdReached = {
-                            onIntent(ArticleDetailIntent.ScrollThresholdReached)
-                        },
-                    )
+                    CompositionLocalProvider(
+                        LocalBottomBarHeight provides paddingValues.calculateBottomPadding()
+                    ) {
+                        ArticleDetailContent(
+                            article = state.article,
+                            translatedTitle = state.translatedTitle,
+                            translatedText = state.translatedText,
+                            translationState = state.translationState,
+                            onScrollThresholdReached = {
+                                onIntent(ArticleDetailIntent.ScrollThresholdReached)
+                            },
+                        )
+                    }
                 }
             }
         }
