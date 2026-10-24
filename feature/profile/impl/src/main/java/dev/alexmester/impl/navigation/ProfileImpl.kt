@@ -17,7 +17,7 @@ import dev.alexmester.impl.presentation.profile.ProfileScreen
 import dev.alexmester.impl.presentation.system.SystemScreen
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 
-class ProfileImpl(
+internal class ProfileImpl(
     private val typedArticleListApi: TypedArticleListApi,
     private val interestsApi: InterestsApi
 ) : ProfileApi {

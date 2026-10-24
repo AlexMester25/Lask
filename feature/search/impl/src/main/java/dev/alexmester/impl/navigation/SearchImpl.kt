@@ -10,7 +10,7 @@ import dev.alexmester.api.navigation.SearchRoute
 import dev.alexmester.impl.presentation.SearchScreen
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 
-class SearchImpl(
+internal class SearchImpl(
     private val articleDetailApi: ArticleDetailApi,
 ) : SearchApi {
 

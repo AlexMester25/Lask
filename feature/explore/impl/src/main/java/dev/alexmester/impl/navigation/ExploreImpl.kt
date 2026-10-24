@@ -13,7 +13,7 @@ import dev.alexmester.impl.presentation.ExploreScreen
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-class ExploreImpl(
+internal class ExploreImpl(
     private val articleDetailApi: ArticleDetailApi,
     private val searchApi: SearchApi,
 ) : ExploreApi {

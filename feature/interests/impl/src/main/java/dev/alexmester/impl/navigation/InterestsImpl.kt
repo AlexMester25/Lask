@@ -7,7 +7,7 @@ import dev.alexmester.api.navigation.InterestsApi
 import dev.alexmester.api.navigation.InterestsRoute
 import dev.alexmester.impl.presentation.InterestsScreen
 
-class InterestsImpl: InterestsApi {
+internal class InterestsImpl: InterestsApi {
 
     override fun interestsRoute(): InterestsRoute = InterestsRoute
 

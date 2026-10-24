@@ -11,7 +11,7 @@ import dev.alexmester.impl.presentation.ArticleDetailScreen
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 
 
-class ArticleDetailImpl : ArticleDetailApi {
+internal class ArticleDetailImpl : ArticleDetailApi {
 
     override fun articleDetailRoute(articleId: Long, articleUrl: String) =
         ArticleDetailRoute(articleId = articleId, articleUrl = articleUrl)

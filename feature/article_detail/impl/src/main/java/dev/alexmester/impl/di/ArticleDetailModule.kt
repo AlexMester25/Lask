@@ -1,10 +1,12 @@
 package dev.alexmester.impl.di
 
+import dev.alexmester.api.navigation.ArticleDetailApi
 import dev.alexmester.impl.data.repository.ArticleDetailRepositoryImpl
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
 import dev.alexmester.impl.domain.usecase.ClapArticleUseCase
 import dev.alexmester.impl.domain.usecase.MarkArticleAsReadUseCase
 import dev.alexmester.impl.domain.usecase.TranslateTextsUseCase
+import dev.alexmester.impl.navigation.ArticleDetailImpl
 import dev.alexmester.impl.presentation.mvi.ArticleDetailViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
@@ -12,7 +14,7 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.*
 
 val articleDetail = module {
-
+    single<ArticleDetailImpl>() bind ArticleDetailApi::class
     factory<MarkArticleAsReadUseCase>()
     factory<ClapArticleUseCase>()
     factory<TranslateTextsUseCase>()

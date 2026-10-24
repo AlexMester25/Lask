@@ -10,7 +10,7 @@ import dev.alexmester.api.navigation.BookmarksApi
 import dev.alexmester.impl.presentation.BookmarksScreen
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 
-class BookmarksImpl(
+internal class BookmarksImpl(
     private val articleDetailApi: ArticleDetailApi,
 ) : BookmarksApi {
 

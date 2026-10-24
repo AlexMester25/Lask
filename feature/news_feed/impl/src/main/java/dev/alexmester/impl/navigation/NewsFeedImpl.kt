@@ -12,8 +12,8 @@ import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreen
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-class NewsFeedImpl(
-    val articleDetailApi: ArticleDetailApi,
+internal class NewsFeedImpl(
+    private val articleDetailApi: ArticleDetailApi,
 ) : NewsFeedApi {
 
     override fun feedRoute() = NewsFeedRoute

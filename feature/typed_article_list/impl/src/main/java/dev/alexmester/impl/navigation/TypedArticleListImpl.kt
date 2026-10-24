@@ -12,7 +12,7 @@ import dev.alexmester.api.navigation.TypedArticleListRoute
 import dev.alexmester.impl.presentation.article_list.TypedArticleListScreen
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 
-class TypedArticleListImpl(
+internal class TypedArticleListImpl(
     private val articleDetailApi: ArticleDetailApi,
 ): TypedArticleListApi {
 

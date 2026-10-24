@@ -18,7 +18,6 @@ import dev.alexmester.platform.di.platform
 object AppModules {
     val all = listOf(
         mainModule,
-        featuresNavigation,
         // Core
         network,
         database,
