@@ -30,7 +30,7 @@ import dev.alexmester.ui.desing_system.LaskTypography
 @Composable
 fun InterestsErrorRow(
     modifier: Modifier = Modifier,
-    validationError: InterestError??
+    validationError: InterestError?,
 ) {
     AnimatedVisibility(
         modifier = modifier,

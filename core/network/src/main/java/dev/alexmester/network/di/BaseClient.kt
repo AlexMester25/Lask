@@ -1,5 +1,6 @@
 package dev.alexmester.network.di
 
+import dev.alexmester.network.BuildConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.HttpRequestRetry
@@ -27,7 +28,7 @@ object BaseClient {
 
         install(Logging) {
             logger = Logger.ANDROID
-            level = LogLevel.HEADERS
+            level = if (BuildConfig.DEBUG) LogLevel.HEADERS else LogLevel.NONE
         }
 
         install(HttpTimeout) {

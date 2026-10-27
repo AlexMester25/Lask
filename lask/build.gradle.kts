@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("myapp.android.application")
     id("myapp.android.compose")
@@ -6,10 +8,25 @@ plugins {
     id("myapp.coil")
 //    alias(libs.plugins.baselineprofile)
 }
+val localProperties = Properties().apply {
+    val propsFile = rootProject.file("local.properties")
+    if (propsFile.exists()) propsFile.reader().use { load(it) }
+}
+
+fun secret(name: String): String? = localProperties.getProperty(name) ?: System.getenv(name)
 
 android {
     namespace = "dev.alexmester.lask"
-
+    signingConfigs {
+        create("release") {
+            secret("RELEASE_STORE_FILE")?.let { path ->
+                storeFile = rootProject.file(path)
+                storePassword = secret("RELEASE_STORE_PASSWORD")
+                keyAlias = secret("RELEASE_KEY_ALIAS")
+                keyPassword = secret("RELEASE_KEY_PASSWORD")
+            }
+        }
+    }
     defaultConfig {
         applicationId = "dev.alexmester.lask"
         versionCode = 1
@@ -27,7 +44,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release").takeIf { it.storeFile != null }
         }
         create("benchmark") {
             initWith(buildTypes.getByName("release"))
