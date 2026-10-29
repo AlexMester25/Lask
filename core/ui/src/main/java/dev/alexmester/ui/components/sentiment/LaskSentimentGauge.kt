@@ -152,7 +152,7 @@ fun SentimentText(
 
     Text(
         text = labelText,
-        style = MaterialTheme.LaskTypography.footnoteSemiBold,
+        style = MaterialTheme.LaskTypography.button2,
         color = sentimentColor(sentiment),
         modifier = modifier,
     )

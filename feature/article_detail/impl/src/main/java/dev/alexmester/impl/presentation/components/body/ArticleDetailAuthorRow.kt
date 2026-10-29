@@ -3,7 +3,7 @@ package dev.alexmester.impl.presentation.components.body
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,26 +38,39 @@ internal fun ArticleDetailAuthorRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         sentiment?.let { sentiment ->
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = stringResource(R.string.sentiment_title),
-                    style = MaterialTheme.LaskTypography.footnote,
-                    color = MaterialTheme.LaskColors.brand_blue,
-                )
                 LaskSentimentGauge(
-                    sentiment = sentiment,
                     modifier = Modifier.width(60.dp),
+                    sentiment = sentiment,
                     arcStrokeWidth = 6.dp,
                 )
-                SentimentText(
-                    modifier = Modifier.padding(top = 4.dp),
-                    sentiment = sentiment
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(horizontal = 8.dp),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    SentimentText(
+                        modifier = Modifier,
+                        sentiment = sentiment
+                    )
+                    Text(
+                        text = stringResource(R.string.sentiment_title),
+                        style = MaterialTheme.LaskTypography.footnote,
+                        color = MaterialTheme.LaskColors.textSecondary,
+                    )
+                }
             }
         }
+        VerticalDivider(
+            modifier = Modifier.height(24.dp),
+            color = MaterialTheme.LaskColors.textSecondary
+        )
         Row(
             modifier = Modifier,
             verticalAlignment = Alignment.CenterVertically,
@@ -66,14 +80,17 @@ internal fun ArticleDetailAuthorRow(
                 modifier = Modifier.size(48.dp),
                 char = authors.firstOrNull()?.firstOrNull()?.toString() ?: "?",
             )
-            Column {
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.Start
+            ) {
                 Text(
                     text = authors.firstOrNull() ?: stringResource(R.string.unknown_author),
                     style = MaterialTheme.LaskTypography.body2SemiBold,
                     color = MaterialTheme.LaskColors.textPrimary,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = DateUtils.formatPublishDate(publishDate),
                     style = MaterialTheme.LaskTypography.footnote,
@@ -82,6 +99,5 @@ internal fun ArticleDetailAuthorRow(
                 )
             }
         }
-
     }
 }

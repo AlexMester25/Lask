@@ -25,6 +25,7 @@ internal fun ArticleDetailBody(
             .padding(horizontal = 32.dp)
     ) {
         ArticleDetailCategory(category = article.category)
+        Spacer(modifier = Modifier.height(8.dp))
         ArticleDetailTitle(
             title = article.title,
             articleId = article.id,
