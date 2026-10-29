@@ -1,11 +1,7 @@
 plugins {
-    id("myapp.android.library")
+    id("myapp.kotlin.library")
 }
 
-android {
-    namespace = "dev.alexmester.utils"
-}
-
-dependencies{
+dependencies {
     implementation(project(":core:models"))
 }
