@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -19,27 +20,41 @@ import dev.alexmester.utils.locale.LocaleUtils.countryCodeToFlagEmoji
 
 @Composable
 internal fun ArticleMeta(article: NewsArticle) {
+    val countryCode = article.sourceCountry
+    val flagEmoji = remember(countryCode) {
+        countryCode?.let { countryCodeToFlagEmoji(it) }
+    }
+    val fullCountryName = remember(countryCode) {
+        countryCode?.let { LocaleUtils.countryCodeToFullCountryName(it) }
+    }
+    val formattedCategory = remember(article.category) {
+        article.category?.replaceFirstChar { c -> c.uppercase() }
+    }
+    val formattedDate = remember(article.publishDate) {
+        DateUtils.formatPublishDate(article.publishDate)
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            article.sourceCountry?.let { countryCode ->
+            if (flagEmoji != null && fullCountryName != null) {
                 Text(
-                    text = countryCodeToFlagEmoji(countryCode),
+                    text = flagEmoji,
                     style = MaterialTheme.LaskTypography.footnote
                 )
                 Text(
-                    text = LocaleUtils.countryCodeToFullCountryName(countryCode),
+                    text = fullCountryName,
                     style = MaterialTheme.LaskTypography.footnote,
                     color = MaterialTheme.LaskColors.textSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            article.category?.let {
+            formattedCategory?.let {
                 Text(
-                    text = it.replaceFirstChar { c -> c.uppercase() },
+                    text = it,
                     style = MaterialTheme.LaskTypography.footnote,
                     color = MaterialTheme.LaskColors.informative,
                     maxLines = 1,
@@ -54,7 +69,7 @@ internal fun ArticleMeta(article: NewsArticle) {
         ) {
             article.sentiment?.let { LaskSentimentDot(it) }
             Text(
-                text = DateUtils.formatPublishDate(article.publishDate),
+                text = formattedDate,
                 style = MaterialTheme.LaskTypography.footnote,
                 color = MaterialTheme.LaskColors.textSecondary,
             )

@@ -46,16 +46,13 @@ internal fun DefaultLayout(
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-            .height(IntrinsicSize.Min),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             ArticleTitle(article)
             ArticleMeta(article)
@@ -74,8 +71,7 @@ internal fun DefaultLayout(
         Box(
             modifier = Modifier
                 .animateContentSize()
-                .width(if (selectionMode) 40.dp else 0.dp)
-                .fillMaxHeight(),
+                .width(if (selectionMode) 40.dp else 0.dp),
             contentAlignment = Alignment.Center
         ) {
             LaskBookmarkButton(

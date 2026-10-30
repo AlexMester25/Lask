@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ImageNotSupported
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +40,7 @@ fun ArticleCardImage(
     articleId: Long,
     isRead: Boolean,
 ) {
-
+    val context = LocalContext.current
     val backgroundColor = MaterialTheme.LaskColors.brand_blue10
     val iconTint = MaterialTheme.LaskColors.textSecondary.copy(alpha = 0.4f)
 
@@ -59,18 +60,24 @@ fun ArticleCardImage(
         icon = Icons.Default.ImageNotSupported,
     )
 
+    val imageRequest = remember(imageUrl, context) {
+        imageUrl?.let {
+            ImageRequest.Builder(context)
+                .data(it)
+                .crossfade(true)
+                .placeholderMemoryCacheKey(it)
+                .build()
+        }
+    }
+
     val sizeMod = modifier
         .sharedElementIfAvailable(key = "image_$articleId")
         .clip(RoundedCornerShape(8.dp))
 
     Box(modifier = sizeMod) {
-        if (imageUrl != null) {
+        if (imageRequest != null) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUrl)
-                    .crossfade(true)
-                    .placeholderMemoryCacheKey(imageUrl)
-                    .build(),
+                model = imageRequest,
                 contentDescription = title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
@@ -79,7 +86,7 @@ fun ArticleCardImage(
             )
         } else {
             Image(
-                modifier = sizeMod,
+                modifier = Modifier.fillMaxSize(),
                 painter = emptyPainter,
                 contentDescription = null
             )

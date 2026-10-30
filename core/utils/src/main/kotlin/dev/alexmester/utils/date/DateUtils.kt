@@ -9,6 +9,8 @@ import java.util.Locale
 
 object DateUtils {
 
+    private val publishDateInputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
     fun formatCachedAtDate(timestamp: Long): String {
         val localDate = Instant.ofEpochMilli(timestamp)
             .atZone(ZoneId.systemDefault())
@@ -20,11 +22,14 @@ object DateUtils {
     }
 
     fun formatPublishDate(dateString: String): String {
-        val localDateTime = LocalDateTime
-            .parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        return DateTimeFormatter
-            .ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT)
-            .withLocale(Locale.getDefault())
-            .format(localDateTime)
+        return try {
+            val localDateTime = LocalDateTime.parse(dateString, publishDateInputFormatter)
+            DateTimeFormatter
+                .ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT)
+                .withLocale(Locale.getDefault())
+                .format(localDateTime)
+        } catch (_: Exception) {
+            dateString
+        }
     }
 }

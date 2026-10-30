@@ -21,6 +21,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -157,18 +158,21 @@ internal fun NewsFeedScreenContent(
                                     )
                                 }
                             }
+                            val onClickArticle = remember(onIntent) {
+                                { articleId: Long, articleUrl: String ->
+                                    onIntent(
+                                        NewsFeedIntent.ArticleClick(
+                                            articleId = articleId,
+                                            articleUrl = articleUrl
+                                        )
+                                    )
+                                }
+                            }
                             NewsFeedList(
                                 modifier = Modifier,
                                 state = currentState,
                                 readArticleIds = readArticleIds,
-                                onClickArticle = { artilceId, arlicteUrl ->
-                                    onIntent(
-                                        NewsFeedIntent.ArticleClick(
-                                            articleId = artilceId,
-                                            articleUrl = arlicteUrl
-                                        )
-                                    )
-                                }
+                                onClickArticle = onClickArticle
                             )
                         }
                     }
