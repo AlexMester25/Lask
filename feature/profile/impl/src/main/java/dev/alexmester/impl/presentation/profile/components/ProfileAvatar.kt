@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +36,16 @@ internal fun ProfileAvatar(
     isEdit: Boolean,
     onClick: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val imageRequest = remember(displayUri, context) {
+        displayUri?.let {
+            ImageRequest.Builder(context)
+                .data(it)
+                .crossfade(true)
+                .build()
+        }
+    }
+
     val colorStops = arrayOf(
         0.0f to MaterialTheme.LaskColors.brand_blue10,
         0.4f to MaterialTheme.LaskColors.brand_blue10.copy(alpha = 0.4f),
@@ -80,12 +91,9 @@ internal fun ProfileAvatar(
                     .zIndex(1f)
             )
         }
-        if (displayUri != null) {
+        if (imageRequest != null) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(displayUri)
-                    .crossfade(true)
-                    .build(),
+                model = imageRequest,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

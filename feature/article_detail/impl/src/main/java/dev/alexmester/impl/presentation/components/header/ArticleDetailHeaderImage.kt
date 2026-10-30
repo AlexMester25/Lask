@@ -42,20 +42,28 @@ internal fun ArticleDetailHeaderImage(
             animationSpec = tween(durationMillis = 300),
         )
     }
+    val context = LocalContext.current
+    val imageRequest = remember(image, context) {
+        image?.let {
+            ImageRequest.Builder(context)
+                .data(it)
+                .placeholderMemoryCacheKey(it)
+                .crossfade(true)
+                .build()
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(280.dp + statusBarHeight)
     ) {
-        if (image != null) {
+        if (imageRequest != null) {
             Box(
                 modifier = modifier.sharedElementIfAvailable(key = "image_$articleId")
             ){
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(image)
-                        .crossfade(false)
-                        .build(),
+                    model = imageRequest,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
