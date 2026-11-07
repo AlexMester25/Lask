@@ -72,6 +72,9 @@ internal fun ArticleMeta(article: NewsArticle) {
                 text = formattedDate,
                 style = MaterialTheme.LaskTypography.footnote,
                 color = MaterialTheme.LaskColors.textSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                softWrap = false,
             )
             article.authors.firstOrNull()?.let { author ->
                 Text(

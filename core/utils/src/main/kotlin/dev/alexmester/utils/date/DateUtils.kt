@@ -25,7 +25,7 @@ object DateUtils {
         return try {
             val localDateTime = LocalDateTime.parse(dateString, publishDateInputFormatter)
             DateTimeFormatter
-                .ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT)
+                .ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT)
                 .withLocale(Locale.getDefault())
                 .format(localDateTime)
         } catch (_: Exception) {
