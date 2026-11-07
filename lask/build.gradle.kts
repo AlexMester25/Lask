@@ -6,7 +6,7 @@ plugins {
     id("myapp.koin")
     id("myapp.kotlin.serialization")
     id("myapp.coil")
-//    alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.baselineprofile)
 }
 val localProperties = Properties().apply {
     val propsFile = rootProject.file("local.properties")
@@ -46,12 +46,6 @@ android {
             )
             signingConfig = signingConfigs.getByName("release").takeIf { it.storeFile != null }
         }
-        create("benchmark") {
-            initWith(buildTypes.getByName("release"))
-            signingConfig = signingConfigs.getByName("debug")
-            isDebuggable = false
-            matchingFallbacks += listOf("release")
-        }
         debug {
             isMinifyEnabled = false
         }
@@ -81,12 +75,11 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.profileinstaller)
 
-//    "baselineProfile"(project(":macrobenchmark"))
+    baselineProfile(project(":macrobenchmark"))
 }
-// Настройки генерации профиля
-//baselineProfile {
-//    baselineProfileOutputDir = "src/main"
-//    automaticGenerationDuringBuild = false
-//    saveInSrc = true
-//    mergeIntoMain = true
-//}
+
+baselineProfile {
+    automaticGenerationDuringBuild = false
+    saveInSrc = true
+    mergeIntoMain = true
+}

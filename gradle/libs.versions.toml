@@ -54,8 +54,7 @@ androidxTestUiautomator = "2.3.0"
 turbine = "1.2.1"
 
 # Benchmark / Profile
-benchmarkMacroJunit4 = "1.2.0-beta01"
-androidxBenchmark = "1.4.1"
+androidxBenchmark = "1.5.0"
 profileinstaller = "1.4.1"
 
 
@@ -145,7 +144,6 @@ androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomato
 
 # -------------------- Benchmark --------------------
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxBenchmark" }
-androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 
 

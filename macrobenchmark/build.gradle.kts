@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.test)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -22,28 +23,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        create("benchmark") {
-            isDebuggable = false
-            signingConfig = getByName("debug").signingConfig
-            matchingFallbacks += listOf("release")
-        }
-    }
-
+    // Синтетические build type-ы (nonMinifiedRelease и benchmarkRelease)
+    // создаёт плагин androidx.baselineprofile.
     targetProjectPath = ":lask"
-    experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 
 dependencies {
     implementation(libs.androidx.junit)
     implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.uiautomator)
-    implementation(libs.androidx.benchmark.macro.junit4)
+    implementation(libs.androidx.benchmark.macro)
     implementation(libs.androidx.profileinstaller)
-}
-
-androidComponents {
-    beforeVariants(selector().all()) {
-        it.enable = it.buildType == "benchmark"
-    }
 }
