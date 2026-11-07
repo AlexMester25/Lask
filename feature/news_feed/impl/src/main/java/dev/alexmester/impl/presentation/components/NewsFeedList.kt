@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import dev.alexmester.newsfeed.impl.presentation.components.NewsFeedClusterStickyHeader
 import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
 import dev.alexmester.ui.components.bottom_bar.LocalBottomBarHeight
@@ -21,7 +22,9 @@ internal fun NewsFeedList(
 ) {
     LazyColumn(
         contentPadding = PaddingValues(bottom = LocalBottomBarHeight.current),
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag("feed_list"),
     ) {
         state.clusters.forEach { cluster ->
             stickyHeader(
@@ -41,7 +44,9 @@ internal fun NewsFeedList(
                     { onClickArticle(article.id, article.url) }
                 }
                 LaskArticleCard(
-                    modifier = Modifier.animateItem(),
+                    modifier = Modifier
+                        .animateItem()
+                        .testTag("article_card"),
                     article = article,
                     isRead = article.id in readArticleIds,
                     onClick = onClick

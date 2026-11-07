@@ -1,5 +1,6 @@
 package dev.alexmester.newsfeed.impl.presentation.feed
 
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -99,6 +100,8 @@ internal fun NewsFeedScreenContent(
     stateRefreshBox: PullToRefreshState,
     onIntent: (NewsFeedIntent) -> Unit,
 ) {
+    ReportDrawnWhen { state !is NewsFeedState.Loading }
+
     Scaffold(
         topBar = { NewsFeedTopBar(state = state) }
     ) { paddingValues ->

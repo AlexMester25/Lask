@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import dev.alexmester.impl.presentation.components.body.ArticleDetailBody
 import dev.alexmester.impl.presentation.components.common.rememberScrollThreshold
 import dev.alexmester.impl.presentation.components.header.ArticleDetailHeaderImage
@@ -41,6 +42,7 @@ internal fun ArticleDetailContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
+                .testTag("article_detail_scroll")
         ) {
             ArticleDetailHeaderImage(
                 image = article.image,

@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -65,7 +67,11 @@ fun RootScreen(navController: NavHostController) {
             SharedTransitionLocals.LocalSharedTransitionScope provides this,
             LocalBottomBarHeight provides bottomBarHeight,
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .semantics { testTagsAsResourceId = true }
+            ) {
                 NavHost(
                     navController = navController,
                     startDestination = NewsFeedRoute,
