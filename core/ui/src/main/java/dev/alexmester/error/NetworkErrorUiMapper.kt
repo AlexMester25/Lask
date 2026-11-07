@@ -20,10 +20,30 @@ object NetworkErrorUiMapper {
 
     fun toUiText(error: NetworkError): UiText = when (error) {
         is NetworkError.NoInternet -> UiText.StringResource(R.string.error_no_internet)
+        is NetworkError.Timeout -> UiText.StringResource(R.string.error_timeout)
         is NetworkError.PaymentRequired -> UiText.StringResource(R.string.error_payment_required)
-        is NetworkError.RateLimit -> UiText.StringResource(R.string.error_rate_limit)
+        is NetworkError.RateLimit -> error.toUiText()
         is NetworkError.BadGateway -> UiText.StringResource(R.string.error_server)
         is NetworkError.TranslateError -> UiText.StringResource(R.string.error_translation_failed)
+        is NetworkError.ParseError -> UiText.StringResource(R.string.error_parse)
+        is NetworkError.HttpError -> error.toUiText()
+        is NetworkError.Unknown -> UiText.StringResource(R.string.error_unknown)
+    }
+
+    private fun NetworkError.RateLimit.toUiText(): UiText =
+        retryAfterSeconds?.let { seconds ->
+            UiText.StringResource(R.string.error_rate_limit_retry, args = arrayOf(seconds))
+        } ?: UiText.StringResource(R.string.error_rate_limit)
+
+    private fun NetworkError.HttpError.toUiText(): UiText = when (code) {
+        400 -> UiText.StringResource(R.string.error_bad_request)
+        401 -> UiText.StringResource(R.string.error_unauthorized)
+        403 -> UiText.StringResource(R.string.error_forbidden)
+        404 -> UiText.StringResource(R.string.error_not_found)
+        408 -> UiText.StringResource(R.string.error_timeout)
+        429 -> UiText.StringResource(R.string.error_rate_limit)
+        in 500..599 -> UiText.StringResource(R.string.error_server)
+        in 400..499 -> UiText.StringResource(R.string.error_bad_request)
         else -> UiText.StringResource(R.string.error_unknown)
     }
 
@@ -33,7 +53,12 @@ object NetworkErrorUiMapper {
             is NetworkError.NoInternet -> ImageVector.vectorResource(R.drawable.ic_no_internet_error)
             is NetworkError.PaymentRequired -> ImageVector.vectorResource(R.drawable.ic_payment_required)
             is NetworkError.RateLimit -> ImageVector.vectorResource(R.drawable.ic_rate_limit_error)
-            else -> ImageVector.vectorResource(R.drawable.ic_unknow_error)
+            is NetworkError.Timeout,
+            is NetworkError.BadGateway,
+            is NetworkError.TranslateError,
+            is NetworkError.ParseError,
+            is NetworkError.HttpError,
+            is NetworkError.Unknown -> ImageVector.vectorResource(R.drawable.ic_unknow_error)
         }
         return NotificationUi(
             image = image,

@@ -5,13 +5,19 @@
     <string name="error_no_internet">No internet connection</string>
     <string name="error_payment_required">Daily quota exceeded</string>
     <string name="error_rate_limit">Request limit exceeded.\nTry again later</string>
-    <string name="error_unknown">Unknown error</string>
+    <string name="error_unknown">Something went wrong.\nPlease try again</string>
     <string name="error_article_not_found">Article not found</string>
     <string name="error_news_empty">There is no news yet</string>
     <string name="error_retry">Retry</string>
     <string name="error_translation_failed">Translation failed. Please try again.</string>
-    <string name="error_translation_text_too_long">Text is too long to translate</string>
     <string name="error_server">Server Error</string>
+    <string name="error_timeout">Request timed out.\nCheck your connection</string>
+    <string name="error_parse">Could not process the server response</string>
+    <string name="error_bad_request">Invalid request</string>
+    <string name="error_unauthorized">Authorization required</string>
+    <string name="error_forbidden">Access denied</string>
+    <string name="error_not_found">Requested data not found</string>
+    <string name="error_rate_limit_retry">Request limit exceeded.\nTry again in %1$d s</string>
 
 
     <!-- common warning -->
@@ -39,7 +45,6 @@
     <string name="welcome_explore">Explore →</string>
 
     <string name="article_read">Read</string>
-    <string name="article_is_empty">No articles yet…</string>
 
     <!-- Offline Banner -->
     <string name="offline_banner_with_time">Offline · updated at %1$s</string>
@@ -47,9 +52,6 @@
 
     <!-- Sentiment Text -->
     <string name="sentiment_title">Sentiment</string>
-    <string name="sentiment_positive">Positive</string>
-    <string name="sentiment_neutral">Neutral</string>
-    <string name="sentiment_negative">Negative</string>
 
     <!-- Common -->
     <string name="unknown_author">Unknown author</string>
@@ -72,7 +74,6 @@
     <string name="interests_just_for_you">Just For You</string>
     <string name="interests_text_field_placeholder">Write you interests</string>
     <string name="interests_add">Add</string>
-    <string name="interests_you_interests">You Interests</string>
     <string name="interests_you_not_added">You not added any interests</string>
     <string name="interests_error_too_short">At least 2 characters required</string>
     <string name="interests_error_too_long">Maximum 30 characters allowed</string>

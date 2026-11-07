@@ -20,10 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import dev.alexmester.ui.R
 import dev.alexmester.ui.desing_system.LaskColors
 import dev.alexmester.ui.desing_system.LaskPalette
 import dev.alexmester.ui.desing_system.LaskTypography
@@ -183,13 +181,6 @@ private fun DrawScope.drawNeedle(
         strokeWidth = strokePx * 0.6f,
         cap = StrokeCap.Round,
     )
-}
-
-@Composable
-private fun sentimentLabel(sentiment: Double): String = when {
-    sentiment > 0.1 -> stringResource(R.string.sentiment_positive)
-    sentiment < -0.1 -> stringResource(R.string.sentiment_negative)
-    else -> stringResource(R.string.sentiment_neutral)
 }
 
 private fun sentimentColor(sentiment: Double): Color = when {

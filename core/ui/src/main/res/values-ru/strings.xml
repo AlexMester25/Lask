@@ -5,13 +5,19 @@
     <string name="error_no_internet">Нет подключения к сети</string>
     <string name="error_payment_required">Дневная квота исчерпана</string>
     <string name="error_rate_limit">Превышен лимит запросов. Попробуйте позже</string>
-    <string name="error_unknown">Ошибка загрузки новостей</string>
+    <string name="error_unknown">Что-то пошло не так.\nПопробуйте еще раз</string>
     <string name="error_article_not_found">Статья не найдена</string>
     <string name="error_news_empty">Новостей пока нет</string>
     <string name="error_retry">Повторить</string>
     <string name="error_translation_failed">Перевод не удался, попробуйте еще раз.</string>
-    <string name="error_translation_text_too_long">Текст слишком длинный для перевода</string>
     <string name="error_server">Ошибка сервера</string>
+    <string name="error_timeout">Превышено время ожидания.\nПроверьте соединение</string>
+    <string name="error_parse">Не удалось обработать ответ сервера</string>
+    <string name="error_bad_request">Некорректный запрос</string>
+    <string name="error_unauthorized">Требуется авторизация</string>
+    <string name="error_forbidden">Доступ запрещен</string>
+    <string name="error_not_found">Запрашиваемые данные не найдены</string>
+    <string name="error_rate_limit_retry">Превышен лимит запросов.\nПовторите через %1$d сек</string>
 
     <!-- common warning -->
     <string name="warning_no_articles">Статей пока нет</string>
@@ -38,7 +44,6 @@
     <string name="welcome_explore">Исследовать →</string>
 
     <string name="article_read">Прочитано</string>
-    <string name="article_is_empty">Статей пока нет…</string>
 
     <!-- Offline Banner -->
     <string name="offline_banner_with_time">Офлайн · обновлено %1$s</string>
@@ -46,9 +51,6 @@
 
     <!-- Sentiment Text -->
     <string name="sentiment_title">Настроение</string>
-    <string name="sentiment_positive">Позитивная</string>
-    <string name="sentiment_neutral">Нейтральная</string>
-    <string name="sentiment_negative">Негативная</string>
 
     <!-- Common -->
     <string name="unknown_author">Автор неизвестен</string>
@@ -71,7 +73,6 @@
     <string name="interests_just_for_you">Для Тебя</string>
     <string name="interests_text_field_placeholder">Напишите интересы</string>
     <string name="interests_add">Добавить</string>
-    <string name="interests_you_interests">Ваши интересы</string>
     <string name="interests_you_not_added">Вы не добавили никаких интересов.</string>
     <string name="interests_error_too_short">Минимум 2 символа</string>
     <string name="interests_error_too_long">Максимум 30 символов</string>
