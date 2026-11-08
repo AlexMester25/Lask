@@ -63,11 +63,15 @@ internal fun DefaultLayout(
                 .width(if (selectionMode) 40.dp else 0.dp),
             contentAlignment = Alignment.Center
         ) {
-            LaskBookmarkButton(
-                isBookmarked = isKept,
-                onClick = onBookmarkToggle,
-                style = BookmarkButtonStyle.Standalone,
-            )
+            // Кнопка нужна только в режиме выделения (edit mode в закладках). Вне его
+            // она измеряется в 0dp, но компонируется на каждой карточке — убираем эту работу.
+            if (selectionMode) {
+                LaskBookmarkButton(
+                    isBookmarked = isKept,
+                    onClick = onBookmarkToggle,
+                    style = BookmarkButtonStyle.Standalone,
+                )
+            }
         }
     }
 }
