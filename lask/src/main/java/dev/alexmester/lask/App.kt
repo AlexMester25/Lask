@@ -9,6 +9,11 @@ import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.crossfade
 import dev.alexmester.lask.di.AppModules
+import dev.alexmester.lask.startup.TextStackWarmup
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
@@ -21,6 +26,8 @@ import java.util.concurrent.TimeUnit
 
 class App : Application(), SingletonImageLoader.Factory {
 
+    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     override fun onCreate() {
         super.onCreate()
         startKoin {
@@ -28,6 +35,9 @@ class App : Application(), SingletonImageLoader.Factory {
             androidContext(this@App)
             modules(AppModules.all)
         }
+        // Разогрев текстового стека в фоне: первая реальная раскладка в UI дешевеет
+        // примерно на 20 мс (см. TextStackWarmup).
+        appScope.launch { TextStackWarmup.warmUp(this@App) }
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
