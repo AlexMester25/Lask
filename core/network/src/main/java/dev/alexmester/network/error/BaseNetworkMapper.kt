@@ -1,46 +1,54 @@
 package dev.alexmester.network.error
 
 import dev.alexmester.models.error.NetworkError
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
+import io.ktor.http.HttpHeaders
+import io.ktor.serialization.ContentConvertException
 import kotlinx.serialization.SerializationException
-import java.net.ConnectException
-import java.net.SocketException
+import java.io.IOException
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 import kotlin.coroutines.cancellation.CancellationException
 
-
 abstract class BaseNetworkMapper : NetworkErrorMapper {
+
     override fun map(throwable: Throwable): NetworkError {
-        check(throwable !is CancellationException) {
-            "CancellationException must not be mapped"
-        }
+        if (throwable is CancellationException) throw throwable
         return when (throwable) {
             is NetworkError -> throwable
-            is HttpRequestTimeoutException -> NetworkError.Timeout()
+            is HttpRequestTimeoutException,
+            is SocketTimeoutException -> NetworkError.Timeout()
+            // TCP connect timeout обычно означает недоступность сети, а не медленный сервер.
+            is ConnectTimeoutException -> NetworkError.NoInternet()
             is UnknownHostException,
             is UnresolvedAddressException,
-            is ConnectException,
-            is SocketException -> NetworkError.NoInternet()
+            is IOException -> NetworkError.NoInternet()
+            // Ktor оборачивает ошибки kotlinx.serialization в ContentConvertException,
+            // поэтому исходный SerializationException сам по себе не встретится.
+            is ContentConvertException,
             is SerializationException -> NetworkError.ParseError(cause = throwable)
             is ResponseException -> mapHttpError(throwable)
             else -> NetworkError.Unknown(cause = throwable, message = throwable.message)
         }
     }
 
-    protected open fun mapHttpError(throwable: ResponseException): NetworkError {
-        val status = throwable.response.status.value
-        return when (status) {
-            402 -> NetworkError.PaymentRequired()
-            502 -> NetworkError.BadGateway()
-            429 -> {
-                val retryAfter = throwable.response.headers["Retry-After"]?.toLongOrNull()
-                NetworkError.RateLimit(retryAfterSeconds = retryAfter)
-            }
-            in 400..499 -> NetworkError.HttpError(status, throwable.response.status.description)
-            in 500..599 -> NetworkError.HttpError(status, throwable.response.status.description)
-            else -> NetworkError.HttpError(status)
-        }
+    protected open fun mapHttpError(throwable: ResponseException): NetworkError = mapHttpStatus(
+        status = throwable.response.status.value,
+        description = throwable.response.status.description,
+        retryAfter = throwable.response.headers[HttpHeaders.RetryAfter],
+    )
+
+    internal open fun mapHttpStatus(
+        status: Int,
+        description: String? = null,
+        retryAfter: String? = null,
+    ): NetworkError = when (status) {
+        402 -> NetworkError.PaymentRequired()
+        429 -> NetworkError.RateLimit(retryAfterSeconds = retryAfter?.toLongOrNull())
+        502 -> NetworkError.BadGateway()
+        else -> NetworkError.HttpError(status, description)
     }
 }
