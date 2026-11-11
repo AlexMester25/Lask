@@ -15,6 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.alexmester.impl.presentation.components.BookmarksList
 import dev.alexmester.impl.presentation.components.BookmarksTopBar
@@ -35,6 +37,13 @@ fun BookmarksScreen(
     viewModel: BookmarksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    // Режим удаления — временное состояние экрана. При уходе на другой экран
+    // (в т.ч. на другую вкладку с сохранением состояния) сбрасываем его,
+    // чтобы при возврате не оставался активным режим редактирования.
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
+        viewModel.handleIntent(BookmarksIntent.CancelDeletion)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffects.collect { effect ->
