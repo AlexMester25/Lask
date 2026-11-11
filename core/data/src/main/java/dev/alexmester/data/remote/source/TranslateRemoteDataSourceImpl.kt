@@ -1,7 +1,7 @@
 package dev.alexmester.data.remote.source
 
 import dev.alexmester.data.error.NetworkErrorMapper
-import dev.alexmester.data.extension.safeApiCall
+import dev.alexmester.data.extension.runNetworkResult
 import dev.alexmester.data.remote.api.TranslateApiService
 import dev.alexmester.domain.source.TranslateRemoteDataSource
 import dev.alexmester.models.result.AppResult
@@ -16,7 +16,7 @@ internal class TranslateRemoteDataSourceImpl(
         text: String,
         sourceLanguage: String?,
         targetLanguage: String
-    ): AppResult<String> = safeApiCall(errorMapper){
+    ): AppResult<String> = runNetworkResult(errorMapper){
         api.translate(
             text = text,
             sourceLanguage = sourceLanguage,

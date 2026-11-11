@@ -38,7 +38,7 @@ import dev.alexmester.api.navigation.TypedArticleListApi
 import dev.alexmester.lask.app_bottom_navigation.AppBottomBar
 import dev.alexmester.navigation.register
 import dev.alexmester.ui.components.bottom_bar.LocalBottomBarHeight
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState

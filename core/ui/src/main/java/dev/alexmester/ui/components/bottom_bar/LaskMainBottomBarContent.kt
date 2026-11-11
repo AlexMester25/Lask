@@ -21,8 +21,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTypography
 
 @Composable
 fun LaskMainBottomBarContent(item: LaskMainBottomBarItem) {

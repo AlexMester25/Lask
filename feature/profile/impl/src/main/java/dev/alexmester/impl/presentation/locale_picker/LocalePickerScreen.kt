@@ -25,7 +25,7 @@ import dev.alexmester.impl.presentation.locale_picker.mvi.LocalePickerSideEffect
 import dev.alexmester.impl.presentation.locale_picker.mvi.LocalePickerState
 import dev.alexmester.impl.presentation.locale_picker.mvi.LocalePickerViewModel
 import dev.alexmester.ui.components.locale.LaskLocaleRowItem
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 

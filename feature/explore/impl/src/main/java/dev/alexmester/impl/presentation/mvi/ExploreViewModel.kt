@@ -3,8 +3,8 @@ package dev.alexmester.impl.presentation.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.domain.repository.ArticleRepository
-import dev.alexmester.error.AppErrorUiMapper
-import dev.alexmester.impl.domain.model.RefreshResult
+import dev.alexmester.ui.error.AppErrorUiMapper
+import dev.alexmester.impl.domain.model.RefreshExploreResult
 import dev.alexmester.impl.domain.repository.ExploreRepository
 import dev.alexmester.impl.domain.usecase.LoadMoreExploreUseCase
 import dev.alexmester.impl.domain.usecase.RefreshExploreUseCase
@@ -126,11 +126,11 @@ class ExploreViewModel(
         }
     }
 
-    private fun handleRefreshResult(result: RefreshResult) {
+    private fun handleRefreshResult(result: RefreshExploreResult) {
         val hasCache = _state.value.isContent
 
         when (result) {
-            is RefreshResult.NoInterests -> {
+            is RefreshExploreResult.NoInterests -> {
                 _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
                 handleEmptyResult(
                     hasCache = hasCache,
@@ -139,7 +139,7 @@ class ExploreViewModel(
                 )
             }
 
-            is RefreshResult.EmptySearchResult -> {
+            is RefreshExploreResult.EmptySearchResult -> {
                 _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
                 handleEmptyResult(
                     hasCache = hasCache,
@@ -148,7 +148,7 @@ class ExploreViewModel(
                 )
             }
 
-            is RefreshResult.Updated -> _state.update { current ->
+            is RefreshExploreResult.Updated -> _state.update { current ->
                 ExploreState.Content(
                     articles = current.contentOrNull?.articles.orEmpty(),
                     isRefreshing = false,
@@ -162,9 +162,9 @@ class ExploreViewModel(
         }
     }
 
-    private fun handleLoadMoreResult(result: RefreshResult) {
+    private fun handleLoadMoreResult(result: RefreshExploreResult) {
         when (result) {
-            is RefreshResult.NoInterests -> {
+            is RefreshExploreResult.NoInterests -> {
                 _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
                 emitSideEffect(
                     ExploreSideEffect.ShowWarning(
@@ -172,7 +172,7 @@ class ExploreViewModel(
                     )
                 )
             }
-            is RefreshResult.EmptySearchResult -> {
+            is RefreshExploreResult.EmptySearchResult -> {
                 _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
                 emitSideEffect(
                     ExploreSideEffect.ShowWarning(
@@ -180,7 +180,7 @@ class ExploreViewModel(
                     )
                 )
             }
-            is RefreshResult.Updated -> {
+            is RefreshExploreResult.Updated -> {
                 _state.updateContent {
                     it.copy(
                         isLoadingMore = false,

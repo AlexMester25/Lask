@@ -36,7 +36,7 @@ import dev.alexmester.ui.components.notification_screen.NotificationType
 import dev.alexmester.ui.components.pull_to_refresh_box.LaskPullToRefreshBox
 import dev.alexmester.ui.components.snackbar.showErrorSnackbar
 import dev.alexmester.ui.components.snackbar.showWarningSnackbar
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

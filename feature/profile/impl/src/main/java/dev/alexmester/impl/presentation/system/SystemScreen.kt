@@ -31,8 +31,8 @@ import dev.alexmester.impl.presentation.system.mvi.SystemState
 import dev.alexmester.impl.presentation.system.mvi.SystemViewModel
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.buttons.LaskTextButton
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTypography
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

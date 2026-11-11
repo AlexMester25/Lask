@@ -14,8 +14,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import com.snackbar.snackswipe.SnackSwipeController
 import com.snackbar.snackswipe.showSnackSwipe
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTypography
 
 fun SnackSwipeController.showBookmarkSnackbar(
     isBookmarked: Boolean,

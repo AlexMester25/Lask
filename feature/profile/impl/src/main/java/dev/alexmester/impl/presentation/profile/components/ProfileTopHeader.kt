@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.alexmester.impl.presentation.profile.mvi.ProfileIntent
-import dev.alexmester.ui.desing_system.LaskTheme
+import dev.alexmester.ui.design_system.LaskTheme
 
 @Composable
 internal fun ProfileTopHeader(

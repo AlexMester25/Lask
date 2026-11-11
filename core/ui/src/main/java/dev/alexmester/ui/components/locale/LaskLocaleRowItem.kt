@@ -19,8 +19,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.alexmester.models.locale.LocaleItem
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTypography
 
 @Composable
 fun LaskLocaleRowItem(

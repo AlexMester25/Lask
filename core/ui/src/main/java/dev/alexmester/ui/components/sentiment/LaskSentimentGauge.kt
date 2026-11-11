@@ -22,9 +22,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskPalette
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskPalette
+import dev.alexmester.ui.design_system.LaskTypography
 import kotlin.math.cos
 import kotlin.math.sin
 

@@ -21,7 +21,7 @@ import dev.alexmester.impl.presentation.profile.mvi.ProfileIntent
 import dev.alexmester.impl.presentation.profile.mvi.ProfileSideEffect
 import dev.alexmester.impl.presentation.profile.mvi.ProfileState
 import dev.alexmester.impl.presentation.profile.mvi.ProfileViewModel
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

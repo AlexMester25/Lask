@@ -8,7 +8,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 
 @Composable
 fun LaskPullToRefreshBox(

@@ -10,7 +10,7 @@ import kotlin.coroutines.cancellation.CancellationException
 /**
  * Выполняет сетевой вызов и приводит его сбой к типизированной [NetworkError].
  */
-suspend fun <T> safeApiCall(
+suspend fun <T> runNetworkResult(
     mapper: NetworkErrorMapper,
     block: suspend () -> T,
 ): AppResult<T> {

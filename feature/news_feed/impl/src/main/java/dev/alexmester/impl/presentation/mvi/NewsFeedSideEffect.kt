@@ -1,4 +1,4 @@
-package dev.alexmester.newsfeed.impl.presentation.feed
+package dev.alexmester.impl.presentation.mvi
 
 import dev.alexmester.models.error.AppError
 import dev.alexmester.ui.uitext.UiText

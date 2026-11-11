@@ -23,8 +23,8 @@ import dev.alexmester.ui.R
 import dev.alexmester.ui.components.avatars.AuthorAvatar
 import dev.alexmester.ui.components.sentiment.LaskSentimentGauge
 import dev.alexmester.ui.components.sentiment.SentimentText
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTypography
 import dev.alexmester.utils.date.DateUtils
 
 /**

@@ -3,7 +3,7 @@ package dev.alexmester.impl.presentation.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.domain.repository.ArticleRepository
-import dev.alexmester.error.AppErrorUiMapper
+import dev.alexmester.ui.error.AppErrorUiMapper
 import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.domain.model.SearchFilters
 import dev.alexmester.impl.domain.repository.SearchRepository

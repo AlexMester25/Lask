@@ -3,8 +3,8 @@ package dev.alexmester.ui.components.sentiment
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import dev.alexmester.ui.desing_system.LaskPalette
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskPalette
+import dev.alexmester.ui.design_system.LaskTypography
 
 @Composable
 fun LaskSentimentDot(sentiment: Double) {

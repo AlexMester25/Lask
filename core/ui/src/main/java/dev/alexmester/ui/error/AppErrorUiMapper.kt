@@ -1,4 +1,4 @@
-package dev.alexmester.error
+package dev.alexmester.ui.error
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -9,7 +9,7 @@ import dev.alexmester.models.error.AppError
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.error.StorageError
 import dev.alexmester.ui.R
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 import dev.alexmester.ui.uitext.UiText
 
 data class NotificationUi(
@@ -75,7 +75,7 @@ object AppErrorUiMapper {
             is NetworkError.ParseError,
             is NetworkError.HttpError,
             is NetworkError.Unknown,
-            is StorageError -> ImageVector.vectorResource(R.drawable.ic_unknow_error)
+            is StorageError -> ImageVector.vectorResource(R.drawable.ic_unknown_error)
         }
         return NotificationUi(
             image = image,

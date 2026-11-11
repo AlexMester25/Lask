@@ -5,7 +5,7 @@ import dev.alexmester.domain.cache.FeedType
 import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.domain.source.NewsRemoteDataSource
 import dev.alexmester.impl.domain.model.ExploreQuery
-import dev.alexmester.impl.domain.model.RefreshResult
+import dev.alexmester.impl.domain.model.RefreshExploreResult
 import dev.alexmester.impl.domain.repository.ExploreRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.news.NewsCluster
@@ -45,21 +45,21 @@ class ExploreRepositoryImpl(
         force: Boolean,
         query: String,
         language: String
-    ): AppResult<RefreshResult> =
+    ): AppResult<RefreshExploreResult> =
         withContext(dispatchers.io) {
             if (!force && feedCache.isFresh(FeedType.EXPLORE, CACHE_TTL_MS)) {
-                return@withContext AppResult.Success(RefreshResult.CacheFresh)
+                return@withContext AppResult.Success(RefreshExploreResult.CacheFresh)
             }
             when (val result = fetchPage(query, language, offset = 0)) {
                 is AppResult.Failure -> result
                 is AppResult.Success -> {
                     if (result.data.isEmpty()) {
-                        return@withContext AppResult.Success(RefreshResult.EmptySearchResult)
+                        return@withContext AppResult.Success(RefreshExploreResult.EmptySearchResult)
                     }
                     feedCache.replace(
                         FeedType.EXPLORE,
                         listOf(NewsCluster(id = 0, articles = result.data)),
-                    ).map { RefreshResult.Updated(result.data.size) }
+                    ).map { RefreshExploreResult.Updated(result.data.size) }
                 }
             }
         }
@@ -68,17 +68,17 @@ class ExploreRepositoryImpl(
         query: String,
         language: String,
         offset: Int
-    ): AppResult<RefreshResult> =
+    ): AppResult<RefreshExploreResult> =
         withContext(dispatchers.io) {
             when (val result = fetchPage(query, language, offset)) {
                 is AppResult.Failure -> result
                 is AppResult.Success -> {
                     if (result.data.isEmpty()) {
-                        return@withContext AppResult.Success(RefreshResult.EmptySearchResult)
+                        return@withContext AppResult.Success(RefreshExploreResult.EmptySearchResult)
                     }
                     feedCache
                         .append(FeedType.EXPLORE, result.data, positionStart = offset)
-                        .map { RefreshResult.Updated(result.data.size) }
+                        .map { RefreshExploreResult.Updated(result.data.size) }
                 }
             }
         }

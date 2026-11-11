@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskPalette
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskPalette
 
 enum class BookmarkButtonStyle {
     IconBottomBar,

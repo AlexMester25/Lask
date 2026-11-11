@@ -1,8 +1,6 @@
 package dev.alexmester.models.result
 
 import dev.alexmester.models.error.AppError
-import dev.alexmester.models.error.NetworkError
-import kotlin.coroutines.cancellation.CancellationException
 
 
 sealed class AppResult<out T> {
@@ -39,17 +37,4 @@ inline fun <T, R> AppResult<T>.map(transform: (T) -> R): AppResult<R> = when (th
 inline fun <T> AppResult<T>.getOrElse(defaultValue: (AppError) -> T): T = when (this) {
     is AppResult.Success -> data
     is AppResult.Failure -> defaultValue(error)
-}
-
-
-suspend inline fun <T> runAppResult(crossinline block: suspend () -> T): AppResult<T> {
-    return try {
-        AppResult.Success(block())
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: AppError) {
-        AppResult.Failure(e)
-    } catch (e: Exception) {
-        AppResult.Failure(NetworkError.Unknown(cause = e, message = e.message))
-    }
 }

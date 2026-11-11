@@ -23,8 +23,8 @@ import dev.alexmester.ui.components.list_card.ArticleCardVariant
 import dev.alexmester.ui.components.list_card.LaskArticleCard
 import dev.alexmester.ui.components.pagination.LaskPaginationError
 import dev.alexmester.ui.components.pagination.LaskPaginationLoading
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTypography
 
 @Composable
 internal fun ExploreList(

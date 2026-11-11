@@ -4,15 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.domain.repository.UserPreferencesRepository
-import dev.alexmester.impl.domain.model.FeedResult
+import dev.alexmester.impl.domain.model.FeedLoadState
 import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedIntent
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedReducer
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedSideEffect
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
 import dev.alexmester.ui.R
 import dev.alexmester.ui.uitext.UiText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,7 +38,7 @@ class NewsFeedViewModel(
     private val _sideEffects = MutableSharedFlow<NewsFeedSideEffect>(extraBufferCapacity = 1)
     val sideEffects = _sideEffects.asSharedFlow()
 
-    private val _feedResult = MutableStateFlow<FeedResult>(FeedResult.Idle)
+    private val _feedLoadState = MutableStateFlow<FeedLoadState>(FeedLoadState.Idle)
 
     private var refreshJob: Job? = null
 
@@ -55,12 +51,12 @@ class NewsFeedViewModel(
 
     val state: StateFlow<NewsFeedState> = combine(
         trendsDataFlow,
-        _feedResult,
+        _feedLoadState,
         flow { emit(newsFeedRepository.getLastCachedAt()) },
-    ) { combineData, feedResult, lastCachedAt ->
+    ) { combineData, loadState, lastCachedAt ->
         NewsFeedReducer.reduce(
             clusters = combineData.clusters,
-            feedResult = feedResult,
+            loadState = loadState,
             country = combineData.preferences.defaultCountry,
             language = combineData.preferences.defaultLanguage,
             lastCachedAt = lastCachedAt,
@@ -110,8 +106,8 @@ class NewsFeedViewModel(
     private fun refresh(force: Boolean = false) {
         refreshJob?.cancel()
         refreshJob = viewModelScope.launch {
-            if (_feedResult.value !is FeedResult.Success) {
-                _feedResult.value = FeedResult.Loading
+            if (_feedLoadState.value !is FeedLoadState.Success) {
+                _feedLoadState.value = FeedLoadState.Loading
             }
             when (val result = newsFeedRepository.refreshFeed(force)) {
                 is AppResult.Success -> {
@@ -119,7 +115,7 @@ class NewsFeedViewModel(
 
                         is RefreshFeedResult.Updated,
                         RefreshFeedResult.CacheFresh -> {
-                            _feedResult.value = FeedResult.Success
+                            _feedLoadState.value = FeedLoadState.Success
                         }
 
                         is RefreshFeedResult.IncompatibleLocale -> {
@@ -128,14 +124,14 @@ class NewsFeedViewModel(
                                     UiText.StringResource(R.string.locale_incompatible)
                                 )
                             )
-                            _feedResult.value = FeedResult.Success
+                            _feedLoadState.value = FeedLoadState.Success
                         }
                     }
                 }
 
                 is AppResult.Failure -> {
                     _sideEffects.tryEmit(NewsFeedSideEffect.ShowError(result.error))
-                    _feedResult.value = FeedResult.Error(result.error)
+                    _feedLoadState.value = FeedLoadState.Error(result.error)
                 }
             }
         }

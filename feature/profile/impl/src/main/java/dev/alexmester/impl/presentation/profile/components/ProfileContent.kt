@@ -17,9 +17,9 @@ import dev.alexmester.impl.presentation.profile.mvi.ProfileIntent
 import dev.alexmester.impl.presentation.profile.mvi.ProfileState
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.menu.LaskRowMenu
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTheme
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTheme
+import dev.alexmester.ui.design_system.LaskTypography
 
 @Composable
 internal fun ProfileContent(

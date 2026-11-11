@@ -11,8 +11,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.buttons.LaskBackButton
 import dev.alexmester.ui.components.buttons.LaskTextButton
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

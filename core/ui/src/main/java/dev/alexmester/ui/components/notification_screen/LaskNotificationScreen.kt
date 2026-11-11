@@ -31,14 +31,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.alexmester.error.AppErrorUiMapper
-import dev.alexmester.error.NotificationUi
+import dev.alexmester.ui.error.AppErrorUiMapper
+import dev.alexmester.ui.error.NotificationUi
 import dev.alexmester.models.error.AppError
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.ui.R
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTheme
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTheme
+import dev.alexmester.ui.design_system.LaskTypography
 
 sealed interface NotificationType {
     data class Error(val error: AppError) : NotificationType

@@ -1,4 +1,4 @@
-package dev.alexmester.ui.desing_system
+package dev.alexmester.ui.design_system
 
 import androidx.compose.ui.graphics.Color
 

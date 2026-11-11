@@ -1,4 +1,4 @@
-package dev.alexmester.newsfeed.impl.presentation.feed
+package dev.alexmester.impl.presentation
 
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedVisibility
@@ -28,18 +28,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.snackbar.snackswipe.SnackSwipeBox
-import dev.alexmester.error.AppErrorUiMapper
 import dev.alexmester.impl.presentation.components.NewsFeedEmptyScreen
 import dev.alexmester.impl.presentation.components.NewsFeedList
+import dev.alexmester.impl.presentation.components.NewsFeedOfflineBanner
 import dev.alexmester.impl.presentation.components.NewsFeedTopBar
+import dev.alexmester.impl.presentation.mvi.ContentState
+import dev.alexmester.impl.presentation.mvi.NewsFeedIntent
+import dev.alexmester.impl.presentation.mvi.NewsFeedSideEffect
+import dev.alexmester.impl.presentation.mvi.NewsFeedState
 import dev.alexmester.impl.presentation.mvi.NewsFeedViewModel
-import dev.alexmester.newsfeed.impl.presentation.components.NewsFeedOfflineBanner
+import dev.alexmester.impl.presentation.mvi.isContent
+import dev.alexmester.impl.presentation.mvi.isOffline
+import dev.alexmester.impl.presentation.mvi.isRefreshing
 import dev.alexmester.ui.components.notification_screen.LaskNotificationScreen
 import dev.alexmester.ui.components.notification_screen.NotificationType
 import dev.alexmester.ui.components.pull_to_refresh_box.LaskPullToRefreshBox
 import dev.alexmester.ui.components.snackbar.showErrorSnackbar
 import dev.alexmester.ui.components.snackbar.showWarningSnackbar
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.error.AppErrorUiMapper
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

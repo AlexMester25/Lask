@@ -27,8 +27,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.list_card.rememberLaskArticleCardPainter
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTypography
 import dev.alexmester.ui.shared_transition.sharedElementIfAvailable
 
 @OptIn(ExperimentalSharedTransitionApi::class)

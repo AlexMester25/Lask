@@ -26,7 +26,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import dev.alexmester.ui.components.avatars.AuthorAvatar
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 
 @Composable
 internal fun ProfileAvatar(

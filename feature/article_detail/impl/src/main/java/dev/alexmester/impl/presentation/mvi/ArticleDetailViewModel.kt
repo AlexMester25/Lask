@@ -156,7 +156,7 @@ class ArticleDetailViewModel(
     private fun onToggleBookmark() {
         viewModelScope.launch {
             val nowBookmarked = articleRepository.toggleBookmark(articleId)
-            emitSideEffect(ArticleDetailSideEffect.ShawBookmarkActionMessage(nowBookmarked))
+            emitSideEffect(ArticleDetailSideEffect.ShowBookmarkActionMessage(nowBookmarked))
         }
     }
 

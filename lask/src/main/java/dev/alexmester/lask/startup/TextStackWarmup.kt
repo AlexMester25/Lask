@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
-import dev.alexmester.ui.desing_system.Inter
-import dev.alexmester.ui.desing_system.Merriweather
+import dev.alexmester.ui.design_system.Inter
+import dev.alexmester.ui.design_system.Merriweather
 
 /**
  * Первая раскладка текста с переносом строк в процессе стоит 23–33 мс: это одноразовая

@@ -1,6 +1,6 @@
-package dev.alexmester.newsfeed.impl.presentation.feed
+package dev.alexmester.impl.presentation.mvi
 
-import dev.alexmester.impl.domain.model.FeedResult
+import dev.alexmester.impl.domain.model.FeedLoadState
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.news.NewsCluster
 
@@ -9,13 +9,13 @@ object NewsFeedReducer {
 
     fun reduce(
         clusters: List<NewsCluster>,
-        feedResult: FeedResult,
+        loadState: FeedLoadState,
         country: String,
         language: String,
         lastCachedAt: Long?,
-    ): NewsFeedState = when (feedResult) {
+    ): NewsFeedState = when (loadState) {
 
-        is FeedResult.Loading -> when {
+        is FeedLoadState.Loading -> when {
             clusters.isNotEmpty() -> NewsFeedState.Content(
                 clusters = clusters,
                 country = country,
@@ -26,7 +26,7 @@ object NewsFeedReducer {
             else -> NewsFeedState.Loading
         }
 
-        is FeedResult.Success -> when {
+        is FeedLoadState.Success -> when {
             clusters.isNotEmpty() -> NewsFeedState.Content(
                 clusters = clusters,
                 country = country,
@@ -37,8 +37,8 @@ object NewsFeedReducer {
             else -> NewsFeedState.Empty(country = country, language = language)
         }
 
-        is FeedResult.Error -> when {
-            feedResult.error is NetworkError.NoInternet && clusters.isNotEmpty() ->
+        is FeedLoadState.Error -> when {
+            loadState.error is NetworkError.NoInternet && clusters.isNotEmpty() ->
                 NewsFeedState.Content(
                     clusters = clusters,
                     country = country,
@@ -53,9 +53,9 @@ object NewsFeedReducer {
                 lastCachedAt = lastCachedAt,
                 contentState = ContentState.Idle,
             )
-            else -> NewsFeedState.Error(errorType = feedResult.error)
+            else -> NewsFeedState.Error(errorType = loadState.error)
         }
 
-        is FeedResult.Idle -> NewsFeedState.Loading
+        is FeedLoadState.Idle -> NewsFeedState.Loading
     }
 }

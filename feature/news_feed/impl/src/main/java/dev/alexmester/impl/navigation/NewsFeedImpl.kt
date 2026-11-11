@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import dev.alexmester.api.navigation.ArticleDetailApi
 import dev.alexmester.api.navigation.NewsFeedRoute
 import dev.alexmester.api.navigation.NewsFeedApi
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedScreen
+import dev.alexmester.impl.presentation.NewsFeedScreen
 import dev.alexmester.ui.shared_transition.SharedTransitionLocals
 
 @OptIn(ExperimentalSharedTransitionApi::class)

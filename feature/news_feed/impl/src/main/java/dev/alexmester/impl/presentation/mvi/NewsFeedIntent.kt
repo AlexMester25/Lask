@@ -1,4 +1,4 @@
-package dev.alexmester.newsfeed.impl.presentation.feed
+package dev.alexmester.impl.presentation.mvi
 
 sealed interface NewsFeedIntent {
     data object Refresh : NewsFeedIntent

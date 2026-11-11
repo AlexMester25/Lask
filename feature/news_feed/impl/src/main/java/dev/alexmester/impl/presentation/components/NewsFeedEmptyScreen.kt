@@ -14,8 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.alexmester.ui.R
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTypography
 import dev.alexmester.utils.locale.LocaleUtils.countryCodeToFlagEmoji
 import dev.alexmester.utils.locale.LocaleUtils.countryCodeToFullCountryName
 import dev.alexmester.utils.locale.LocaleUtils.languageCodeToFullLanguageName

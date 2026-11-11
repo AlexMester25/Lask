@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import dev.alexmester.newsfeed.impl.presentation.components.NewsFeedClusterStickyHeader
-import dev.alexmester.newsfeed.impl.presentation.feed.NewsFeedState
+import dev.alexmester.impl.presentation.components.NewsFeedClusterStickyHeader
+import dev.alexmester.impl.presentation.mvi.NewsFeedState
 import dev.alexmester.ui.components.bottom_bar.LocalBottomBarHeight
 import dev.alexmester.ui.components.list_card.LaskArticleCard
 

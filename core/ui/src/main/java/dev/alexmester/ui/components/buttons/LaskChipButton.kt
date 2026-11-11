@@ -34,10 +34,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.alexmester.ui.R
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskPalette
-import dev.alexmester.ui.desing_system.LaskTheme
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskPalette
+import dev.alexmester.ui.design_system.LaskTheme
+import dev.alexmester.ui.design_system.LaskTypography
 
 enum class LaskChipButtonVariants{
     Filters, Interests

@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import dev.alexmester.lask.main.MainUiState
 import dev.alexmester.lask.main.MainViewModel
 import dev.alexmester.lask.welcome_screen.WelcomeScreen
-import dev.alexmester.ui.desing_system.LaskTheme
+import dev.alexmester.ui.design_system.LaskTheme
 
 @Composable
 fun AppContent(viewModel: MainViewModel) {

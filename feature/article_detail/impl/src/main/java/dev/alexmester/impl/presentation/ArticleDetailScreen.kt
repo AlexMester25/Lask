@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.snackbar.snackswipe.SnackSwipeBox
-import dev.alexmester.error.AppErrorUiMapper
+import dev.alexmester.ui.error.AppErrorUiMapper
 import dev.alexmester.impl.presentation.components.ArticleDetailContent
 import dev.alexmester.impl.presentation.components.bottom_bar.ArticleDetailBottomBar
 import dev.alexmester.impl.presentation.mvi.ArticleDetailIntent
@@ -35,7 +35,7 @@ import dev.alexmester.ui.components.notification_screen.LaskNotificationScreen
 import dev.alexmester.ui.components.notification_screen.NotificationType
 import dev.alexmester.ui.components.snackbar.showBookmarkSnackbar
 import dev.alexmester.ui.components.snackbar.showErrorSnackbar
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 import dev.alexmester.ui.uitext.UiText
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -72,7 +72,7 @@ fun ArticleDetailScreen(
             viewModel.sideEffects.collect { effect ->
                 when (effect) {
                     is ArticleDetailSideEffect.NavigateBack -> onBack()
-                    is ArticleDetailSideEffect.ShawBookmarkActionMessage -> {
+                    is ArticleDetailSideEffect.ShowBookmarkActionMessage -> {
                         snackSwipeController.showBookmarkSnackbar(
                             isBookmarked = effect.isBookmarked,
                             backgroundColor = backgroundColorSnackDefault,

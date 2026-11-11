@@ -33,7 +33,7 @@ import dev.alexmester.ui.components.buttons.LaskChipButton
 import dev.alexmester.ui.components.buttons.LaskChipButtonVariants
 import dev.alexmester.ui.components.buttons.LaskTextButton
 import dev.alexmester.ui.components.input_field.LaskTextField
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 import org.koin.compose.viewmodel.koinViewModel
 
 

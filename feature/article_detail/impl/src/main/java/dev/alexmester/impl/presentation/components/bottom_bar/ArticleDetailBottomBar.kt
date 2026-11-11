@@ -23,7 +23,7 @@ import dev.alexmester.ui.components.buttons.LaskBookmarkButton
 import dev.alexmester.ui.components.buttons.LaskClapButton
 import dev.alexmester.ui.components.buttons.LaskShareButton
 import dev.alexmester.ui.components.buttons.LaskTranslateButton
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
 

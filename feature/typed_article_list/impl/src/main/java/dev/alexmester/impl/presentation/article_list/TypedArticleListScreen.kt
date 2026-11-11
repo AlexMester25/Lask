@@ -27,7 +27,7 @@ import dev.alexmester.impl.presentation.article_list.mvi.TypedArticleListViewMod
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.notification_screen.LaskNotificationScreen
 import dev.alexmester.ui.components.notification_screen.NotificationType
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 

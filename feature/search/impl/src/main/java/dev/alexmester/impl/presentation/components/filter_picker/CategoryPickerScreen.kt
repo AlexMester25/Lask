@@ -18,7 +18,7 @@ import dev.alexmester.models.categories.SearchCategory
 import dev.alexmester.ui.components.locale.LaskLocaleRowItem
 import dev.alexmester.models.locale.LocaleItem
 import dev.alexmester.ui.R
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

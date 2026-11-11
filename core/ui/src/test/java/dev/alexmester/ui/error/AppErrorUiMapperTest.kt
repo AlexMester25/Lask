@@ -1,4 +1,4 @@
-package dev.alexmester.error
+package dev.alexmester.ui.error
 
 import dev.alexmester.models.error.AppError
 import dev.alexmester.models.error.NetworkError

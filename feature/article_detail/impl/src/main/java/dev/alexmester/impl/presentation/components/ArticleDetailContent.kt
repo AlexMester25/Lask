@@ -16,7 +16,7 @@ import dev.alexmester.impl.presentation.components.common.rememberScrollThreshol
 import dev.alexmester.impl.presentation.components.header.ArticleDetailHeaderImage
 import dev.alexmester.impl.presentation.mvi.TranslationState
 import dev.alexmester.models.news.NewsArticle
-import dev.alexmester.ui.desing_system.LaskColors
+import dev.alexmester.ui.design_system.LaskColors
 
 @Composable
 internal fun ArticleDetailContent(

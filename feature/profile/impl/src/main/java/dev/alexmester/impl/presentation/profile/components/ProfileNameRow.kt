@@ -26,9 +26,9 @@ import androidx.compose.ui.unit.dp
 import dev.alexmester.impl.presentation.profile.mvi.ProfileIntent
 import dev.alexmester.ui.R
 import dev.alexmester.ui.components.buttons.LaskEditButton
-import dev.alexmester.ui.desing_system.LaskColors
-import dev.alexmester.ui.desing_system.LaskTheme
-import dev.alexmester.ui.desing_system.LaskTypography
+import dev.alexmester.ui.design_system.LaskColors
+import dev.alexmester.ui.design_system.LaskTheme
+import dev.alexmester.ui.design_system.LaskTypography
 
 @Composable
 internal fun ProfileNameRow(
