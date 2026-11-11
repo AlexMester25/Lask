@@ -1,15 +1,18 @@
-package dev.alexmester.network.extension
+package dev.alexmester.data.extension
 
+import dev.alexmester.data.error.NetworkErrorMapper
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.network.error.NetworkErrorMapper
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlin.coroutines.cancellation.CancellationException
 
+/**
+ * Выполняет сетевой вызов и приводит его сбой к типизированной [NetworkError].
+ */
 suspend fun <T> safeApiCall(
     mapper: NetworkErrorMapper,
-    block: suspend () -> T
+    block: suspend () -> T,
 ): AppResult<T> {
     return try {
         AppResult.Success(block())

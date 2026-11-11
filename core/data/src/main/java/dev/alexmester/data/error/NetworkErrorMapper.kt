@@ -1,4 +1,4 @@
-package dev.alexmester.network.error
+package dev.alexmester.data.error
 
 import dev.alexmester.models.error.NetworkError
 import io.ktor.client.network.sockets.ConnectTimeoutException
@@ -13,9 +13,17 @@ import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 import kotlin.coroutines.cancellation.CancellationException
 
-abstract class BaseNetworkMapper : NetworkErrorMapper {
+/**
+ * Переводит исключения сетевого слоя в доменные [NetworkError].
+ *
+ * Единый маппер для всех API: отличия конкретного сервиса задаются через [statusOverrides],
+ * чтобы не заводить отдельный класс-наследник на каждый API.
+ */
+class NetworkErrorMapper(
+    private val statusOverrides: Map<Int, () -> NetworkError> = emptyMap(),
+) {
 
-    override fun map(throwable: Throwable): NetworkError {
+    fun map(throwable: Throwable): NetworkError {
         if (throwable is CancellationException) throw throwable
         return when (throwable) {
             is NetworkError -> throwable
@@ -35,20 +43,34 @@ abstract class BaseNetworkMapper : NetworkErrorMapper {
         }
     }
 
-    protected open fun mapHttpError(throwable: ResponseException): NetworkError = mapHttpStatus(
+    private fun mapHttpError(throwable: ResponseException): NetworkError = mapHttpStatus(
         status = throwable.response.status.value,
         description = throwable.response.status.description,
         retryAfter = throwable.response.headers[HttpHeaders.RetryAfter],
     )
 
-    internal open fun mapHttpStatus(
+    internal fun mapHttpStatus(
         status: Int,
         description: String? = null,
         retryAfter: String? = null,
-    ): NetworkError = when (status) {
+    ): NetworkError = statusOverrides[status]?.invoke() ?: when (status) {
         402 -> NetworkError.PaymentRequired()
         429 -> NetworkError.RateLimit(retryAfterSeconds = retryAfter?.toLongOrNull())
         502 -> NetworkError.BadGateway()
         else -> NetworkError.HttpError(status, description)
+    }
+
+    companion object {
+        private const val STATUS_UNPROCESSABLE_ENTITY = 422
+
+        /** World News API: стандартный маппинг HTTP-статусов. */
+        fun worldNews(): NetworkErrorMapper = NetworkErrorMapper()
+
+        /** Translate Plus API: 422 означает ошибку перевода. */
+        fun translatePlus(): NetworkErrorMapper = NetworkErrorMapper(
+            statusOverrides = mapOf(
+                STATUS_UNPROCESSABLE_ENTITY to { NetworkError.TranslateError() },
+            ),
+        )
     }
 }

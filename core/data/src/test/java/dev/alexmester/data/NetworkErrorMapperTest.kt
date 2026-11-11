@@ -1,5 +1,6 @@
-package dev.alexmester.network.error
+package dev.alexmester.data
 
+import dev.alexmester.data.error.NetworkErrorMapper
 import dev.alexmester.models.error.NetworkError
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -17,9 +18,10 @@ import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 import kotlin.coroutines.cancellation.CancellationException
 
-class BaseNetworkMapperTest {
+class NetworkErrorMapperTest {
 
-    private val mapper = WorldNewsErrorMapper()
+    private val mapper = NetworkErrorMapper()
+    private val translateMapper = NetworkErrorMapper.translatePlus()
 
     @Test
     fun `cancellation is rethrown instead of being mapped`() {
@@ -146,5 +148,23 @@ class BaseNetworkMapperTest {
             NetworkError.HttpError(code = 503, message = "Service Unavailable"),
             mapper.mapHttpStatus(503, description = "Service Unavailable"),
         )
+    }
+
+    @Test
+    fun `unprocessable entity maps to translate error for translate api`() {
+        assertTrue(translateMapper.mapHttpStatus(422) is NetworkError.TranslateError)
+    }
+
+    @Test
+    fun `translate api falls back to base mapping for other statuses`() {
+        assertEquals(
+            NetworkError.HttpError(code = 500),
+            translateMapper.mapHttpStatus(500),
+        )
+    }
+
+    @Test
+    fun `translate api still maps rate limit by base rules`() {
+        assertTrue(translateMapper.mapHttpStatus(429) is NetworkError.RateLimit)
     }
 }

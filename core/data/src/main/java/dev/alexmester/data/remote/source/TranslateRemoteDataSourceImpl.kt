@@ -1,16 +1,16 @@
 package dev.alexmester.data.remote.source
 
+import dev.alexmester.data.error.NetworkErrorMapper
+import dev.alexmester.data.extension.safeApiCall
 import dev.alexmester.data.remote.api.TranslateApiService
 import dev.alexmester.domain.source.TranslateRemoteDataSource
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.network.error.TranslatePlusErrorMapper
-import dev.alexmester.network.extension.safeApiCall
 
 internal class TranslateRemoteDataSourceImpl(
     private val api: TranslateApiService,
 ) : TranslateRemoteDataSource {
 
-    private val errorMapper = TranslatePlusErrorMapper()
+    private val errorMapper = NetworkErrorMapper.translatePlus()
 
     override suspend fun translate(
         text: String,
