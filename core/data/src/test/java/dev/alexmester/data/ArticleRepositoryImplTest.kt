@@ -1,11 +1,15 @@
 package dev.alexmester.data
 
+import android.database.sqlite.SQLiteFullException
 import dev.alexmester.data.repository.ArticleRepositoryImpl
 import dev.alexmester.database.dao.ArticleDao
 import dev.alexmester.database.dao.ArticleUserStateDao
 import dev.alexmester.database.dao.TransactionRunner
 import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.database.entity.ArticleUserStateEntity
+import dev.alexmester.models.error.StorageError
+import dev.alexmester.models.news.NewsArticle
+import dev.alexmester.models.result.AppResult
 import dev.alexmester.platform.dispatchers.DispatcherProvider
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -26,9 +30,9 @@ class ArticleRepositoryImplTest {
     private val clock = Clock.fixed(Instant.ofEpochMilli(10_000L), ZoneOffset.UTC)
     private val userStateDao = FakeArticleUserStateDao()
 
-    private fun repository() = ArticleRepositoryImpl(
+    private fun repository(articleDao: ArticleDao = StubArticleDao()) = ArticleRepositoryImpl(
         userStateDao = userStateDao,
-        articleDao = StubArticleDao(),
+        articleDao = articleDao,
         transactionRunner = object : TransactionRunner {
             override suspend fun invoke(tx: suspend () -> Unit) = tx()
         },
@@ -73,6 +77,25 @@ class ArticleRepositoryImplTest {
     }
 
     @Test
+    fun `save articles succeeds when dao accepts the insert`() = runTest {
+        val result = repository().saveArticles(listOf(article()))
+
+        assertTrue(result is AppResult.Success)
+    }
+
+    @Test
+    fun `save articles returns storage error when dao fails`() = runTest {
+        val repository = repository(
+            articleDao = StubArticleDao(insertFailure = SQLiteFullException("full")),
+        )
+
+        val result = repository.saveArticles(listOf(article()))
+
+        assertTrue(result is AppResult.Failure)
+        assertTrue((result as AppResult.Failure).error is StorageError.NoSpace)
+    }
+
+    @Test
     fun `remove bookmarks deletes only rows without user data`() = runTest {
         val repository = repository()
         repository.toggleBookmark(1L) // пустая после снятия закладки
@@ -87,6 +110,12 @@ class ArticleRepositoryImplTest {
         assertEquals(true, userStateDao.rows[2L]?.isRead)
         assertEquals(1, userStateDao.rows[3L]?.clapCount)
     }
+
+    private fun article() = NewsArticle(
+        id = 1L, title = "t", text = null, summary = null, url = "u", image = null,
+        video = null, publishDate = "2026-10-22 10:00:00", authors = emptyList(),
+        category = null, language = null, sourceCountry = null, sentiment = null,
+    )
 }
 
 private class FakeArticleUserStateDao : ArticleUserStateDao {
@@ -144,8 +173,12 @@ private class FakeArticleUserStateDao : ArticleUserStateDao {
     override fun observeClappedArticles(): Flow<List<ArticleEntity>> = emptyFlow()
 }
 
-private class StubArticleDao : ArticleDao {
-    override suspend fun insertArticles(articles: List<ArticleEntity>) = Unit
+private class StubArticleDao(
+    private val insertFailure: Throwable? = null,
+) : ArticleDao {
+    override suspend fun insertArticles(articles: List<ArticleEntity>) {
+        insertFailure?.let { throw it }
+    }
     override suspend fun getArticleById(id: Long): ArticleEntity? = null
     override suspend fun deleteOrphanedInactiveUserStates() = Unit
     override suspend fun deleteOrphaned() = Unit

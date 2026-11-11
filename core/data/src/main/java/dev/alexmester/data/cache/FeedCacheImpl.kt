@@ -1,5 +1,6 @@
 package dev.alexmester.data.cache
 
+import dev.alexmester.data.extension.runStorageResult
 import dev.alexmester.data.mapper.toClusters
 import dev.alexmester.data.mapper.toEntities
 import dev.alexmester.database.dao.ArticleDao
@@ -10,6 +11,7 @@ import dev.alexmester.domain.cache.FeedCache
 import dev.alexmester.domain.cache.FeedType
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.news.NewsCluster
+import dev.alexmester.models.result.AppResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.Clock
@@ -24,7 +26,10 @@ internal class FeedCacheImpl(
     override fun observeClusters(feedType: FeedType): Flow<List<NewsCluster>> =
         feedCacheDao.observeFeedWithState(feedType.key).map { it.toClusters() }
 
-    override suspend fun replace(feedType: FeedType, clusters: List<NewsCluster>) {
+    override suspend fun replace(
+        feedType: FeedType,
+        clusters: List<NewsCluster>,
+    ): AppResult<Unit> = runStorageResult {
         val (articles, cache) = clusters.toEntities(feedType.key, clock.millis())
         transactionRunner {
             feedCacheDao.clearFeed(feedType.key)
@@ -35,7 +40,11 @@ internal class FeedCacheImpl(
         }
     }
 
-    override suspend fun append(feedType: FeedType, articles: List<NewsArticle>, positionStart: Int) {
+    override suspend fun append(
+        feedType: FeedType,
+        articles: List<NewsArticle>,
+        positionStart: Int,
+    ): AppResult<Unit> = runStorageResult {
         val (entities, cache) = articles.toEntities(feedType.key, positionStart, clock.millis())
         transactionRunner {
             articleDao.insertArticles(entities)

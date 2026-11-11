@@ -1,13 +1,16 @@
 package dev.alexmester.domain.repository
 
 import dev.alexmester.models.news.NewsArticle
+import dev.alexmester.models.result.AppResult
 import kotlinx.coroutines.flow.Flow
 
 interface ArticleRepository {
     fun observeReadArticleIds(): Flow<Set<Long>>
     fun observeReadArticles(): Flow<List<NewsArticle>>
     fun observeClappedArticles(): Flow<List<NewsArticle>>
-    suspend fun saveArticles(articles: List<NewsArticle>)
+
+    /** Сохраняет статьи локально. Сбой хранилища возвращается как [AppResult.Failure]. */
+    suspend fun saveArticles(articles: List<NewsArticle>): AppResult<Unit>
 
     suspend fun getArticleById(id: Long): NewsArticle?
 

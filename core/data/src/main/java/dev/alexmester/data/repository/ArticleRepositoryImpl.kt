@@ -1,5 +1,6 @@
 package dev.alexmester.data.repository
 
+import dev.alexmester.data.extension.runStorageResult
 import dev.alexmester.data.mapper.toDomain
 import dev.alexmester.data.mapper.toEntity
 import dev.alexmester.database.dao.ArticleDao
@@ -8,6 +9,7 @@ import dev.alexmester.database.dao.TransactionRunner
 import dev.alexmester.database.entity.ArticleUserStateEntity
 import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.models.news.NewsArticle
+import dev.alexmester.models.result.AppResult
 import dev.alexmester.platform.dispatchers.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -31,9 +33,11 @@ internal class ArticleRepositoryImpl (
     override fun observeClappedArticles(): Flow<List<NewsArticle>> =
         userStateDao.observeClappedArticles().map { entities -> entities.map { it.toDomain() } }
 
-    override suspend fun saveArticles(articles: List<NewsArticle>) =
-        withContext(dispatchers.io) {
-            articleDao.insertArticles(articles.map { it.toEntity() })
+    override suspend fun saveArticles(articles: List<NewsArticle>): AppResult<Unit> =
+        runStorageResult {
+            withContext(dispatchers.io) {
+                articleDao.insertArticles(articles.map { it.toEntity() })
+            }
         }
 
     override suspend fun getArticleById(id: Long): NewsArticle? =

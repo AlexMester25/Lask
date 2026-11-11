@@ -8,7 +8,7 @@ import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.repository.NewsFeedRepository
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.models.result.runAppResult
+import dev.alexmester.models.result.map
 import dev.alexmester.platform.dispatchers.DispatcherProvider
 import dev.alexmester.utils.constants.LaskConstants.CACHE_TTL_MS
 import dev.alexmester.domain.locale.checkCompatibility
@@ -38,10 +38,9 @@ class NewsFeedRepositoryImpl(
 
             when (val result = remote.getTopNews(prefs.defaultCountry, prefs.defaultLanguage)) {
                 is AppResult.Failure -> result
-                is AppResult.Success -> runAppResult<RefreshFeedResult> {
-                    feedCache.replace(FeedType.TRENDS, result.data)
-                    RefreshFeedResult.Updated(result.data.size)
-                }
+                is AppResult.Success -> feedCache
+                    .replace(FeedType.TRENDS, result.data)
+                    .map { RefreshFeedResult.Updated(result.data.size) }
             }
         }
 

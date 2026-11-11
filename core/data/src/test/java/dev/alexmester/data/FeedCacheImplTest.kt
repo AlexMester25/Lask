@@ -1,6 +1,7 @@
 package dev.alexmester.data
 
 import dev.alexmester.data.cache.FeedCacheImpl
+import android.database.sqlite.SQLiteFullException
 import dev.alexmester.database.dao.ArticleDao
 import dev.alexmester.database.dao.FeedArticleWithState
 import dev.alexmester.database.dao.FeedCacheDao
@@ -8,8 +9,10 @@ import dev.alexmester.database.dao.TransactionRunner
 import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.database.entity.FeedCacheEntity
 import dev.alexmester.domain.cache.FeedType
+import dev.alexmester.models.error.StorageError
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.news.NewsCluster
+import dev.alexmester.models.result.AppResult
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
@@ -17,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.io.IOException
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -28,11 +32,14 @@ class FeedCacheImplTest {
     private val clock = Clock.fixed(Instant.ofEpochMilli(now), ZoneOffset.UTC)
     private val calls = mutableListOf<String>()
 
-    private fun cache(dao: FakeFeedCacheDao) = FeedCacheImpl(
+    private fun cache(
+        dao: FakeFeedCacheDao,
+        articleDao: ArticleDao = FakeArticleDao(calls),
+    ) = FeedCacheImpl(
         transactionRunner = object : TransactionRunner {
             override suspend fun invoke(tx: suspend () -> Unit) = tx()
         },
-        articleDao = FakeArticleDao(calls),
+        articleDao = articleDao,
         feedCacheDao = dao,
         clock = clock,
     )
@@ -88,6 +95,28 @@ class FeedCacheImplTest {
         )
     }
 
+    @Test
+    fun `replace returns storage error when dao fails`() = runTest {
+        val result = cache(
+            dao = FakeFeedCacheDao(null),
+            articleDao = FakeArticleDao(calls, insertFailure = SQLiteFullException("full")),
+        ).replace(FeedType.TRENDS, listOf(NewsCluster(id = 0, articles = listOf(article()))))
+
+        assertTrue(result is AppResult.Failure)
+        assertTrue((result as AppResult.Failure).error is StorageError.NoSpace)
+    }
+
+    @Test
+    fun `append returns storage error when dao fails`() = runTest {
+        val result = cache(
+            dao = FakeFeedCacheDao(null),
+            articleDao = FakeArticleDao(calls, insertFailure = IOException("disk")),
+        ).append(FeedType.EXPLORE, listOf(article()), positionStart = 0)
+
+        assertTrue(result is AppResult.Failure)
+        assertTrue((result as AppResult.Failure).error is StorageError.Io)
+    }
+
     private fun article() = NewsArticle(
         id = 1L, title = "t", text = null, summary = null, url = "u", image = null,
         video = null, publishDate = "2026-10-22 10:00:00", authors = emptyList(),
@@ -114,8 +143,12 @@ private class FakeFeedCacheDao(
     override suspend fun getLastCachedAt(feedType: String): Long? = lastCachedAt
 }
 
-private class FakeArticleDao(private val calls: MutableList<String>) : ArticleDao {
+private class FakeArticleDao(
+    private val calls: MutableList<String>,
+    private val insertFailure: Throwable? = null,
+) : ArticleDao {
     override suspend fun insertArticles(articles: List<ArticleEntity>) {
+        insertFailure?.let { throw it }
         calls += "insertArticles"
     }
 

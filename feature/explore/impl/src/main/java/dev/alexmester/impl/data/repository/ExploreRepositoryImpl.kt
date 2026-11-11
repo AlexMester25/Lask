@@ -11,7 +11,7 @@ import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.news.NewsCluster
 import dev.alexmester.models.news.SearchParams
 import dev.alexmester.models.result.AppResult
-import dev.alexmester.models.result.runAppResult
+import dev.alexmester.models.result.map
 import dev.alexmester.platform.dispatchers.DispatcherProvider
 import dev.alexmester.utils.constants.LaskConstants
 import dev.alexmester.utils.constants.LaskConstants.CACHE_TTL_MS
@@ -56,13 +56,10 @@ class ExploreRepositoryImpl(
                     if (result.data.isEmpty()) {
                         return@withContext AppResult.Success(RefreshResult.EmptySearchResult)
                     }
-                    runAppResult<RefreshResult> {
-                        feedCache.replace(
-                            FeedType.EXPLORE,
-                            listOf(NewsCluster(id = 0, articles = result.data)),
-                        )
-                        RefreshResult.Updated(result.data.size)
-                    }
+                    feedCache.replace(
+                        FeedType.EXPLORE,
+                        listOf(NewsCluster(id = 0, articles = result.data)),
+                    ).map { RefreshResult.Updated(result.data.size) }
                 }
             }
         }
@@ -79,10 +76,9 @@ class ExploreRepositoryImpl(
                     if (result.data.isEmpty()) {
                         return@withContext AppResult.Success(RefreshResult.EmptySearchResult)
                     }
-                    runAppResult<RefreshResult> {
-                        feedCache.append(FeedType.EXPLORE, result.data, positionStart = offset)
-                        RefreshResult.Updated(result.data.size)
-                    }
+                    feedCache
+                        .append(FeedType.EXPLORE, result.data, positionStart = offset)
+                        .map { RefreshResult.Updated(result.data.size) }
                 }
             }
         }
