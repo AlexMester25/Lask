@@ -52,13 +52,19 @@ internal class ArticleRepositoryImpl (
                 ensureUserState(articleId)
                 userStateDao.toggleBookmark(articleId, clock.millis())
                 isBookmarked = userStateDao.isBookmarked(articleId) ?: false
+                if (!isBookmarked) userStateDao.deleteEmptyStates(setOf(articleId))
             }
             isBookmarked
         }
 
     override suspend fun removeBookmarks(ids: Set<Long>) {
         if (ids.isEmpty()) return
-        withContext(dispatchers.io) { userStateDao.clearBookmarks(ids) }
+        withContext(dispatchers.io) {
+            transactionRunner {
+                userStateDao.clearBookmarks(ids)
+                userStateDao.deleteEmptyStates(ids)
+            }
+        }
     }
 
     override fun observeClapCount(articleId: Long): Flow<Int> =

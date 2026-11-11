@@ -35,6 +35,23 @@ interface ArticleUserStateDao {
     )
     suspend fun clearBookmarks(ids: Set<Long>)
 
+    /**
+     * Удаляет записи состояния, в которых не осталось пользовательских данных
+     * (не прочитано, не аплодировано, не в закладках).
+     *
+     * Вызывать после снятия закладки: иначе строка остаётся пустой и мешает
+     * удалению статьи (FK на articles без CASCADE).
+     */
+    @Query(
+        """
+    DELETE FROM article_user_state
+    WHERE articleId IN (:ids)
+      AND isBookmarked = 0 AND isRead = 0 AND clapCount = 0
+      AND bookmarkedAt IS NULL AND readAt IS NULL
+"""
+    )
+    suspend fun deleteEmptyStates(ids: Set<Long>)
+
     @Query("SELECT isBookmarked FROM article_user_state WHERE articleId = :articleId")
     fun observeIsBookmarked(articleId: Long): Flow<Boolean?>
 
