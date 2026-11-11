@@ -1,6 +1,6 @@
 package dev.alexmester.impl.presentation.mvi
 
-import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.error.AppError
 import dev.alexmester.models.news.NewsArticle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -9,7 +9,7 @@ sealed interface ExploreState {
     data object Loading : ExploreState
 
     data class Error(
-        val errorType: NetworkError,
+        val errorType: AppError,
         val isRefreshing: Boolean = false
     ) : ExploreState
 

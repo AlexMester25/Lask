@@ -18,6 +18,10 @@
     <string name="error_forbidden">Access denied</string>
     <string name="error_not_found">Requested data not found</string>
     <string name="error_rate_limit_retry">Request limit exceeded.\nTry again in %1$d s</string>
+    <string name="error_storage_full">Not enough storage space to save data</string>
+    <string name="error_storage_busy">Storage is busy. Please try again</string>
+    <string name="error_storage_corrupted">Saved data is corrupted</string>
+    <string name="error_storage_failed">Could not save data.\nPlease try again</string>
 
 
     <!-- common warning -->

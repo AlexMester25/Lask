@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.snackbar.snackswipe.SnackSwipeBox
-import dev.alexmester.error.NetworkErrorUiMapper
+import dev.alexmester.error.AppErrorUiMapper
 import dev.alexmester.impl.presentation.components.NewsFeedEmptyScreen
 import dev.alexmester.impl.presentation.components.NewsFeedList
 import dev.alexmester.impl.presentation.components.NewsFeedTopBar
@@ -62,7 +62,7 @@ fun NewsFeedScreen(
                 when (effect) {
                     is NewsFeedSideEffect.ShowError -> {
                         if (state.isContent) {
-                            val messageError = NetworkErrorUiMapper.toUiText(effect.message).asString(context)
+                            val messageError = AppErrorUiMapper.toUiText(effect.message).asString(context)
                             snackSwipeController.showErrorSnackbar(
                                 backgroundColor = backgroundColorSnackError,
                                 text = messageError

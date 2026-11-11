@@ -1,13 +1,13 @@
 package dev.alexmester.newsfeed.impl.presentation.feed
 
-import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.error.AppError
 import dev.alexmester.models.locale.SupportedLocales
 import dev.alexmester.models.news.NewsCluster
 
 sealed interface NewsFeedState {
     data object Loading : NewsFeedState
     data class Error(
-        val errorType: NetworkError,
+        val errorType: AppError,
         val isRefreshing: Boolean = false,
         ) : NewsFeedState
     data class Content(

@@ -2,7 +2,7 @@ package dev.alexmester.impl.presentation.mvi
 
 import dev.alexmester.impl.domain.model.FilterType
 import dev.alexmester.impl.domain.model.SearchFilters
-import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.error.AppError
 import dev.alexmester.models.news.NewsArticle
 
 data class SearchState(
@@ -14,6 +14,6 @@ data class SearchState(
     val isLoadingMore: Boolean = false,
     val loadMoreError: Boolean = false,
     val endReached: Boolean = false,
-    val error: NetworkError? = null,
+    val error: AppError? = null,
     val hasSearched: Boolean = false,
 )

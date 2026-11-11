@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.snackbar.snackswipe.SnackSwipeBox
-import dev.alexmester.error.NetworkErrorUiMapper
+import dev.alexmester.error.AppErrorUiMapper
 import dev.alexmester.impl.presentation.components.ArticleDetailContent
 import dev.alexmester.impl.presentation.components.bottom_bar.ArticleDetailBottomBar
 import dev.alexmester.impl.presentation.mvi.ArticleDetailIntent
@@ -86,7 +86,7 @@ fun ArticleDetailScreen(
                     is ArticleDetailSideEffect.ShowError -> {
                         snackSwipeController.showErrorSnackbar(
                             backgroundColor = backgroundColorSnackError,
-                            text = NetworkErrorUiMapper.toUiText(effect.errorType).asString(context)
+                            text = AppErrorUiMapper.toUiText(effect.errorType).asString(context)
                         )
                     }
 

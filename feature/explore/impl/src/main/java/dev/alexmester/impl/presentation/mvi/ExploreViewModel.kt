@@ -3,12 +3,12 @@ package dev.alexmester.impl.presentation.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.alexmester.domain.repository.ArticleRepository
-import dev.alexmester.error.NetworkErrorUiMapper
+import dev.alexmester.error.AppErrorUiMapper
 import dev.alexmester.impl.domain.model.RefreshResult
 import dev.alexmester.impl.domain.repository.ExploreRepository
 import dev.alexmester.impl.domain.usecase.LoadMoreExploreUseCase
 import dev.alexmester.impl.domain.usecase.RefreshExploreUseCase
-import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.error.AppError
 import dev.alexmester.models.result.onFailure
 import dev.alexmester.models.result.onSuccess
 import dev.alexmester.ui.R
@@ -121,7 +121,7 @@ class ExploreViewModel(
                 }
                 .onFailure { error ->
                     _state.updateContent { it.copy(isLoadingMore = false, loadMoreError = true) }
-                    emitSideEffect(ExploreSideEffect.ShowError(NetworkErrorUiMapper.toUiText(error)))
+                    emitSideEffect(ExploreSideEffect.ShowError(AppErrorUiMapper.toUiText(error)))
                 }
         }
     }
@@ -206,12 +206,12 @@ class ExploreViewModel(
         }
     }
 
-    private fun handleError(error: NetworkError) {
+    private fun handleError(error: AppError) {
         _state.update { current ->
             if (current is ExploreState.Content) current.copy(isRefreshing = false)
             else ExploreState.Error(error)
         }
-        emitSideEffect(ExploreSideEffect.ShowError(NetworkErrorUiMapper.toUiText(error)))
+        emitSideEffect(ExploreSideEffect.ShowError(AppErrorUiMapper.toUiText(error)))
     }
 
     private fun emitSideEffect(effect: ExploreSideEffect) {

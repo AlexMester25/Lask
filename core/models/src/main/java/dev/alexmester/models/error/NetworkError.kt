@@ -1,7 +1,7 @@
 package dev.alexmester.models.error
 
 
-sealed class NetworkError : Exception() {
+sealed class NetworkError : AppError() {
 
     class NoInternet : NetworkError()
 

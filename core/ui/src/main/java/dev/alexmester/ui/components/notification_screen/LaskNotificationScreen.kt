@@ -31,8 +31,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.alexmester.error.NetworkErrorUiMapper
+import dev.alexmester.error.AppErrorUiMapper
 import dev.alexmester.error.NotificationUi
+import dev.alexmester.models.error.AppError
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.ui.R
 import dev.alexmester.ui.desing_system.LaskColors
@@ -40,7 +41,7 @@ import dev.alexmester.ui.desing_system.LaskTheme
 import dev.alexmester.ui.desing_system.LaskTypography
 
 sealed interface NotificationType {
-    data class Error(val error: NetworkError) : NotificationType
+    data class Error(val error: AppError) : NotificationType
     data class Warning(val text: String, val image: ImageVector) : NotificationType
 }
 
@@ -53,7 +54,7 @@ fun LaskNotificationScreen(
     onRetry: () -> Unit = {}
 ) {
     val ui = when (type) {
-        is NotificationType.Error -> NetworkErrorUiMapper.mapToNotificationUi(type.error)
+        is NotificationType.Error -> AppErrorUiMapper.mapToNotificationUi(type.error)
         is NotificationType.Warning -> NotificationUi(
             image = type.image,
             text = type.text,

@@ -18,6 +18,10 @@
     <string name="error_forbidden">Доступ запрещен</string>
     <string name="error_not_found">Запрашиваемые данные не найдены</string>
     <string name="error_rate_limit_retry">Превышен лимит запросов.\nПовторите через %1$d сек</string>
+    <string name="error_storage_full">Недостаточно места для сохранения данных</string>
+    <string name="error_storage_busy">Хранилище занято. Попробуйте еще раз</string>
+    <string name="error_storage_corrupted">Сохраненные данные повреждены</string>
+    <string name="error_storage_failed">Не удалось сохранить данные.\nПопробуйте еще раз</string>
 
     <!-- common warning -->
     <string name="warning_no_articles">Статей пока нет</string>
