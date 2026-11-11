@@ -30,6 +30,7 @@ internal class FeedCacheImpl(
             feedCacheDao.clearFeed(feedType.key)
             articleDao.insertArticles(articles)
             feedCacheDao.insertFeedCache(cache)
+            articleDao.deleteOrphanedInactiveUserStates()
             articleDao.deleteOrphaned()
         }
     }
@@ -39,6 +40,7 @@ internal class FeedCacheImpl(
         transactionRunner {
             articleDao.insertArticles(entities)
             feedCacheDao.insertFeedCache(cache)
+            articleDao.deleteOrphanedInactiveUserStates()
             articleDao.deleteOrphaned()
         }
     }
