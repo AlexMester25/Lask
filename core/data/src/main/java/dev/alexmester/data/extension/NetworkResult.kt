@@ -1,14 +1,15 @@
 package dev.alexmester.data.extension
 
 import dev.alexmester.data.error.NetworkErrorMapper
-import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.error.AppError
 import dev.alexmester.models.result.AppResult
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
- * Выполняет сетевой вызов и приводит его сбой к типизированной [NetworkError].
+ * Выполняет сетевой вызов и приводит его сбой к типизированной [AppError]
+ * (обычно [dev.alexmester.models.error.NetworkError]).
  */
 suspend fun <T> runNetworkResult(
     mapper: NetworkErrorMapper,
@@ -18,7 +19,7 @@ suspend fun <T> runNetworkResult(
         AppResult.Success(block())
     } catch (e: CancellationException) {
         throw e
-    } catch (e: NetworkError) {
+    } catch (e: AppError) {
         AppResult.Failure(e)
     } catch (e: Exception) {
         // Сокет, закрытый при отмене, приходит как IOException: не показываем отмену как сетевую ошибку.

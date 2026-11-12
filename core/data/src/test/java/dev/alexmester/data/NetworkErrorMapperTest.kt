@@ -1,16 +1,21 @@
 package dev.alexmester.data
 
 import dev.alexmester.data.error.NetworkErrorMapper
+import dev.alexmester.data.extension.runNetworkResult
 import dev.alexmester.models.error.NetworkError
+import dev.alexmester.models.error.StorageError
+import dev.alexmester.models.result.AppResult
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.serialization.ContentConvertException
 import io.ktor.serialization.JsonConvertException
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.SerializationException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -166,5 +171,40 @@ class NetworkErrorMapperTest {
     @Test
     fun `translate api still maps rate limit by base rules`() {
         assertTrue(translateMapper.mapHttpStatus(429) is NetworkError.RateLimit)
+    }
+
+    @Test
+    fun `runNetworkResult returns success`() = runTest {
+        val result = runNetworkResult(mapper) { 42 }
+
+        assertEquals(AppResult.Success(42), result)
+    }
+
+    @Test
+    fun `runNetworkResult maps network exception`() = runTest {
+        val result = runNetworkResult<Unit>(mapper) { throw UnknownHostException("host") }
+
+        assertTrue(result is AppResult.Failure)
+        assertTrue((result as AppResult.Failure).error is NetworkError.NoInternet)
+    }
+
+    @Test
+    fun `runNetworkResult keeps app error`() = runTest {
+        val error = StorageError.Constraint()
+
+        val result = runNetworkResult<Unit>(mapper) { throw error }
+
+        assertTrue(result is AppResult.Failure)
+        assertSame(error, (result as AppResult.Failure).error)
+    }
+
+    @Test
+    fun `runNetworkResult rethrows cancellation`() = runTest {
+        try {
+            runNetworkResult<Unit>(mapper) { throw CancellationException("cancelled") }
+            fail("CancellationException expected")
+        } catch (expected: CancellationException) {
+            assertEquals("cancelled", expected.message)
+        }
     }
 }
