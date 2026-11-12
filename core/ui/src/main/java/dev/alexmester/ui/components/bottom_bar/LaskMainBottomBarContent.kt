@@ -65,6 +65,8 @@ fun LaskMainBottomBarContent(item: LaskMainBottomBarItem) {
                 text = item.title,
                 style = MaterialTheme.LaskTypography.footnoteSemiBold,
                 color = textColor,
+                maxLines = 1,
+                softWrap = false,
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
