@@ -15,12 +15,13 @@ val database = module {
             klass = AppDatabase::class.java,
             name = DB_NAME,
         )
-            .fallbackToDestructiveMigrationFrom()
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
 
     single { get<AppDatabase>().articleDao() }
     single { get<AppDatabase>().articleUserStateDao()}
+    single { get<AppDatabase>().articleTranslationDao() }
     single { get<AppDatabase>().feedCacheDao() }
     single<TransactionRunner> { get<AppDatabase>().transactionRunnerDao() }
 }

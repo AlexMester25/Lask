@@ -114,17 +114,18 @@ class ArticleDetailViewModel(
             val sourceLang = "auto"
 
             translateTextsUseCase(
+                articleId = article.id,
                 title = article.title,
                 bodyText = bodyText,
                 targetLanguage = targetLang,
                 sourceLanguage = sourceLang,
             )
-                .onSuccess { (translatedTitle, translatedBody) ->
+                .onSuccess { translation ->
                     _state.update {
                         it.contentOrNull?.copy(
                             translationState = TranslationState.Translated,
-                            translatedTitle = translatedTitle,
-                            translatedText = translatedBody,
+                            translatedTitle = translation.title,
+                            translatedText = translation.text,
                         ) ?: it
                     }
                 }

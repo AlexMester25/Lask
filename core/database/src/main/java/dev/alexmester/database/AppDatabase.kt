@@ -6,10 +6,12 @@ import androidx.room.TypeConverters
 import dev.alexmester.database.DatabaseConstants.DB_VERSION
 import dev.alexmester.database.converter.StringListConverter
 import dev.alexmester.database.dao.ArticleDao
+import dev.alexmester.database.dao.ArticleTranslationDao
 import dev.alexmester.database.dao.ArticleUserStateDao
 import dev.alexmester.database.dao.FeedCacheDao
 import dev.alexmester.database.dao.TransactionRunnerDao
 import dev.alexmester.database.entity.ArticleEntity
+import dev.alexmester.database.entity.ArticleTranslationEntity
 import dev.alexmester.database.entity.ArticleUserStateEntity
 import dev.alexmester.database.entity.FeedCacheEntity
 
@@ -18,6 +20,7 @@ import dev.alexmester.database.entity.FeedCacheEntity
         ArticleEntity::class,
         ArticleUserStateEntity::class,
         FeedCacheEntity::class,
+        ArticleTranslationEntity::class,
     ],
     version = DB_VERSION,
     exportSchema = true,
@@ -26,6 +29,7 @@ import dev.alexmester.database.entity.FeedCacheEntity
 abstract class AppDatabase : RoomDatabase() {
     abstract fun articleDao(): ArticleDao
     abstract fun articleUserStateDao(): ArticleUserStateDao
+    abstract fun articleTranslationDao(): ArticleTranslationDao
     abstract fun feedCacheDao(): FeedCacheDao
     abstract fun transactionRunnerDao(): TransactionRunnerDao
 }

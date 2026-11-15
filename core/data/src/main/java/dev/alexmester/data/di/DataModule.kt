@@ -6,9 +6,11 @@ import dev.alexmester.data.remote.source.NewsRemoteDataSourceImpl
 import dev.alexmester.data.remote.api.WorldNewsApiService
 import dev.alexmester.data.remote.source.TranslateRemoteDataSourceImpl
 import dev.alexmester.data.repository.ArticleRepositoryImpl
+import dev.alexmester.data.repository.ArticleTranslationRepositoryImpl
 import dev.alexmester.data.repository.UserPreferencesRepositoryImpl
 import dev.alexmester.domain.cache.FeedCache
 import dev.alexmester.domain.repository.ArticleRepository
+import dev.alexmester.domain.repository.ArticleTranslationRepository
 import dev.alexmester.domain.repository.UserPreferencesRepository
 import dev.alexmester.domain.source.NewsRemoteDataSource
 import dev.alexmester.domain.source.TranslateRemoteDataSource
@@ -36,4 +38,5 @@ val data = module {
     single<FeedCacheImpl>() bind FeedCache::class
     single<UserPreferencesRepositoryImpl>() bind UserPreferencesRepository::class
     single<ArticleRepositoryImpl>() bind ArticleRepository::class
+    single<ArticleTranslationRepositoryImpl>() bind ArticleTranslationRepository::class
 }
