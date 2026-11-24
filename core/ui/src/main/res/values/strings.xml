@@ -60,6 +60,7 @@
     <!-- Common -->
     <string name="unknown_author">Unknown author</string>
     <string name="apply">Apply</string>
+    <string name="scroll_to_top">Scroll to top</string>
 
     <!-- Profile -->
     <string name="profile_article_read">Article Read</string>

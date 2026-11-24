@@ -59,6 +59,7 @@
     <!-- Common -->
     <string name="unknown_author">Автор неизвестен</string>
     <string name="apply">Ок</string>
+    <string name="scroll_to_top">Наверх</string>
 
     <!-- Profile -->
     <string name="profile_article_read">Прочитано</string>
