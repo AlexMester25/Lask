@@ -120,8 +120,11 @@ class FakeArticleRepository : ArticleRepository {
 
     override suspend fun getArticleById(id: Long): NewsArticle? = null
 
-    override fun observeBookmarkedArticles(): Flow<List<NewsArticle>> =
+    override fun observeBookmarkedArticles(limit: Int): Flow<List<NewsArticle>> =
         flowOf(emptyList())
+
+    override fun observeBookmarkedCount(): Flow<Int> =
+        flowOf(0)
 
     override fun observeIsBookmarked(articleId: Long): Flow<Boolean> =
         flowOf(false)

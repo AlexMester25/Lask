@@ -6,4 +6,5 @@ sealed class BookmarksIntent {
     data object ConfirmDeletion : BookmarksIntent()
     data object CancelDeletion : BookmarksIntent()
     data class ArticleClick(val articleId: Long, val articleUrl: String) : BookmarksIntent()
+    data object LoadMore : BookmarksIntent()
 }

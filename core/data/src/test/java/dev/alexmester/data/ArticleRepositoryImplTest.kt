@@ -165,7 +165,8 @@ private class FakeArticleUserStateDao : ArticleUserStateDao {
 
     override suspend fun isBookmarked(articleId: Long): Boolean? = rows[articleId]?.isBookmarked
 
-    override fun observeBookmarkedArticles(): Flow<List<ArticleEntity>> = emptyFlow()
+    override fun observeBookmarkedArticles(limit: Int): Flow<List<ArticleEntity>> = emptyFlow()
+    override fun observeBookmarkedCount(): Flow<Int> = emptyFlow()
     override fun observeReadArticleIds(): Flow<List<Long>> = emptyFlow()
     override fun observeReadCount(): Flow<Int> = emptyFlow()
     override fun observeReadArticles(): Flow<List<ArticleEntity>> = emptyFlow()

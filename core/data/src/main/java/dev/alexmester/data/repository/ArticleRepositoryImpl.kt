@@ -12,6 +12,7 @@ import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.platform.dispatchers.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.Clock
@@ -25,13 +26,19 @@ internal class ArticleRepositoryImpl (
 ): ArticleRepository {
 
     override fun observeReadArticleIds(): Flow<Set<Long>> =
-        userStateDao.observeReadArticleIds().map { it.toSet() }
+        userStateDao.observeReadArticleIds()
+            .map { it.toSet() }
+            .flowOn(dispatchers.io)
 
     override fun observeReadArticles(): Flow<List<NewsArticle>> =
-        userStateDao.observeReadArticles().map { entities -> entities.map { it.toDomain() } }
+        userStateDao.observeReadArticles()
+            .map { entities -> entities.map { it.toDomain() } }
+            .flowOn(dispatchers.io)
 
     override fun observeClappedArticles(): Flow<List<NewsArticle>> =
-        userStateDao.observeClappedArticles().map { entities -> entities.map { it.toDomain() } }
+        userStateDao.observeClappedArticles()
+            .map { entities -> entities.map { it.toDomain() } }
+            .flowOn(dispatchers.io)
 
     override suspend fun saveArticles(articles: List<NewsArticle>): AppResult<Unit> =
         runStorageResult {
@@ -43,8 +50,12 @@ internal class ArticleRepositoryImpl (
     override suspend fun getArticleById(id: Long): NewsArticle? =
         withContext(dispatchers.io) { articleDao.getArticleById(id)?.toDomain() }
 
-    override fun observeBookmarkedArticles(): Flow<List<NewsArticle>> =
-        userStateDao.observeBookmarkedArticles().map { rows -> rows.map { it.toDomain() } }
+    override fun observeBookmarkedArticles(limit: Int): Flow<List<NewsArticle>> =
+        userStateDao.observeBookmarkedArticles(limit)
+            .map { rows -> rows.map { it.toDomain() } }
+            .flowOn(dispatchers.io)
+
+    override fun observeBookmarkedCount(): Flow<Int> = userStateDao.observeBookmarkedCount()
 
     override fun observeIsBookmarked(articleId: Long): Flow<Boolean> =
         userStateDao.observeIsBookmarked(articleId).map { it ?: false }

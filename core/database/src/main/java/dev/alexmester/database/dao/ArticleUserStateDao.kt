@@ -64,9 +64,13 @@ interface ArticleUserStateDao {
         INNER JOIN article_user_state s ON a.id = s.articleId
         WHERE s.isBookmarked = 1
         ORDER BY s.bookmarkedAt DESC
+        LIMIT :limit
     """
     )
-    fun observeBookmarkedArticles(): Flow<List<ArticleEntity>>
+    fun observeBookmarkedArticles(limit: Int): Flow<List<ArticleEntity>>
+
+    @Query("SELECT COUNT(*) FROM article_user_state WHERE isBookmarked = 1")
+    fun observeBookmarkedCount(): Flow<Int>
 
     // ── Read ──────────────────────────────────────────────────────────────────
 

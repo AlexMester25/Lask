@@ -11,6 +11,8 @@ sealed interface BookmarksState {
         val articles: List<NewsArticle>,
         val isEditMode: Boolean = false,
         val pendingRemovalIds: Set<Long> = emptySet(),
+        val canLoadMore: Boolean = false,
+        val isLoadingMore: Boolean = false,
     ) : BookmarksState
 }
 

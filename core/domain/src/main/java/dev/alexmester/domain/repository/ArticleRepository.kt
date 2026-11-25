@@ -14,7 +14,11 @@ interface ArticleRepository {
 
     suspend fun getArticleById(id: Long): NewsArticle?
 
-    fun observeBookmarkedArticles(): Flow<List<NewsArticle>>
+    /** Закладки, начиная с самых свежих, не более [limit] штук. */
+    fun observeBookmarkedArticles(limit: Int): Flow<List<NewsArticle>>
+
+    /** Общее количество закладок — нужно, чтобы понять, есть ли ещё страницы. */
+    fun observeBookmarkedCount(): Flow<Int>
     fun observeIsBookmarked(articleId: Long): Flow<Boolean>
     suspend fun toggleBookmark(articleId: Long): Boolean
     suspend fun removeBookmarks(ids: Set<Long>)

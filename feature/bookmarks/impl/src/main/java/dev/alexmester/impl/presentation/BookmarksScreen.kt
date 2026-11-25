@@ -104,6 +104,8 @@ internal fun BookmarksScreenContent(
                         articles = currentState.articles,
                         isEditMode = currentState.isEditMode,
                         pendingRemovalIds = currentState.pendingRemovalIds,
+                        canLoadMore = currentState.canLoadMore,
+                        isLoadingMore = currentState.isLoadingMore,
                         onArticleClick = { id, url ->
                             if (!currentState.isEditMode) {
                                 onIntent(BookmarksIntent.ArticleClick(id, url))
@@ -111,6 +113,9 @@ internal fun BookmarksScreenContent(
                         },
                         onTogglePendingRemoval = { id ->
                             onIntent(BookmarksIntent.TogglePendingRemoval(id))
+                        },
+                        onLoadMore = {
+                            onIntent(BookmarksIntent.LoadMore)
                         },
                     )
                 }

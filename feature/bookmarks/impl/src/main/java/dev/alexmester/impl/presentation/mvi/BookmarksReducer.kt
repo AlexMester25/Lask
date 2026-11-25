@@ -33,9 +33,17 @@ object BookmarksReducer {
     fun onArticlesUpdated(
         state: BookmarksState,
         articles: List<NewsArticle>,
+        canLoadMore: Boolean,
     ): BookmarksState = when {
         articles.isEmpty() -> BookmarksState.Empty
-        state is BookmarksState.Content -> state.copy(articles = articles)
-        else -> BookmarksState.Content(articles = articles)
+        state is BookmarksState.Content -> state.copy(
+            articles = articles,
+            canLoadMore = canLoadMore,
+            isLoadingMore = false,
+        )
+        else -> BookmarksState.Content(
+            articles = articles,
+            canLoadMore = canLoadMore,
+        )
     }
 }
