@@ -1,4 +1,4 @@
-package dev.alexmester.impl
+package dev.alexmester.testing
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

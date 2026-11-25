@@ -1,15 +1,15 @@
 package dev.alexmester.impl.presentation.mvi
 
-import dev.alexmester.impl.FakeArticleRepository
 import dev.alexmester.impl.FakeNewsFeedRepository
-import dev.alexmester.impl.FakeUserPreferencesRepository
-import dev.alexmester.impl.MainDispatcherRule
-import dev.alexmester.impl.buildCluster
 import dev.alexmester.impl.domain.model.RefreshFeedResult
 import dev.alexmester.impl.domain.usecase.ObserveTrendsUseCase
 import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.preference.UserPreferences
 import dev.alexmester.models.result.AppResult
+import dev.alexmester.testing.MainDispatcherRule
+import dev.alexmester.testing.builder.buildCluster
+import dev.alexmester.testing.fake.FakeArticleRepository
+import dev.alexmester.testing.fake.FakeUserPreferencesRepository
 import dev.alexmester.ui.R
 import dev.alexmester.ui.uitext.UiText
 import junit.framework.TestCase.assertEquals

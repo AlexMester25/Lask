@@ -36,6 +36,7 @@ include(":core:models")
 include(":core:navigation")
 include(":core:utils")
 include(":core:platform")
+include(":core:testing")
 
 include(":feature:news_feed:api")
 include(":feature:news_feed:impl")

@@ -1,6 +1,5 @@
 package dev.alexmester.impl
 
-import dev.alexmester.domain.repository.ArticleTranslationRepository
 import dev.alexmester.impl.domain.repository.ArticleDetailRepository
 import dev.alexmester.impl.domain.usecase.TranslateTextsUseCase
 import dev.alexmester.models.error.AppError
@@ -8,6 +7,8 @@ import dev.alexmester.models.error.NetworkError
 import dev.alexmester.models.error.StorageError
 import dev.alexmester.models.result.AppResult
 import dev.alexmester.models.translation.ArticleTranslation
+import dev.alexmester.testing.fake.FakeArticleTranslationRepository
+import dev.alexmester.testing.fake.TranslationCacheWrite
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest
@@ -58,7 +59,7 @@ class TranslateTextsUseCaseTest {
         )
         assertEquals(listOf("Title", "Body"), detailRepository.calls)
         assertEquals(
-            listOf(CacheWrite(1L, "ru", ArticleTranslation("Заголовок", "Текст"))),
+            listOf(TranslationCacheWrite(1L, "ru", ArticleTranslation("Заголовок", "Текст"))),
             translationRepository.saved,
         )
     }
@@ -103,12 +104,6 @@ class TranslateTextsUseCaseTest {
     }
 }
 
-private data class CacheWrite(
-    val articleId: Long,
-    val targetLanguage: String,
-    val translation: ArticleTranslation,
-)
-
 private class FakeArticleDetailRepository(
     var translations: Map<String, String> = emptyMap(),
     var failure: AppError? = null,
@@ -124,27 +119,5 @@ private class FakeArticleDetailRepository(
         calls += text
         failure?.let { return AppResult.Failure(it) }
         return AppResult.Success(translations[text] ?: "translated:$text")
-    }
-}
-
-private class FakeArticleTranslationRepository : ArticleTranslationRepository {
-
-    var cached: ArticleTranslation? = null
-    var saveFailure: AppError? = null
-    val saved = mutableListOf<CacheWrite>()
-
-    override suspend fun getTranslation(
-        articleId: Long,
-        targetLanguage: String,
-    ): ArticleTranslation? = cached
-
-    override suspend fun saveTranslation(
-        articleId: Long,
-        targetLanguage: String,
-        translation: ArticleTranslation,
-    ): AppResult<Unit> {
-        saveFailure?.let { return AppResult.Failure(it) }
-        saved += CacheWrite(articleId, targetLanguage, translation)
-        return AppResult.Success(Unit)
     }
 }

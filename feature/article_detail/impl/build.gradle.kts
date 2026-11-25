@@ -19,4 +19,6 @@ dependencies {
     implementation(project(":core:utils"))
     implementation(project(":core:platform"))
     implementation(project(":core:domain"))
+
+    testImplementation(project(":core:testing"))
 }

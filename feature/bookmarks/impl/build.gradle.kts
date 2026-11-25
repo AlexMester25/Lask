@@ -16,4 +16,6 @@ dependencies {
     implementation(project(":core:models"))
     implementation(project(":core:ui"))
     implementation(project(":core:utils"))
+
+    testImplementation(project(":core:testing"))
 }
