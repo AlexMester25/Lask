@@ -1,35 +1,16 @@
 package dev.alexmester.datastore
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import java.io.File
-import java.util.UUID
-import kotlin.io.path.createTempDirectory
 
-private const val FILE_NAME = "add_interests_test_datastore"
-
-@ExperimentalCoroutinesApi
 class DataSourceAddInterestsTest {
 
-    private lateinit var dataStore: DataStore<Preferences>
     private lateinit var dataSource: UserPreferencesDataSource
 
-    private fun TestScope.setupDataSource() {
-        val tempDir = createTempDirectory().toFile()
-        val fileName = "${FILE_NAME}_${UUID.randomUUID()}"
-        dataStore = PreferenceDataStoreFactory.create(
-            scope = backgroundScope,
-            produceFile = { File(tempDir, "$fileName.preferences_pb") }
-        )
-        dataSource = UserPreferencesDataSourceImpl(dataStore)
+    private fun setupDataSource() {
+        dataSource = UserPreferencesDataSourceImpl(InMemoryPreferencesDataStore())
     }
 
     @Test
@@ -37,7 +18,6 @@ class DataSourceAddInterestsTest {
         setupDataSource()
 
         dataSource.addInterest("Kotlin")
-        advanceUntilIdle()
 
         val interests = dataSource.userPreferences.first().interests
 
@@ -51,7 +31,6 @@ class DataSourceAddInterestsTest {
         dataSource.addInterest("kotlin")
         dataSource.addInterest("Kotlin")
         dataSource.addInterest("  Kotlin  ")
-        advanceUntilIdle()
 
         val interests = dataSource.userPreferences.first().interests
 
@@ -67,7 +46,6 @@ class DataSourceAddInterestsTest {
         dataSource.addInterest("   ")
         dataSource.addInterest("")
         dataSource.addInterest("   \t\n")
-        advanceUntilIdle()
 
         val after = dataSource.userPreferences.first().interests
 
@@ -79,11 +57,8 @@ class DataSourceAddInterestsTest {
         setupDataSource()
 
         dataSource.addInterest("Kotlin")
-        advanceUntilIdle()
         dataSource.addInterest("Android")
-        advanceUntilIdle()
         dataSource.addInterest("Jetpack")
-        advanceUntilIdle()
 
         val interests = dataSource.userPreferences.first().interests
 
@@ -97,7 +72,6 @@ class DataSourceAddInterestsTest {
         dataSource.addInterest("Kotlin")
         dataSource.addInterest("kotlin")
         dataSource.addInterest("KOTLIN")
-        advanceUntilIdle()
 
         val interests = dataSource.userPreferences.first().interests
 

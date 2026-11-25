@@ -1,116 +1,86 @@
 package dev.alexmester.datastore
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import java.io.File
-import java.util.UUID
-import kotlin.io.path.createTempDirectory
 
-private const val FILE_NAME = "remove_interests_test_datastore"
-
-@ExperimentalCoroutinesApi
-@OptIn(ExperimentalCoroutinesApi::class)
 class DataSourceRemoveInterestsTest {
 
-    private lateinit var dataStore: DataStore<Preferences>
     private lateinit var dataSource: UserPreferencesDataSource
 
-    private fun TestScope.setupDataSource() {
-        val tempDir = createTempDirectory().toFile()
-        val fileName = "${FILE_NAME}_${UUID.randomUUID()}"
-        dataStore = PreferenceDataStoreFactory.create(
-            scope = backgroundScope,
-            produceFile = { File(tempDir, "$fileName.preferences_pb") }
-        )
-        dataSource = UserPreferencesDataSourceImpl(dataStore)
+    private fun setupDataSource() {
+        dataSource = UserPreferencesDataSourceImpl(InMemoryPreferencesDataStore())
     }
 
     @Test
     fun `removeInterest removes existing keyword`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.addInterest("Kotlin")
-            dataSource.addInterest("Android")
-            dataSource.addInterest("Jetpack")
-            advanceUntilIdle() // Ждем завершения всех записей
+        dataSource.addInterest("Kotlin")
+        dataSource.addInterest("Android")
+        dataSource.addInterest("Jetpack")
 
-            dataSource.removeInterest("android")
-            advanceUntilIdle()
+        dataSource.removeInterest("android")
 
-            val interests = dataSource.userPreferences.first().interests
-            assertEquals(setOf("kotlin", "jetpack"), interests)
-        }
+        val interests = dataSource.userPreferences.first().interests
+        assertEquals(setOf("kotlin", "jetpack"), interests)
+    }
 
     @Test
     fun `removeInterest does nothing if keyword not exists`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.addInterest("Kotlin")
-            dataSource.addInterest("Android")
-            advanceUntilIdle()
+        dataSource.addInterest("Kotlin")
+        dataSource.addInterest("Android")
 
-            val before = dataSource.userPreferences.first().interests
+        val before = dataSource.userPreferences.first().interests
 
-            dataSource.removeInterest("Flutter")
-            advanceUntilIdle()
+        dataSource.removeInterest("Flutter")
 
-            val after = dataSource.userPreferences.first().interests
-            assertEquals(before, after)
-        }
+        val after = dataSource.userPreferences.first().interests
+        assertEquals(before, after)
+    }
 
     @Test
     fun `removeInterest is case insensitive`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.addInterest("Kotlin")
-            dataSource.addInterest("Android")
-            advanceUntilIdle()
+        dataSource.addInterest("Kotlin")
+        dataSource.addInterest("Android")
 
-            dataSource.removeInterest("kotlin")
-            advanceUntilIdle()
+        dataSource.removeInterest("kotlin")
 
-            val interests = dataSource.userPreferences.first().interests
-            assertEquals(setOf("android"), interests)
-        }
+        val interests = dataSource.userPreferences.first().interests
+        assertEquals(setOf("android"), interests)
+    }
 
     @Test
     fun `removeInterest handles blank input gracefully`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.addInterest("Kotlin")
-            dataSource.addInterest("Android")
-            advanceUntilIdle()
+        dataSource.addInterest("Kotlin")
+        dataSource.addInterest("Android")
 
-            val before = dataSource.userPreferences.first().interests
+        val before = dataSource.userPreferences.first().interests
 
-            dataSource.removeInterest("   ")
-            dataSource.removeInterest("")
-            advanceUntilIdle()
+        dataSource.removeInterest("   ")
+        dataSource.removeInterest("")
 
-            val after = dataSource.userPreferences.first().interests
-            assertEquals(before, after)
-        }
+        val after = dataSource.userPreferences.first().interests
+        assertEquals(before, after)
+    }
 
     @Test
     fun `removeInterest removes only one occurrence even if somehow duplicated`() = runTest {
-            setupDataSource()
+        setupDataSource()
 
-            dataSource.addInterest("kotlin")
-            dataSource.addInterest("android")
-            advanceUntilIdle()
+        dataSource.addInterest("kotlin")
+        dataSource.addInterest("android")
 
-            dataSource.removeInterest("kotlin")
-            advanceUntilIdle()
+        dataSource.removeInterest("kotlin")
 
-            val interests = dataSource.userPreferences.first().interests
-            assertEquals(setOf("android"), interests)
-        }
+        val interests = dataSource.userPreferences.first().interests
+        assertEquals(setOf("android"), interests)
+    }
 }
