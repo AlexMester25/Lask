@@ -18,3 +18,7 @@ local.properties
 *.jks
 *.keystore
 AGENTS.md
+
+# graphify: generated knowledge graph and temp pipeline files (repo root only)
+/graphify-out/
+/.graphify_*
