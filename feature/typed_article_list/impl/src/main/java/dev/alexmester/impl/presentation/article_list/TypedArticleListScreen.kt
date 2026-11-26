@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Article
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -25,8 +23,6 @@ import dev.alexmester.impl.presentation.article_list.mvi.TypedArticleListSideEff
 import dev.alexmester.impl.presentation.article_list.mvi.TypedArticleListState
 import dev.alexmester.impl.presentation.article_list.mvi.TypedArticleListViewModel
 import dev.alexmester.ui.R
-import dev.alexmester.ui.components.notification_screen.LaskNotificationScreen
-import dev.alexmester.ui.components.notification_screen.NotificationType
 import dev.alexmester.ui.design_system.LaskColors
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -93,15 +89,6 @@ internal fun ArticleListScreenContent(
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.LaskColors.brand_blue,
                         trackColor = MaterialTheme.LaskColors.brand_blue10,
-                    )
-                }
-
-                state.allArticles.isEmpty() -> {
-                    LaskNotificationScreen(
-                        type = NotificationType.Warning(
-                            text = stringResource(R.string.warning_no_articles),
-                            image = Icons.Default.Article
-                        )
                     )
                 }
 

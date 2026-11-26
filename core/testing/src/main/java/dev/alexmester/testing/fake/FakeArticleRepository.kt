@@ -1,5 +1,7 @@
 package dev.alexmester.testing.fake
 
+import dev.alexmester.domain.articles.CategoryCount
+import dev.alexmester.domain.articles.CategoryFilter
 import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
@@ -12,9 +14,11 @@ import kotlinx.coroutines.flow.update
 /**
  * In-memory реализация [ArticleRepository] для тестов.
  *
- * Повторяет наблюдаемое поведение настоящего репозитория: закладки отдаются
- * окном [observeBookmarkedArticles], а их количество считается по всему набору,
- * поэтому `size == limit` не путается с «загружено всё».
+ * Повторяет наблюдаемое поведение настоящего репозитория:
+ * - закладки, «Прочитанное» и «Клапы» отдаются окном по `limit`, а не целиком;
+ * - фильтрация по категории и фасеты считаются по всему набору, а не по окну,
+ *   поэтому `size == limit` не путается с «загружено всё»;
+ * - статьи без категории образуют отдельную группу (`CategoryFilter.Uncategorized`).
  */
 class FakeArticleRepository(
     articles: List<NewsArticle> = emptyList(),
@@ -30,6 +34,12 @@ class FakeArticleRepository(
 
     /** Лимиты, с которыми создавались потоки закладок, в порядке создания. */
     val requestedLimits = mutableListOf<Int>()
+
+    /** Лимиты, с которыми создавались потоки «Прочитанного», в порядке создания. */
+    val readRequestedLimits = mutableListOf<Int>()
+
+    /** Лимиты, с которыми создавались потоки «Клапов», в порядке создания. */
+    val clappedRequestedLimits = mutableListOf<Int>()
 
     /** Результат [saveArticles]; по умолчанию — успех. */
     var saveResult: AppResult<Unit> = AppResult.Success(Unit)
@@ -55,9 +65,27 @@ class FakeArticleRepository(
 
     override fun observeReadArticleIds(): Flow<Set<Long>> = readArticleIds.asStateFlow()
 
-    override fun observeReadArticles(): Flow<List<NewsArticle>> = readArticles.asStateFlow()
+    override fun observeReadArticles(
+        filter: CategoryFilter,
+        limit: Int,
+    ): Flow<List<NewsArticle>> {
+        readRequestedLimits += limit
+        return readArticles.map { it.applyFilter(filter).take(limit) }
+    }
 
-    override fun observeClappedArticles(): Flow<List<NewsArticle>> = clappedArticles.asStateFlow()
+    override fun observeReadCategoryCounts(): Flow<List<CategoryCount>> =
+        readArticles.map { it.toCategoryCounts() }
+
+    override fun observeClappedArticles(
+        filter: CategoryFilter,
+        limit: Int,
+    ): Flow<List<NewsArticle>> {
+        clappedRequestedLimits += limit
+        return clappedArticles.map { it.applyFilter(filter).take(limit) }
+    }
+
+    override fun observeClappedCategoryCounts(): Flow<List<CategoryCount>> =
+        clappedArticles.map { it.toCategoryCounts() }
 
     override suspend fun saveArticles(articles: List<NewsArticle>): AppResult<Unit> {
         articles.forEach { storedArticles[it.id] = it }
@@ -107,4 +135,23 @@ class FakeArticleRepository(
     }
 
     override fun observeReadCount(): Flow<Int> = readArticleIds.map { it.size }
+
+    private fun List<NewsArticle>.applyFilter(filter: CategoryFilter): List<NewsArticle> =
+        when (filter) {
+            CategoryFilter.All -> this
+            CategoryFilter.Uncategorized -> filter { it.category == null }
+            is CategoryFilter.Named -> filter { it.category == filter.name }
+        }
+
+    /**
+     * Повторяет `GROUP BY category ... ORDER BY COUNT(*) DESC, category ASC`:
+     * null-категория при равенстве размеров идёт первой, как NULL в SQLite ASC.
+     */
+    private fun List<NewsArticle>.toCategoryCounts(): List<CategoryCount> =
+        groupBy { it.category }
+            .map { (category, articles) -> CategoryCount(category = category, count = articles.size) }
+            .sortedWith(
+                compareByDescending<CategoryCount> { it.count }
+                    .thenBy { it.category ?: "" },
+            )
 }

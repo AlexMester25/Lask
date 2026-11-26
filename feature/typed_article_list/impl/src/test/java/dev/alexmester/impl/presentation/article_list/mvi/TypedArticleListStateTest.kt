@@ -1,93 +1,134 @@
 package dev.alexmester.impl.presentation.article_list.mvi
 
-import dev.alexmester.testing.builder.buildArticle
+import dev.alexmester.domain.articles.CategoryCount
+import dev.alexmester.domain.articles.CategoryFilter
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
 import org.junit.Test
 
 class TypedArticleListStateTest {
 
     @Test
-    fun `categories count articles and keep All first`() {
-        val state = TypedArticleListState(
-            allArticles = listOf(
-                buildArticle(id = 1, category = "Tech"),
-                buildArticle(id = 2, category = "Tech"),
-                buildArticle(id = 3, category = "Sport"),
-                buildArticle(id = 4, category = null),
+    fun `categories put All first with the sum of every facet`() {
+        val categories = TypedArticleListState.categoriesOf(
+            facets = listOf(
+                CategoryCount(category = "Tech", count = 2),
+                CategoryCount(category = "Sport", count = 1),
+                CategoryCount(category = null, count = 1),
             ),
+            selected = CategoryFilter.All,
         )
 
         assertEquals(
             listOf(
-                null to 4,
-                "Tech" to 2,
-                "Sport" to 1,
-                "Other" to 1,
+                CategoryFilter.All to 4,
+                CategoryFilter.Named("Tech") to 2,
+                CategoryFilter.Named("Sport") to 1,
+                CategoryFilter.Uncategorized to 1,
             ),
-            state.categories,
+            categories,
         )
     }
 
     @Test
-    fun `all category returns every article`() {
-        val articles = listOf(
-            buildArticle(id = 1, category = "Tech"),
-            buildArticle(id = 2, category = null),
-        )
-        val state = TypedArticleListState(allArticles = articles, selectedCategory = null)
-
-        assertEquals(articles, state.filteredArticles)
-    }
-
-    @Test
-    fun `other category returns only articles without category`() {
-        val state = TypedArticleListState(
-            allArticles = listOf(
-                buildArticle(id = 1, category = "Tech"),
-                buildArticle(id = 2, category = null),
+    fun `facets keep the order given by sql`() {
+        val categories = TypedArticleListState.categoriesOf(
+            facets = listOf(
+                CategoryCount(category = "Tech", count = 5),
+                CategoryCount(category = "Sport", count = 1),
             ),
-            selectedCategory = TypedArticleListState.OTHER_CATEGORY,
+            selected = CategoryFilter.All,
         )
 
-        assertEquals(listOf(2L), state.filteredArticles.map { it.id })
-    }
-
-    @Test
-    fun `specific category returns matching articles`() {
-        val state = TypedArticleListState(
-            allArticles = listOf(
-                buildArticle(id = 1, category = "Tech"),
-                buildArticle(id = 2, category = "Sport"),
-                buildArticle(id = 3, category = "Tech"),
+        assertEquals(
+            listOf(
+                CategoryFilter.All to 6,
+                CategoryFilter.Named("Tech") to 5,
+                CategoryFilter.Named("Sport") to 1,
             ),
-            selectedCategory = "Tech",
+            categories,
         )
-
-        assertEquals(listOf(1L, 3L), state.filteredArticles.map { it.id })
     }
 
     @Test
-    fun `derived values are computed once per state instance`() {
-        val state = TypedArticleListState(
-            allArticles = listOf(buildArticle(id = 1, category = "Tech")),
-            selectedCategory = "Tech",
+    fun `selected category that disappeared stays as an empty chip`() {
+        val categories = TypedArticleListState.categoriesOf(
+            facets = listOf(CategoryCount(category = "Tech", count = 2)),
+            selected = CategoryFilter.Named("Sport"),
         )
 
-        assertSame(state.categories, state.categories)
-        assertSame(state.filteredArticles, state.filteredArticles)
+        assertEquals(
+            listOf(
+                CategoryFilter.All to 2,
+                CategoryFilter.Named("Tech") to 2,
+                CategoryFilter.Named("Sport") to 0,
+            ),
+            categories,
+        )
     }
 
     @Test
-    fun `changing category produces new filtered articles`() {
-        val state = TypedArticleListState(
-            allArticles = listOf(
-                buildArticle(id = 1, category = "Tech"),
-                buildArticle(id = 2, category = "Sport"),
+    fun `total of All is the sum of facets`() {
+        val total = TypedArticleListState.totalOf(
+            filter = CategoryFilter.All,
+            facets = listOf(
+                CategoryCount(category = "Tech", count = 3),
+                CategoryCount(category = null, count = 2),
             ),
         )
 
-        assertEquals(listOf(1L), state.copy(selectedCategory = "Tech").filteredArticles.map { it.id })
-        assertEquals(listOf(2L), state.copy(selectedCategory = "Sport").filteredArticles.map { it.id })
+        assertEquals(5, total)
+    }
+
+    @Test
+    fun `total of named category uses its own facet`() {
+        val total = TypedArticleListState.totalOf(
+            filter = CategoryFilter.Named("Tech"),
+            facets = listOf(
+                CategoryCount(category = "Tech", count = 3),
+                CategoryCount(category = "Sport", count = 9),
+            ),
+        )
+
+        assertEquals(3, total)
+    }
+
+    @Test
+    fun `total of uncategorized uses the null facet`() {
+        val total = TypedArticleListState.totalOf(
+            filter = CategoryFilter.Uncategorized,
+            facets = listOf(
+                CategoryCount(category = "Tech", count = 3),
+                CategoryCount(category = null, count = 2),
+            ),
+        )
+
+        assertEquals(2, total)
+    }
+
+    @Test
+    fun `total of a missing category is zero`() {
+        val total = TypedArticleListState.totalOf(
+            filter = CategoryFilter.Named("Sport"),
+            facets = listOf(CategoryCount(category = "Tech", count = 3)),
+        )
+
+        assertEquals(0, total)
+    }
+
+    @Test
+    fun `empty state is not reported while loading`() {
+        assertEquals(false, TypedArticleListState().isEmpty)
+        assertEquals(true, TypedArticleListState(isLoading = false).isEmpty)
+    }
+
+    @Test
+    fun `empty filtered list is distinguished from empty history`() {
+        assertEquals(false, TypedArticleListState(isLoading = false).isFilteredEmpty)
+
+        val filtered = TypedArticleListState(
+            isLoading = false,
+            selectedFilter = CategoryFilter.Named("Tech"),
+        )
+        assertEquals(true, filtered.isFilteredEmpty)
     }
 }

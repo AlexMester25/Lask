@@ -4,9 +4,12 @@ import android.database.sqlite.SQLiteFullException
 import dev.alexmester.data.repository.ArticleRepositoryImpl
 import dev.alexmester.database.dao.ArticleDao
 import dev.alexmester.database.dao.ArticleUserStateDao
+import dev.alexmester.database.dao.CategoryCountRow
 import dev.alexmester.database.dao.TransactionRunner
 import dev.alexmester.database.entity.ArticleEntity
 import dev.alexmester.database.entity.ArticleUserStateEntity
+import dev.alexmester.domain.articles.CategoryCount
+import dev.alexmester.domain.articles.CategoryFilter
 import dev.alexmester.models.error.StorageError
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
@@ -18,6 +21,7 @@ import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -111,6 +115,58 @@ class ArticleRepositoryImplTest {
         assertEquals(1, userStateDao.rows[3L]?.clapCount)
     }
 
+    @Test
+    fun `all filter queries read articles without category restriction`() = runTest {
+        repository().observeReadArticles(CategoryFilter.All, limit = 10).first()
+
+        assertEquals(ArticleQuery(null, onlyUncategorized = false, limit = 10), userStateDao.lastReadQuery)
+    }
+
+    @Test
+    fun `uncategorized filter queries only articles without category`() = runTest {
+        repository().observeReadArticles(CategoryFilter.Uncategorized, limit = 10).first()
+
+        assertEquals(ArticleQuery(null, onlyUncategorized = true, limit = 10), userStateDao.lastReadQuery)
+    }
+
+    @Test
+    fun `named filter queries its own category`() = runTest {
+        repository().observeReadArticles(CategoryFilter.Named("Tech"), limit = 5).first()
+
+        assertEquals(ArticleQuery("Tech", onlyUncategorized = false, limit = 5), userStateDao.lastReadQuery)
+    }
+
+    @Test
+    fun `clapped filter is passed to the clapped query`() = runTest {
+        repository().observeClappedArticles(CategoryFilter.Named("Sport"), limit = 7).first()
+
+        assertEquals(ArticleQuery("Sport", onlyUncategorized = false, limit = 7), userStateDao.lastClappedQuery)
+    }
+
+    @Test
+    fun `read category counts are mapped to domain`() = runTest {
+        userStateDao.readCategoryRows = listOf(
+            CategoryCountRow(category = "Tech", count = 3),
+            CategoryCountRow(category = null, count = 1),
+        )
+
+        val counts = repository().observeReadCategoryCounts().first()
+
+        assertEquals(
+            listOf(CategoryCount(category = "Tech", count = 3), CategoryCount(category = null, count = 1)),
+            counts,
+        )
+    }
+
+    @Test
+    fun `clapped category counts are mapped to domain`() = runTest {
+        userStateDao.clappedCategoryRows = listOf(CategoryCountRow(category = "Sport", count = 2))
+
+        val counts = repository().observeClappedCategoryCounts().first()
+
+        assertEquals(listOf(CategoryCount(category = "Sport", count = 2)), counts)
+    }
+
     private fun article() = NewsArticle(
         id = 1L, title = "t", text = null, summary = null, url = "u", image = null,
         video = null, publishDate = "2026-10-22 10:00:00", authors = emptyList(),
@@ -118,8 +174,21 @@ class ArticleRepositoryImplTest {
     )
 }
 
+private data class ArticleQuery(
+    val category: String?,
+    val onlyUncategorized: Boolean,
+    val limit: Int,
+)
+
 private class FakeArticleUserStateDao : ArticleUserStateDao {
     val rows = mutableMapOf<Long, ArticleUserStateEntity>()
+
+    var lastReadQuery: ArticleQuery? = null
+    var lastClappedQuery: ArticleQuery? = null
+    var readEntities: List<ArticleEntity> = emptyList()
+    var clappedEntities: List<ArticleEntity> = emptyList()
+    var readCategoryRows: List<CategoryCountRow> = emptyList()
+    var clappedCategoryRows: List<CategoryCountRow> = emptyList()
 
     override suspend fun insertIfAbsent(state: ArticleUserStateEntity) {
         rows.putIfAbsent(state.articleId, state)
@@ -169,9 +238,32 @@ private class FakeArticleUserStateDao : ArticleUserStateDao {
     override fun observeBookmarkedCount(): Flow<Int> = emptyFlow()
     override fun observeReadArticleIds(): Flow<List<Long>> = emptyFlow()
     override fun observeReadCount(): Flow<Int> = emptyFlow()
-    override fun observeReadArticles(): Flow<List<ArticleEntity>> = emptyFlow()
+
+    override fun observeReadArticles(
+        category: String?,
+        onlyUncategorized: Boolean,
+        limit: Int,
+    ): Flow<List<ArticleEntity>> {
+        lastReadQuery = ArticleQuery(category, onlyUncategorized, limit)
+        return flowOf(readEntities.take(limit))
+    }
+
+    override fun observeReadCategoryCounts(): Flow<List<CategoryCountRow>> =
+        flowOf(readCategoryRows)
+
     override fun observeClapCount(articleId: Long): Flow<Int?> = flowOf(rows[articleId]?.clapCount)
-    override fun observeClappedArticles(): Flow<List<ArticleEntity>> = emptyFlow()
+
+    override fun observeClappedArticles(
+        category: String?,
+        onlyUncategorized: Boolean,
+        limit: Int,
+    ): Flow<List<ArticleEntity>> {
+        lastClappedQuery = ArticleQuery(category, onlyUncategorized, limit)
+        return flowOf(clappedEntities.take(limit))
+    }
+
+    override fun observeClappedCategoryCounts(): Flow<List<CategoryCountRow>> =
+        flowOf(clappedCategoryRows)
 }
 
 private class StubArticleDao(

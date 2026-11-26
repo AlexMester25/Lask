@@ -7,6 +7,8 @@ import dev.alexmester.database.dao.ArticleDao
 import dev.alexmester.database.dao.ArticleUserStateDao
 import dev.alexmester.database.dao.TransactionRunner
 import dev.alexmester.database.entity.ArticleUserStateEntity
+import dev.alexmester.domain.articles.CategoryCount
+import dev.alexmester.domain.articles.CategoryFilter
 import dev.alexmester.domain.repository.ArticleRepository
 import dev.alexmester.models.news.NewsArticle
 import dev.alexmester.models.result.AppResult
@@ -30,14 +32,34 @@ internal class ArticleRepositoryImpl (
             .map { it.toSet() }
             .flowOn(dispatchers.io)
 
-    override fun observeReadArticles(): Flow<List<NewsArticle>> =
-        userStateDao.observeReadArticles()
+    override fun observeReadArticles(
+        filter: CategoryFilter,
+        limit: Int,
+    ): Flow<List<NewsArticle>> {
+        val (category, onlyUncategorized) = filter.toQuery()
+        return userStateDao.observeReadArticles(category, onlyUncategorized, limit)
             .map { entities -> entities.map { it.toDomain() } }
             .flowOn(dispatchers.io)
+    }
 
-    override fun observeClappedArticles(): Flow<List<NewsArticle>> =
-        userStateDao.observeClappedArticles()
+    override fun observeReadCategoryCounts(): Flow<List<CategoryCount>> =
+        userStateDao.observeReadCategoryCounts()
+            .map { rows -> rows.map { CategoryCount(category = it.category, count = it.count) } }
+            .flowOn(dispatchers.io)
+
+    override fun observeClappedArticles(
+        filter: CategoryFilter,
+        limit: Int,
+    ): Flow<List<NewsArticle>> {
+        val (category, onlyUncategorized) = filter.toQuery()
+        return userStateDao.observeClappedArticles(category, onlyUncategorized, limit)
             .map { entities -> entities.map { it.toDomain() } }
+            .flowOn(dispatchers.io)
+    }
+
+    override fun observeClappedCategoryCounts(): Flow<List<CategoryCount>> =
+        userStateDao.observeClappedCategoryCounts()
+            .map { rows -> rows.map { CategoryCount(category = it.category, count = it.count) } }
             .flowOn(dispatchers.io)
 
     override suspend fun saveArticles(articles: List<NewsArticle>): AppResult<Unit> =
@@ -99,4 +121,14 @@ internal class ArticleRepositoryImpl (
 
     private suspend fun ensureUserState(articleId: Long) =
         userStateDao.insertIfAbsent(ArticleUserStateEntity(articleId = articleId))
+
+    /**
+     * Разворачивает доменный фильтр в параметры SQL: `(category, onlyUncategorized)`.
+     * `All` и `Uncategorized` оба дают `category == null`, но различаются вторым флагом.
+     */
+    private fun CategoryFilter.toQuery(): Pair<String?, Boolean> = when (this) {
+        CategoryFilter.All -> null to false
+        CategoryFilter.Uncategorized -> null to true
+        is CategoryFilter.Named -> name to false
+    }
 }

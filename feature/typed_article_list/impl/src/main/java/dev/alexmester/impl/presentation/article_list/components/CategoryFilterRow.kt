@@ -14,15 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.alexmester.impl.presentation.article_list.mvi.TypedArticleListState
+import dev.alexmester.domain.articles.CategoryFilter
 import dev.alexmester.ui.design_system.LaskColors
 import dev.alexmester.ui.design_system.LaskTypography
 
 @Composable
 internal fun CategoryFilterRow(
-    categories: List<Pair<String?, Int>>,
-    selectedCategory: String?,
-    onCategorySelected: (String?) -> Unit,
+    categories: List<Pair<CategoryFilter, Int>>,
+    selectedFilter: CategoryFilter,
+    onFilterSelected: (CategoryFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
@@ -32,25 +32,20 @@ internal fun CategoryFilterRow(
     ) {
         items(
             items = categories,
-            key = { (cat, _) -> cat ?: "all" },
-        ) { (category, count) ->
-            val label = when (category) {
-                null -> "All"
-                TypedArticleListState.OTHER_CATEGORY -> "Other"
-                else -> category.replaceFirstChar { it.uppercase() }
-            }
-            val isSelected = category == selectedCategory
+            key = { (filter, _) -> filter.key },
+        ) { (filter, count) ->
+            val isSelected = filter == selectedFilter
 
             FilterChip(
                 selected = isSelected,
-                onClick = { onCategorySelected(category) },
+                onClick = { onFilterSelected(filter) },
                 label = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = label,
+                            text = filter.label,
                             style = MaterialTheme.LaskTypography.body1SemiBold,
                             color = MaterialTheme.LaskColors.textPrimary
                         )
@@ -76,3 +71,18 @@ internal fun CategoryFilterRow(
         }
     }
 }
+
+private val CategoryFilter.label: String
+    get() = when (this) {
+        CategoryFilter.All -> "All"
+        CategoryFilter.Uncategorized -> "Other"
+        is CategoryFilter.Named -> name.replaceFirstChar { it.uppercase() }
+    }
+
+/** Ключ для `LazyRow`: префиксы не дают категории «all» столкнуться с чипом «All». */
+private val CategoryFilter.key: String
+    get() = when (this) {
+        CategoryFilter.All -> "filter:all"
+        CategoryFilter.Uncategorized -> "filter:uncategorized"
+        is CategoryFilter.Named -> "filter:$name"
+    }
