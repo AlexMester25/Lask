@@ -97,8 +97,16 @@
     <string name="search_category">Category</string>
     <string name="search_country">Country</string>
     <string name="search_language">Language</string>
+    <string name="search_any_country">Any country</string>
+    <string name="search_any_language">Any language</string>
+    <string name="search_all_categories">All categories</string>
     <string name="search_date_period">Date period</string>
+    <string name="search_date_from">From %1$s</string>
+    <string name="search_date_to">To %1$s</string>
+    <string name="search_date_range_hint">Select date range (last %1$d days)</string>
     <string name="search_sort">Sort</string>
+    <string name="search_sort_newest">Newest first</string>
+    <string name="search_sort_oldest">Oldest first</string>
     <string name="search_back">Back</string>
     <string name="search_placeholder">Search news…</string>
 

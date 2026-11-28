@@ -95,8 +95,16 @@
     <string name="search_category">Категория</string>
     <string name="search_country">Страна</string>
     <string name="search_language">Язык</string>
+    <string name="search_any_country">Любая страна</string>
+    <string name="search_any_language">Любой язык</string>
+    <string name="search_all_categories">Все категории</string>
     <string name="search_date_period">Дата</string>
+    <string name="search_date_from">С %1$s</string>
+    <string name="search_date_to">По %1$s</string>
+    <string name="search_date_range_hint">Выберите период (последние %1$d дней)</string>
     <string name="search_sort">Сортировка</string>
+    <string name="search_sort_newest">Сначала новые</string>
+    <string name="search_sort_oldest">Сначала старые</string>
     <string name="search_back">Назад</string>
     <string name="search_placeholder">Поиск…</string>
 

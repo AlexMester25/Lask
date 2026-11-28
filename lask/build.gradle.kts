@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":feature:article_detail:impl"))
     implementation(project(":feature:bookmarks:impl"))
     implementation(project(":feature:profile:impl"))
+    implementation(project(":feature:settings:impl"))
     implementation(project(":feature:search:impl"))
     implementation(project(":feature:typed_article_list:impl"))
     implementation(project(":feature:interests:impl"))

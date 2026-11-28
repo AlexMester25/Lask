@@ -50,6 +50,9 @@ include(":feature:bookmarks:impl")
 include(":feature:profile:api")
 include(":feature:profile:impl")
 
+include(":feature:settings:api")
+include(":feature:settings:impl")
+
 include(":feature:explore:api")
 include(":feature:explore:impl")
 

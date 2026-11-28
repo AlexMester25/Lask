@@ -1,0 +1,78 @@
+package dev.alexmester.impl.presentation.settings.mvi
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dev.alexmester.api.navigation.LocalePickerType
+import dev.alexmester.domain.repository.UserPreferencesRepository
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+class SettingsViewModel(
+    private val userPreferencesRepository: UserPreferencesRepository,
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(SettingsState())
+    val state: StateFlow<SettingsState> = _state.asStateFlow()
+
+    private val _sideEffects = Channel<SettingsSideEffect>(Channel.BUFFERED)
+    val sideEffects = _sideEffects.receiveAsFlow()
+
+    init {
+        observePreferences()
+    }
+
+    fun handleIntent(intent: SettingsIntent) {
+        when (intent) {
+            is SettingsIntent.SetTheme -> saveTheme(intent.theme)
+            is SettingsIntent.NavigateToLanguage ->
+                emitSideEffect(SettingsSideEffect.NavigateToLocalePicker(LocalePickerType.LANGUAGE))
+            is SettingsIntent.NavigateToCountry ->
+                emitSideEffect(SettingsSideEffect.NavigateToLocalePicker(LocalePickerType.COUNTRY))
+            is SettingsIntent.NavigateToAutoTranslateLanguage ->
+                emitSideEffect(SettingsSideEffect.NavigateToAutoTranslatePicker)
+            is SettingsIntent.Back ->
+                emitSideEffect(SettingsSideEffect.NavigateBack)
+        }
+    }
+
+    private fun observePreferences() {
+        userPreferencesRepository.observeUserPreferences()
+            .onEach { prefs ->
+                _state.update {
+                    it.copy(
+                        theme = when (prefs.isDarkTheme) {
+                            true  -> AppTheme.DARK
+                            false -> AppTheme.LIGHT
+                            null  -> AppTheme.SYSTEM
+                        },
+                        languageCode = prefs.defaultLanguage,
+                        countryCode = prefs.defaultCountry,
+                        autoTranslateLanguage = prefs.autoTranslateLanguage,
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun saveTheme(theme: AppTheme) {
+        viewModelScope.launch {
+            val isDark: Boolean? = when (theme) {
+                AppTheme.SYSTEM -> null
+                AppTheme.LIGHT  -> false
+                AppTheme.DARK   -> true
+            }
+            userPreferencesRepository.updateTheme(isDark)
+        }
+    }
+
+    private fun emitSideEffect(effect: SettingsSideEffect) {
+        viewModelScope.launch { _sideEffects.send(effect) }
+    }
+}

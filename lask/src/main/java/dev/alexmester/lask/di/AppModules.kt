@@ -10,6 +10,7 @@ import dev.alexmester.impl.di.interestsModule
 import dev.alexmester.impl.di.newsFeedModule
 import dev.alexmester.impl.di.profileModule
 import dev.alexmester.impl.di.searchModule
+import dev.alexmester.impl.di.settingsModule
 import dev.alexmester.impl.di.typedArticleListModule
 import dev.alexmester.lask.main.mainModule
 import dev.alexmester.network.di.network
@@ -30,6 +31,7 @@ object AppModules {
         articleDetailModule,
         bookmarksModule,
         profileModule,
+        settingsModule,
         searchModule,
         typedArticleListModule,
         interestsModule,

@@ -34,6 +34,7 @@ import dev.alexmester.api.navigation.NewsFeedApi
 import dev.alexmester.api.navigation.NewsFeedRoute
 import dev.alexmester.api.navigation.ProfileApi
 import dev.alexmester.api.navigation.SearchApi
+import dev.alexmester.api.navigation.SettingsApi
 import dev.alexmester.api.navigation.TypedArticleListApi
 import dev.alexmester.lask.app_bottom_navigation.AppBottomBar
 import dev.alexmester.navigation.register
@@ -54,6 +55,7 @@ fun RootScreen(navController: NavHostController) {
     val exploreApi = koinInject<ExploreApi>()
     val articleDetailApi = koinInject<ArticleDetailApi>()
     val profileApi = koinInject<ProfileApi>()
+    val settingsApi = koinInject<SettingsApi>()
     val searchApi = koinInject<SearchApi>()
     val typedArticleListApi = koinInject<TypedArticleListApi>()
     val interestsApi = koinInject<InterestsApi>()
@@ -89,6 +91,7 @@ fun RootScreen(navController: NavHostController) {
                     register(bookmarkApi, navController)
                     register(articleDetailApi, navController)
                     register(profileApi, navController)
+                    register(settingsApi, navController)
                     register(searchApi, navController)
                     register(typedArticleListApi, navController)
                     register(interestsApi, navController)

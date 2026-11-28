@@ -12,6 +12,7 @@ android {
 dependencies {
     api(project(":feature:profile:api"))
 
+    implementation(project(":feature:settings:api"))
     implementation(project(":feature:typed_article_list:api"))
     implementation(project(":feature:interests:api"))
 

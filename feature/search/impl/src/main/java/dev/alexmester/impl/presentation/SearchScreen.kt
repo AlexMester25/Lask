@@ -1,5 +1,6 @@
 package dev.alexmester.impl.presentation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SearchOff
@@ -95,6 +97,13 @@ internal fun SearchScreenContent(
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
+    // Hoisted above the filter-overlay branch so the horizontal list keeps its scroll position
+    // when the overlay is opened and closed.
+    val filterRowState = rememberLazyListState()
+
+    BackHandler(enabled = state.openedFilterType != null) {
+        onIntent(SearchIntent.ClearFilter)
+    }
 
     state.openedFilterType?.let { openedFilterType ->
         FilterOverlay(
@@ -144,6 +153,7 @@ internal fun SearchScreenContent(
 
         SearchFilterRow(
             filters = state.filters,
+            state = filterRowState,
             onFilterClick = { filterType ->
                 keyboard?.hide()
                 focus.clearFocus()

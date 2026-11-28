@@ -17,14 +17,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import dev.alexmester.impl.presentation.components.FilterPickerTopBar
 import dev.alexmester.ui.R
+import dev.alexmester.ui.components.picker.LaskPickerApply
+import dev.alexmester.ui.components.picker.LaskPickerTopBar
 import dev.alexmester.ui.design_system.LaskColors
 import dev.alexmester.ui.design_system.LaskTypography
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+
+private const val MAX_DATE_RANGE_DAYS = 30
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,9 +50,10 @@ internal fun DateRangePickerScreen(
         }
     }
 
-    // Cap selection to last 30 days (free plan limitation)
+    // Cap selection to the last [MAX_DATE_RANGE_DAYS] days (free plan limitation)
     val today = LocalDate.now(ZoneOffset.UTC)
-    val minDate = today.minusDays(30).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+    val minDate = today.minusDays(MAX_DATE_RANGE_DAYS.toLong())
+        .atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
     val maxDate = today.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
     val pickerState = rememberDateRangePickerState(
@@ -69,16 +73,18 @@ internal fun DateRangePickerScreen(
 
     Scaffold(
         topBar = {
-            FilterPickerTopBar(
+            LaskPickerTopBar(
                 title = stringResource(R.string.search_date_period),
-                isApplyEnabled = isApplyEnabled,
                 onBack = onBack,
-                onApply = {
-                    onApply(
-                        pickerState.selectedStartDateMillis.toDateString(),
-                        pickerState.selectedEndDateMillis.toDateString(),
-                    )
-                },
+                apply = LaskPickerApply(
+                    isEnabled = isApplyEnabled,
+                    onClick = {
+                        onApply(
+                            pickerState.selectedStartDateMillis.toDateString(),
+                            pickerState.selectedEndDateMillis.toDateString(),
+                        )
+                    },
+                ),
             )
         },
         containerColor = MaterialTheme.LaskColors.backgroundPrimary,
@@ -107,7 +113,7 @@ internal fun DateRangePickerScreen(
                 ),
                 title = {
                     Text(
-                        text = "Select date range (last 30 days)",
+                        text = stringResource(R.string.search_date_range_hint, MAX_DATE_RANGE_DAYS),
                         style = MaterialTheme.LaskTypography.body2,
                         color = MaterialTheme.LaskColors.textSecondary,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
